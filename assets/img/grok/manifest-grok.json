@@ -1,0 +1,137 @@
+{
+ "strate-terre-mobile": {
+  "dir": "grok",
+  "w": 784,
+  "h": 1168,
+  "sizes": [
+   784,
+   1170
+  ]
+ },
+ "strate-terre": {
+  "dir": "grok",
+  "w": 1168,
+  "h": 784,
+  "sizes": [
+   1168,
+   1920
+  ]
+ },
+ "strate-argile-rouge-mobile": {
+  "dir": "grok",
+  "w": 784,
+  "h": 1168,
+  "sizes": [
+   784,
+   1170
+  ]
+ },
+ "strate-argile-rouge": {
+  "dir": "grok",
+  "w": 1168,
+  "h": 784,
+  "sizes": [
+   1168,
+   1920
+  ]
+ },
+ "strate-calcaire-asteries-mobile": {
+  "dir": "grok",
+  "w": 784,
+  "h": 1168,
+  "sizes": [
+   784,
+   1170
+  ]
+ },
+ "strate-calcaire-asteries": {
+  "dir": "grok",
+  "w": 1168,
+  "h": 784,
+  "sizes": [
+   1168,
+   1920
+  ]
+ },
+ "pierre-taillee-blonde": {
+  "dir": "grok",
+  "w": 1168,
+  "h": 784,
+  "sizes": [
+   1168,
+   1920
+  ]
+ },
+ "socle-calcaire": {
+  "dir": "grok",
+  "w": 784,
+  "h": 1168,
+  "sizes": [
+   784,
+   1170
+  ]
+ },
+ "carotte-calcaire": {
+  "dir": "grok",
+  "w": 784,
+  "h": 1168,
+  "sizes": [
+   784,
+   1170
+  ]
+ },
+ "douelles-chene": {
+  "dir": "grok",
+  "w": 1168,
+  "h": 784,
+  "sizes": [
+   1168,
+   1920
+  ]
+ },
+ "baies-trois-tas": {
+  "dir": "grok",
+  "w": 1168,
+  "h": 784,
+  "sizes": [
+   1168,
+   1920
+  ]
+ },
+ "asterie-fossile": {
+  "dir": "grok",
+  "w": 784,
+  "h": 784,
+  "sizes": [
+   600,
+   1000
+  ]
+ },
+ "rayon-lumiere-chai": {
+  "dir": "grok",
+  "w": 1168,
+  "h": 784,
+  "sizes": [
+   1168,
+   1920
+  ]
+ },
+ "carotte-detouree": {
+  "dir": "grok",
+  "w": 403,
+  "h": 721,
+  "sizes": [
+   400,
+   800
+  ]
+ },
+ "socle-detoure": {
+  "dir": "grok",
+  "w": 573,
+  "h": 447,
+  "sizes": [
+   400,
+   800
+  ]
+ }
+}

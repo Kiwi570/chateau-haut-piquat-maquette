@@ -1,0 +1,778 @@
+{
+ "vigne-chateau-matin": {
+  "dir": "photos",
+  "w": 4032,
+  "h": 3024,
+  "sizes": [
+   640,
+   1280,
+   1920,
+   2560
+  ]
+ },
+ "chateau-panorama-vignes": {
+  "dir": "photos",
+  "w": 1598,
+  "h": 551,
+  "sizes": [
+   640,
+   1280,
+   1598
+  ]
+ },
+ "chateau-panorama-midi": {
+  "dir": "photos",
+  "w": 9840,
+  "h": 3814,
+  "sizes": [
+   640,
+   1280,
+   1920,
+   2560
+  ]
+ },
+ "chateau-soir-helisurface": {
+  "dir": "photos",
+  "w": 1600,
+  "h": 900,
+  "sizes": [
+   640,
+   1280,
+   1600
+  ]
+ },
+ "chateau-facade": {
+  "dir": "photos",
+  "w": 5184,
+  "h": 3456,
+  "sizes": [
+   640,
+   1280,
+   1920,
+   2560
+  ]
+ },
+ "arche-vers-vignoble": {
+  "dir": "photos",
+  "w": 4032,
+  "h": 3024,
+  "sizes": [
+   640,
+   1280,
+   1920,
+   2560
+  ]
+ },
+ "fond-barrique-mur-calcaire": {
+  "dir": "photos",
+  "w": 3024,
+  "h": 4032,
+  "sizes": [
+   640,
+   1280,
+   1920,
+   2560
+  ]
+ },
+ "grappes-raisin-noir": {
+  "dir": "photos",
+  "w": 5184,
+  "h": 3456,
+  "sizes": [
+   640,
+   1280,
+   1920,
+   2560
+  ]
+ },
+ "vignes-paysage": {
+  "dir": "photos",
+  "w": 1600,
+  "h": 777,
+  "sizes": [
+   640,
+   1280,
+   1600
+  ]
+ },
+ "vignoble-automne-vendangeur": {
+  "dir": "photos",
+  "w": 5184,
+  "h": 3456,
+  "sizes": [
+   640,
+   1280,
+   1920,
+   2560
+  ]
+ },
+ "vendangeur-seau": {
+  "dir": "photos",
+  "w": 1600,
+  "h": 1200,
+  "sizes": [
+   640,
+   1280,
+   1600
+  ]
+ },
+ "tri-vendange": {
+  "dir": "photos",
+  "w": 510,
+  "h": 331,
+  "sizes": [
+   510
+  ]
+ },
+ "marguerites-chateau": {
+  "dir": "photos",
+  "w": 3024,
+  "h": 4032,
+  "sizes": [
+   640,
+   1280,
+   1920,
+   2560
+  ]
+ },
+ "eglise-monolithe-saint-emilion": {
+  "dir": "photos",
+  "w": 1707,
+  "h": 2560,
+  "sizes": [
+   640,
+   1280,
+   1707
+  ]
+ },
+ "calcaire-asteries": {
+  "dir": "photos",
+  "w": 220,
+  "h": 293,
+  "sizes": [
+   220
+  ]
+ },
+ "cuvier-inox": {
+  "dir": "photos",
+  "w": 3024,
+  "h": 4032,
+  "sizes": [
+   640,
+   1280,
+   1920,
+   2560
+  ]
+ },
+ "chai-barriques": {
+  "dir": "photos",
+  "w": 5906,
+  "h": 3938,
+  "sizes": [
+   640,
+   1280,
+   1920,
+   2560
+  ]
+ },
+ "barriques-gros-plan": {
+  "dir": "photos",
+  "w": 3024,
+  "h": 4032,
+  "sizes": [
+   640,
+   1280,
+   1920,
+   2560
+  ]
+ },
+ "jean-pierre-riviere-vigne": {
+  "dir": "photos",
+  "w": 2592,
+  "h": 1728,
+  "sizes": [
+   640,
+   1280,
+   1920,
+   2560
+  ]
+ },
+ "jean-pierre-riviere-grappes": {
+  "dir": "photos",
+  "w": 778,
+  "h": 519,
+  "sizes": [
+   640,
+   778
+  ]
+ },
+ "portrait-jean-pierre-riviere": {
+  "dir": "photos",
+  "w": 350,
+  "h": 482,
+  "sizes": [
+   350
+  ]
+ },
+ "portrait-eric-sabaca": {
+  "dir": "photos",
+  "w": 350,
+  "h": 482,
+  "sizes": [
+   350
+  ]
+ },
+ "equipe-vignoble": {
+  "dir": "photos",
+  "w": 1600,
+  "h": 1200,
+  "sizes": [
+   640,
+   1280,
+   1600
+  ]
+ },
+ "table-ecrivins": {
+  "dir": "photos",
+  "w": 4032,
+  "h": 3024,
+  "sizes": [
+   640,
+   1280,
+   1920,
+   2560
+  ]
+ },
+ "salle-degustation-table": {
+  "dir": "photos",
+  "w": 3024,
+  "h": 4032,
+  "sizes": [
+   640,
+   1280,
+   1920,
+   2560
+  ]
+ },
+ "cour-tables-barriques": {
+  "dir": "photos",
+  "w": 4032,
+  "h": 3024,
+  "sizes": [
+   640,
+   1280,
+   1920,
+   2560
+  ]
+ },
+ "parc-pelouse-cedre": {
+  "dir": "photos",
+  "w": 4032,
+  "h": 3024,
+  "sizes": [
+   640,
+   1280,
+   1920,
+   2560
+  ]
+ },
+ "parc-vue-aerienne-evenement": {
+  "dir": "photos",
+  "w": 1598,
+  "h": 537,
+  "sizes": [
+   640,
+   1280,
+   1598
+  ]
+ },
+ "parc-chateau-illumine": {
+  "dir": "photos",
+  "w": 1600,
+  "h": 778,
+  "sizes": [
+   640,
+   1280,
+   1600
+  ]
+ },
+ "parc-festival-vue-haute": {
+  "dir": "photos",
+  "w": 1600,
+  "h": 778,
+  "sizes": [
+   640,
+   1280,
+   1600
+  ]
+ },
+ "parc-tables-barriques": {
+  "dir": "photos",
+  "w": 1600,
+  "h": 778,
+  "sizes": [
+   640,
+   1280,
+   1600
+  ]
+ },
+ "parc-camping-cars": {
+  "dir": "photos",
+  "w": 4032,
+  "h": 3024,
+  "sizes": [
+   640,
+   1280,
+   1920,
+   2560
+  ]
+ },
+ "chateau-helicoptere-vignes": {
+  "dir": "photos",
+  "w": 1600,
+  "h": 739,
+  "sizes": [
+   640,
+   1280,
+   1600
+  ]
+ },
+ "voitures-anciennes-chateau": {
+  "dir": "photos",
+  "w": 1024,
+  "h": 768,
+  "sizes": [
+   640,
+   1024
+  ]
+ },
+ "service-temperature": {
+  "dir": "photos",
+  "w": 1920,
+  "h": 1080,
+  "sizes": [
+   640,
+   1280,
+   1920
+  ]
+ },
+ "accords-fromages-haut-piquat": {
+  "dir": "photos",
+  "w": 2362,
+  "h": 1575,
+  "sizes": [
+   640,
+   1280,
+   1920,
+   2362
+  ]
+ },
+ "carafe-la-fleur": {
+  "dir": "photos",
+  "w": 2362,
+  "h": 1575,
+  "sizes": [
+   640,
+   1280,
+   1920,
+   2362
+  ]
+ },
+ "service-haut-piquat-2010": {
+  "dir": "photos",
+  "w": 1772,
+  "h": 2484,
+  "sizes": [
+   640,
+   1280,
+   1772
+  ]
+ },
+ "caisses-bois-vignoble": {
+  "dir": "photos",
+  "w": 2074,
+  "h": 1383,
+  "sizes": [
+   640,
+   1280,
+   1920,
+   2074
+  ]
+ },
+ "archive-abbaye-faize": {
+  "dir": "photos",
+  "w": 508,
+  "h": 317,
+  "sizes": [
+   480,
+   508
+  ]
+ },
+ "archive-megalithe-picampeau-1861": {
+  "dir": "photos",
+  "w": 508,
+  "h": 326,
+  "sizes": [
+   480,
+   508
+  ]
+ },
+ "archive-chateau-blason-lussac": {
+  "dir": "photos",
+  "w": 644,
+  "h": 640,
+  "sizes": [
+   480,
+   644
+  ]
+ },
+ "archive-vendanges-1966": {
+  "dir": "photos",
+  "w": 3352,
+  "h": 2035,
+  "sizes": [
+   480,
+   960,
+   1600
+  ]
+ },
+ "bouteille-haut-piquat": {
+  "dir": "vins",
+  "w": 675,
+  "h": 2675,
+  "sizes": [
+   360,
+   675
+  ]
+ },
+ "bouteille-la-fleur": {
+  "dir": "vins",
+  "w": 736,
+  "h": 2689,
+  "sizes": [
+   360,
+   720,
+   736
+  ]
+ },
+ "bouteille-beaulieu": {
+  "dir": "vins",
+  "w": 676,
+  "h": 2672,
+  "sizes": [
+   360,
+   676
+  ]
+ },
+ "bouteille-montroc": {
+  "dir": "vins",
+  "w": 686,
+  "h": 2667,
+  "sizes": [
+   360,
+   686
+  ]
+ },
+ "bouteille-picampeau": {
+  "dir": "vins",
+  "w": 661,
+  "h": 2586,
+  "sizes": [
+   360,
+   661
+  ]
+ },
+ "gamme-formats": {
+  "dir": "vins",
+  "w": 1920,
+  "h": 1832,
+  "sizes": [
+   360,
+   720,
+   1200
+  ]
+ },
+ "logo-chateau-or": {
+  "dir": "logos",
+  "w": 3657,
+  "h": 2662,
+  "sizes": [
+   240,
+   480,
+   960
+  ]
+ },
+ "logo-chateau-encre": {
+  "dir": "logos",
+  "w": 3000,
+  "h": 2185,
+  "sizes": [
+   240,
+   480,
+   960
+  ]
+ },
+ "logo-famille-riviere": {
+  "dir": "logos",
+  "w": 903,
+  "h": 570,
+  "sizes": [
+   240,
+   480,
+   903
+  ]
+ },
+ "label-hve": {
+  "dir": "logos",
+  "w": 1181,
+  "h": 1181,
+  "sizes": [
+   240,
+   480,
+   960
+  ]
+ },
+ "label-vignobles-decouvertes": {
+  "dir": "logos",
+  "w": 500,
+  "h": 639,
+  "sizes": [
+   240,
+   480,
+   500
+  ]
+ },
+ "packshot-beaulieu-2013": {
+  "dir": "vins",
+  "w": 1741,
+  "h": 2475,
+  "sizes": [
+   420,
+   840,
+   1300
+  ]
+ },
+ "packshot-beaulieu-2017": {
+  "dir": "vins",
+  "w": 791,
+  "h": 1126,
+  "sizes": [
+   420,
+   791
+  ]
+ },
+ "packshot-beaulieu-2018": {
+  "dir": "vins",
+  "w": 791,
+  "h": 1126,
+  "sizes": [
+   420,
+   791
+  ]
+ },
+ "packshot-beaulieu-2019": {
+  "dir": "vins",
+  "w": 1741,
+  "h": 2475,
+  "sizes": [
+   420,
+   840,
+   1300
+  ]
+ },
+ "packshot-beaulieu-2020": {
+  "dir": "vins",
+  "w": 791,
+  "h": 1126,
+  "sizes": [
+   420,
+   791
+  ]
+ },
+ "packshot-beaulieu-2022": {
+  "dir": "vins",
+  "w": 1741,
+  "h": 2475,
+  "sizes": [
+   420,
+   840,
+   1300
+  ]
+ },
+ "packshot-haut-piquat-2010": {
+  "dir": "vins",
+  "w": 1741,
+  "h": 2475,
+  "sizes": [
+   420,
+   840,
+   1300
+  ]
+ },
+ "packshot-haut-piquat-2013": {
+  "dir": "vins",
+  "w": 791,
+  "h": 1126,
+  "sizes": [
+   420,
+   791
+  ]
+ },
+ "packshot-haut-piquat-2015": {
+  "dir": "vins",
+  "w": 1741,
+  "h": 2475,
+  "sizes": [
+   420,
+   840,
+   1300
+  ]
+ },
+ "packshot-haut-piquat-2015-imperiale": {
+  "dir": "vins",
+  "w": 791,
+  "h": 1147,
+  "sizes": [
+   420,
+   791
+  ]
+ },
+ "packshot-haut-piquat-2016": {
+  "dir": "vins",
+  "w": 1741,
+  "h": 2475,
+  "sizes": [
+   420,
+   840,
+   1300
+  ]
+ },
+ "packshot-haut-piquat-2017": {
+  "dir": "vins",
+  "w": 791,
+  "h": 1126,
+  "sizes": [
+   420,
+   791
+  ]
+ },
+ "packshot-haut-piquat-2019-demi-bouteilles": {
+  "dir": "vins",
+  "w": 1741,
+  "h": 2521,
+  "sizes": [
+   420,
+   840,
+   1300
+  ]
+ },
+ "packshot-haut-piquat-2020": {
+  "dir": "vins",
+  "w": 1741,
+  "h": 2475,
+  "sizes": [
+   420,
+   840,
+   1300
+  ]
+ },
+ "packshot-haut-piquat-2020-double-magnum": {
+  "dir": "vins",
+  "w": 791,
+  "h": 1147,
+  "sizes": [
+   420,
+   791
+  ]
+ },
+ "packshot-haut-piquat-2022": {
+  "dir": "vins",
+  "w": 1741,
+  "h": 2475,
+  "sizes": [
+   420,
+   840,
+   1300
+  ]
+ },
+ "packshot-haut-piquat-magnums": {
+  "dir": "vins",
+  "w": 1741,
+  "h": 2521,
+  "sizes": [
+   420,
+   840,
+   1300
+  ]
+ },
+ "packshot-la-fleur-2014": {
+  "dir": "vins",
+  "w": 1741,
+  "h": 2475,
+  "sizes": [
+   420,
+   840,
+   1300
+  ]
+ },
+ "packshot-la-fleur-2016": {
+  "dir": "vins",
+  "w": 1741,
+  "h": 2475,
+  "sizes": [
+   420,
+   840,
+   1300
+  ]
+ },
+ "packshot-la-fleur-2016-magnums": {
+  "dir": "vins",
+  "w": 1741,
+  "h": 2521,
+  "sizes": [
+   420,
+   840,
+   1300
+  ]
+ },
+ "packshot-la-fleur-2017": {
+  "dir": "vins",
+  "w": 1741,
+  "h": 2475,
+  "sizes": [
+   420,
+   840,
+   1300
+  ]
+ },
+ "packshot-la-fleur-2019": {
+  "dir": "vins",
+  "w": 1733,
+  "h": 2475,
+  "sizes": [
+   420,
+   840,
+   1300
+  ]
+ },
+ "packshot-la-fleur-2020": {
+  "dir": "vins",
+  "w": 1741,
+  "h": 2475,
+  "sizes": [
+   420,
+   840,
+   1300
+  ]
+ },
+ "packshot-la-fleur-2022": {
+  "dir": "vins",
+  "w": 1741,
+  "h": 2475,
+  "sizes": [
+   420,
+   840,
+   1300
+  ]
+ }
+}
