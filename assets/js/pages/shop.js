@@ -1,7 +1,7 @@
 // Boutique : filtres, cartes inclinables, ajout au panier, règle des formats.
-import { $, $$, L, eur, CALM, TOUCH, scrollToEl } from '../core.js?v=1';
-import { WINES, CHATEAUX, FORMATS } from '../data.js?v=1';
-import { addToCart } from '../cart.js?v=1';
+import { $, $$, L, eur, CALM, TOUCH, scrollToEl, sparkAt } from '../core.js?v=2';
+import { WINES, CHATEAUX, FORMATS } from '../data.js?v=2';
+import { addToCart } from '../cart.js?v=2';
 
 const gsap = window.gsap; const Flip = window.Flip;
 const ORDER = WINES.map((w) => w.id);
@@ -24,9 +24,9 @@ function card(w) {
     <a class="pcard__img" href="vin.html?id=${w.id}" aria-label="${ch.name} ${w.vintage}">${badge}<img src="${w.img.src}" width="${w.img.w}" height="${w.img.h}" alt="${ch.name} ${w.vintage}, ${f.label.fr}" loading="lazy" decoding="async" data-pimg></a>
     <div class="pcard__body">
       <h3><a href="vin.html?id=${w.id}">${ch.name} <span class="num">${w.vintage}</span></a></h3>
-      <p class="pcard__fmt">${L(f.label.fr, f.label.en)}</p>
+      <p class="pcard__fmt"><span class="long">${L(f.label.fr, f.label.en)}</span><span class="short">${f.units} × ${f.cl} cl</span></p>
       ${dist ? `<p class="pcard__dist">${dist}</p>` : ''}
-      <div class="pcard__price"><b>${eur(w.price)}</b>${w.old ? `<s>${eur(w.old)}</s>` : ''}<small>${L(`soit ${eur(per)} la ${f.unit.fr}`, `${eur(per)} per ${f.unit.en}`)}${w.promo51 ? L(' · 5 achetées, 1 offerte', ' · buy 5, get 1 free') : ''}</small></div>
+      <div class="pcard__price"><b>${eur(w.price)}</b>${w.old ? `<s>${eur(w.old)}</s>` : ''}<small>${L(`${eur(per)} / ${f.unit.fr === 'bouteille' ? 'bt' : f.unit.fr}`, `${eur(per)} / ${f.unit.en === 'bottle' ? 'btl' : f.unit.en}`)}${w.promo51 ? L(' · 5 + 1 offerte', ' · 5 + 1 free') : ''}</small></div>
       <button class="btn btn--sm pcard__add" type="button" data-add="${w.id}">${L('Ajouter', 'Add')}</button>
     </div>
   </article>`;
@@ -36,26 +36,32 @@ function chips(group, items) {
   return `<div class="fgroup"><h3>${group}</h3><div class="chips">${items.join('')}</div></div>`;
 }
 function chip(kind, val, label, on, count) {
-  return `<button class="chip" type="button" data-f="${kind}" data-v="${val}" aria-pressed="${on}">${label}${count != null ? ` <span class="muted">${count}</span>` : ''}</button>`;
+  const off = count === 0 && !on;
+  return `<button class="chip" type="button" data-f="${kind}" data-v="${val}" aria-pressed="${on}"${off ? ' aria-disabled="true" tabindex="-1"' : ''}>${label}${count != null ? ` <span class="muted">${count}</span>` : ''}</button>`;
+}
+function match(w, skip) {
+  return (skip === 'ch' || !state.ch.size || state.ch.has(w.ch)) && (skip === 'vin' || !state.vin.size || state.vin.has(w.vintage)) && (skip === 'fmt' || !state.fmt.size || state.fmt.has(w.fmt)) && (skip === 'coeur' || !state.coeur || w.badge === 'coeur') && (skip === 'promo' || !state.promo || w.badge === 'promo');
 }
 function renderFilters() {
   const el = $('[data-filters]');
-  const count = (pred) => WINES.filter(pred).length;
+  const count = (pred, skip) => WINES.filter((w) => match(w, skip) && pred(w)).length;
   const vintages = [...new Set(WINES.map((w) => w.vintage))].sort();
+  const n0 = WINES.filter((w) => match(w)).length;
   el.innerHTML = [
-    chips(L('Château', 'Château'), Object.entries(CHATEAUX).map(([k, c]) => chip('ch', k, { hp: 'Haut-Piquat', lf: 'La Fleur', bl: 'Beaulieu' }[k], state.ch.has(k), count((w) => w.ch === k)))),
-    chips(L('Millésime', 'Vintage'), vintages.map((v) => chip('vin', v, v, state.vin.has(v)))),
-    chips(L('Format', 'Size'), FMT_ORDER.map((k) => chip('fmt', k, FORMATS[k].filter, state.fmt.has(k), count((w) => w.fmt === k)))),
-    chips(L('Sélection', 'Selection'), [chip('coeur', 1, L('Coups de cœur', 'Favourites'), state.coeur), chip('promo', 1, L('Promotions', 'Offers'), state.promo)]),
+    chips(L('Château', 'Château'), Object.entries(CHATEAUX).map(([k, c]) => chip('ch', k, { hp: 'Haut-Piquat', lf: 'La Fleur', bl: 'Beaulieu' }[k], state.ch.has(k), count((w) => w.ch === k, 'ch')))),
+    chips(L('Millésime', 'Vintage'), vintages.map((v) => chip('vin', v, v, state.vin.has(v), count((w) => w.vintage === v, 'vin')))),
+    chips(L('Format', 'Size'), FMT_ORDER.map((k) => chip('fmt', k, FORMATS[k].filter, state.fmt.has(k), count((w) => w.fmt === k, 'fmt')))),
+    chips(L('Sélection', 'Selection'), [chip('coeur', 1, L('Coups de cœur', 'Favourites'), state.coeur, count((w) => w.badge === 'coeur', 'coeur')), chip('promo', 1, L('Promotions', 'Offers'), state.promo, count((w) => w.badge === 'promo', 'promo'))]),
     `<button class="link small" style="border:0;background:none;padding:0;justify-self:start;min-height:44px" type="button" data-reset>${L('Tout afficher', 'Show all')}</button>`,
     `<p class="form-note">${L('Caisses cadeaux et primeurs&nbsp;: <a class="link" href="#cadeaux">sur devis</a>.', 'Gift cases and en primeur: <a class="link" href="#cadeaux">on quote</a>.')}</p>`,
+    `<button class="btn filters__apply" type="button" data-apply>${L(`Voir ${n0} vin${n0 > 1 ? 's' : ''}`, `Show ${n0} wine${n0 > 1 ? 's' : ''}`)}</button>`,
   ].join('');
   const n = state.ch.size + state.vin.size + state.fmt.size + (state.coeur ? 1 : 0) + (state.promo ? 1 : 0);
   $('[data-filter-count]').textContent = n ? `(${n})` : '';
 }
 
 function visible() {
-  let list = WINES.filter((w) => (!state.ch.size || state.ch.has(w.ch)) && (!state.vin.size || state.vin.has(w.vintage)) && (!state.fmt.size || state.fmt.has(w.fmt)) && (!state.coeur || w.badge === 'coeur') && (!state.promo || w.badge === 'promo'));
+  let list = WINES.filter((w) => match(w));
   const s = state.sort;
   if (s === 'price-asc') list.sort((a, b) => a.price - b.price);
   else if (s === 'price-desc') list.sort((a, b) => b.price - a.price);
@@ -65,7 +71,16 @@ function visible() {
   return list;
 }
 
+function syncUrl() {
+  const p = new URLSearchParams();
+  if (state.ch.size === 1) p.set('chateau', [...state.ch][0]);
+  if (state.vin.size === 1) p.set('millesime', [...state.vin][0]);
+  if (state.fmt.size === 1) p.set('format', [...state.fmt][0]);
+  const q = p.toString();
+  history.replaceState(null, '', location.pathname + (q ? '?' + q : '') + location.hash);
+}
 function renderGrid(animate) {
+  syncUrl();
   const grid = $('[data-pgrid]');
   const list = visible();
   const stateF = animate && !CALM && Flip ? Flip.getState($$('.pcard', grid)) : null;
@@ -78,7 +93,12 @@ function renderGrid(animate) {
   });
   existing.forEach((c) => { c.style.display = 'none'; frag.appendChild(c); });
   grid.innerHTML = ''; grid.appendChild(frag);
-  const empty = list.length ? '' : `<div class="pgrid__empty">${L('Aucun vin ne correspond à ces filtres.', 'No wine matches these filters.')}</div>`;
+  const drops = [];
+  state.vin.forEach((v) => drops.push(['vin', v, String(v)]));
+  state.fmt.forEach((k) => drops.push(['fmt', k, FORMATS[k].filter]));
+  if (state.coeur) drops.push(['coeur', 1, L('coups de cœur', 'favourites')]);
+  if (state.promo) drops.push(['promo', 1, L('promotions', 'offers')]);
+  const empty = list.length ? '' : `<div class="pgrid__empty"><p>${L('Aucun vin ne correspond à ces filtres.', 'No wine matches these filters.')}</p><div class="actions">${drops.slice(0, 3).map(([k, v, t]) => `<button class="chip" type="button" data-drop="${k}" data-v="${v}">${L('Retirer', 'Remove')} ${t}</button>`).join('')}<button class="btn btn--sm" type="button" data-drop-all>${L('Tout afficher', 'Show all')}</button></div></div>`;
   grid.insertAdjacentHTML('beforeend', empty);
   $('[data-result-count]').innerHTML = L(`${list.length} vin${list.length > 1 ? 's' : ''}`, `${list.length} wine${list.length > 1 ? 's' : ''}`);
   if (stateF) Flip.from(stateF, { duration: 0.7, ease: 'power3.inOut', absolute: true, stagger: 0.02, onEnter: (els) => gsap.fromTo(els, { autoAlpha: 0, scale: 0.9 }, { autoAlpha: 1, scale: 1, duration: 0.6 }), onLeave: (els) => gsap.to(els, { autoAlpha: 0, scale: 0.9, duration: 0.4 }) });
@@ -94,9 +114,19 @@ function bindTilt(c) {
 
 function initFilters() {
   const panel = $('[data-filters]'); const toggle = $('[data-filters-toggle]');
-  toggle.addEventListener('click', () => { const o = panel.classList.toggle('is-open'); toggle.setAttribute('aria-expanded', o); });
+  let scrim = null;
+  const setOpen = (o) => {
+    panel.classList.toggle('is-open', o); toggle.setAttribute('aria-expanded', o);
+    if (o && innerWidth < 1100) { scrim = document.createElement('div'); scrim.className = 'filters__scrim'; scrim.addEventListener('click', () => setOpen(false)); panel.before(scrim); }
+    else if (scrim) { scrim.remove(); scrim = null; }
+    if (!o && innerWidth < 1100) { toggle.focus({ preventScroll: true }); scrollToEl($('[data-pgrid]')); }
+  };
+  toggle.addEventListener('click', () => setOpen(!panel.classList.contains('is-open')));
+  addEventListener('keydown', (e) => { if (e.key === 'Escape' && panel.classList.contains('is-open') && innerWidth < 1100) setOpen(false); });
   panel.addEventListener('click', (e) => {
+    if (e.target.closest('[data-apply]')) { setOpen(false); return; }
     const b = e.target.closest('[data-f]');
+    if (b && b.getAttribute('aria-disabled') === 'true') return;
     if (e.target.closest('[data-reset]')) { state.ch.clear(); state.vin.clear(); state.fmt.clear(); state.coeur = state.promo = false; }
     else if (b) {
       const k = b.dataset.f; const v = k === 'vin' ? +b.dataset.v : b.dataset.v;
@@ -106,6 +136,9 @@ function initFilters() {
   });
   $('[data-sort]').addEventListener('change', (e) => { state.sort = e.target.value; renderGrid(true); });
   $('[data-pgrid]').addEventListener('click', (e) => {
+    if (e.target.closest('[data-drop-all]')) { state.ch.clear(); state.vin.clear(); state.fmt.clear(); state.coeur = state.promo = false; renderFilters(); renderGrid(true); syncRuler(); return; }
+    const d = e.target.closest('[data-drop]');
+    if (d) { const k = d.dataset.drop; if (k === 'coeur' || k === 'promo') state[k] = false; else state[k].delete(k === 'vin' ? +d.dataset.v : d.dataset.v); renderFilters(); renderGrid(true); syncRuler(); return; }
     const b = e.target.closest('[data-add]'); if (!b) return;
     addToCart(b.dataset.add, 1, $('[data-pimg]', b.closest('.pcard')));
   });
@@ -119,10 +152,12 @@ function initRuler() {
   r.innerHTML = FMT_ORDER.map((k) => `<button type="button" data-fmt="${k}" aria-pressed="false">${names[k]}</button>`).join('');
   const describe = (k) => {
     const list = WINES.filter((w) => w.fmt === k); const min = Math.min(...list.map((w) => w.price));
-    info.innerHTML = L(`${list.length} référence${list.length > 1 ? 's' : ''} en ${FORMATS[k].filter}, à partir de ${eur(min)} la caisse. <a class="link" href="#cat-title" data-goto-grid>Voir dans le catalogue</a>`, `${list.length} item${list.length > 1 ? 's' : ''} in ${FORMATS[k].filter}, from ${eur(min)} per case. <a class="link" href="#cat-title" data-goto-grid>See in the catalogue</a>`);
+    info.innerHTML = L(`${list.length} référence${list.length > 1 ? 's' : ''} en ${FORMATS[k].filter}, à partir de ${eur(min)}. <a class="link" href="#cat-title" data-goto-grid>Voir dans le catalogue</a>`, `${list.length} item${list.length > 1 ? 's' : ''} in ${FORMATS[k].filter}, from ${eur(min)}. <a class="link" href="#cat-title" data-goto-grid>See in the catalogue</a>`);
   };
-  describe('b75');
+  const current = () => (state.fmt.size === 1 ? [...state.fmt][0] : 'b75');
+  describe(current());
   r.addEventListener('pointerover', (e) => { const b = e.target.closest('button'); if (b) describe(b.dataset.fmt); });
+  r.addEventListener('pointerleave', () => describe(current()));
   r.addEventListener('click', (e) => {
     const b = e.target.closest('button'); if (!b) return;
     describe(b.dataset.fmt); state.fmt.clear(); state.fmt.add(b.dataset.fmt); renderFilters(); renderGrid(false); syncRuler();

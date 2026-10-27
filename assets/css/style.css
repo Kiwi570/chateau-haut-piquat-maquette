@@ -808,3 +808,214 @@ html.calm .loader, html.calm .ptrans { display: none; }
 @media (min-width: 900px) and (max-height: 700px) { .era__date { font-size: 2.3rem; } .era p { font-size: 13px; line-height: 1.45; } .era h3 { font-size: 14px; } .era__body { padding: 12px 16px 14px; } }
 .coupe__core { transform: none; }
 .cuvee__stage .cuvee__bottle { height: 41%; bottom: 58%; }
+
+/* ===== v2 · accessibilité : textes ≥ 12 px, cibles ≥ 44 px ===== */
+.hdr__name small, .pcard__badge, .cuvee__badge, .tcard__meta dt, .whero__facts dt, .todo, .illus, .map__note, .vyear .count, .coupe__gauge .tick { font-size: 12px; }
+.map .town text.sub { font-size: 12px; }
+.cart-count { min-width: 20px; height: 20px; line-height: 20px; font-size: 12px; top: 2px; right: 0; }
+@media (max-width: 600px) { .legal { font-size: 12px; } }
+.hdr__nav a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 2px; background-position: 0 calc(100% - 9px); }
+.hero__scroll { min-height: 44px; }
+.tcard__cta .link, .cuvee__cta .link { display: inline-flex; align-items: center; min-height: 44px; }
+.chip { min-height: 44px; }
+.doc__nav a { display: flex; align-items: center; min-height: 44px; padding: 0; }
+.pcard__body h3 a { display: block; padding: 4px 0; }
+.cline .rm, .cline label { min-height: 44px; }
+.ftr__h { font: 650 12px/1 var(--sans); letter-spacing: .2em; text-transform: uppercase; color: var(--ocre); margin-bottom: 18px; }
+@media (hover: none) {
+  .btn:hover:not(:focus-visible)::before { transform: translateY(101%); }
+  .btn:hover:not(:focus-visible) { color: var(--fg); border-color: var(--bg); }
+  .btn--ghost:hover:not(:focus-visible) { border-color: currentColor; }
+}
+
+/* =====================================================================
+   v2 · corrections issues de l'audit
+   ===================================================================== */
+:root { --space-section: clamp(96px, 11vw, 170px); --edge: max(var(--gutter), calc((100% - 1480px) / 2)); }
+.section { padding-block: var(--space-section); }
+
+/* Un seul alignement de marge, y compris en très grand écran */
+.hdr { padding-inline: var(--edge); }
+.hero__content, .ohero__content { left: var(--edge); right: var(--edge); }
+.hero__meta, .hero__scroll { right: var(--edge); }
+.ohero__label { right: var(--edge); }
+
+/* Tiroir panier : plus d'ombre ni de focus quand il est fermé */
+.cart { box-shadow: none; visibility: hidden; transition: transform .6s var(--ease), visibility 0s .6s; }
+.cart.is-open { box-shadow: -20px 0 60px rgba(0, 0, 0, .18); visibility: visible; transition: transform .6s var(--ease); }
+
+/* Message : sous le tiroir, en haut de l'écran sur téléphone */
+.toast { z-index: 88; }
+@media (max-width: 700px) { .toast { bottom: auto; top: calc(var(--hdr-h) + 12px); transform: translate(-50%, -16px); } .toast.is-on { transform: translate(-50%, 0); } }
+
+/* Ouverture : voile plus présent, invitation lisible */
+.hero__shade { background: linear-gradient(180deg, rgba(31, 27, 22, .55) 0%, rgba(31, 27, 22, 0) 24%), radial-gradient(115% 80% at 0% 100%, rgba(31, 27, 22, .78) 0%, rgba(31, 27, 22, .35) 45%, transparent 70%), linear-gradient(0deg, rgba(31, 27, 22, .35), transparent 40%); }
+.hero__sub { text-shadow: 0 1px 18px rgba(20, 15, 10, .45); }
+.hero__scroll { padding: 6px 16px 6px 8px; border-radius: 99px; background: rgba(31, 27, 22, .42); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+.kicker .k-more { display: inline; }
+@media (max-width: 600px) { .kicker .k-more { display: none; } }
+h1, h2, h3, .lead, .coupe__panel p { text-wrap: balance; }
+p { text-wrap: pretty; }
+
+/* Sections sombres : contrastes */
+.is-dark .specs dt { color: rgba(238, 231, 217, .62); }
+.is-dark .lead.muted, .is-dark p.muted { color: rgba(238, 231, 217, .74); }
+
+/* Coupe : un seul panneau opaque, le texte change à l'intérieur */
+.coupe__box { position: relative; display: grid; padding: 22px 22px 24px; background: rgba(31, 27, 22, .86); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid var(--line-light); }
+@media (min-width: 900px) { .coupe__box { padding: 32px 32px 34px; } }
+.coupe__box .coupe__panel { position: relative; inset: auto; grid-area: 1 / 1; padding: 0; background: none; border: 0; backdrop-filter: none; -webkit-backdrop-filter: none; transform: none; top: auto; }
+.coupe__panels { bottom: 16px; }
+@media (min-width: 900px) and (max-height: 640px) { .coupe__box { padding: 18px 22px 20px; } .coupe__box .coupe__panel { padding: 0; } }
+.coupe__gauge .tick { font-size: 12.5px; }
+.coupe__gauge .tick.is-on::after { content: ""; width: 6px; height: 6px; margin-left: 2px; border-radius: 50%; background: var(--ocre); box-shadow: 0 0 10px var(--ocre); }
+html.calm .coupe__box { position: relative; display: grid; gap: 22px; }
+html.calm .coupe__box .coupe__panel { grid-area: auto; }
+
+/* Assemblage : barres sans débordement, légende sous chaque segment */
+.assemblage__bars { width: 100%; }
+.assemblage__bar { min-width: 28px; }
+.assemblage__bar b { font-size: clamp(1.6rem, 3.6vw, 3.4rem); }
+.assemblage__bar:not(:first-child) b { display: none; }
+.assemblage__legend { display: grid; grid-template-columns: 80fr 15fr 5fr; gap: 6px; justify-content: stretch; margin-top: 14px; }
+.assemblage__legend span { white-space: normal; font-size: 13.5px; line-height: 1.35; }
+.assemblage__legend span b { display: block; font: 400 1.35rem/1.1 var(--serif); color: var(--calcaire); }
+.assemblage__legend span:last-child { justify-self: end; text-align: right; }
+.assemblage__legend span::before { display: none; }
+.assemblage__legend span:nth-child(2) { min-width: 150px; }
+@media (max-width: 700px) {
+  .assemblage__legend { grid-template-columns: 1fr; gap: 10px; }
+  .assemblage__legend span, .assemblage__legend span:last-child { justify-self: start; text-align: left; min-width: 0; }
+  .assemblage__legend span b { display: inline; font-size: 1.15rem; margin-right: 8px; }
+}
+
+/* Trois vins : un socle et un fond par vin, bouteille plus présente */
+.cuvee__stage { aspect-ratio: 4 / 5; background: var(--stage, #EDE3D1); }
+.cuvee__stage::before { content: ""; position: absolute; inset: 0; background-image: var(--stage-tex, none); background-size: cover; background-position: center; opacity: .2; mix-blend-mode: multiply; }
+.cuvee__stage::after { content: ""; position: absolute; inset: 0; background: radial-gradient(60% 45% at 50% 32%, rgba(255, 248, 235, .55), transparent 70%); pointer-events: none; }
+.cuvee__stage .socle { position: absolute; left: 10%; width: 80%; bottom: -14%; z-index: 1; filter: var(--socle-filter, none) drop-shadow(0 24px 30px rgba(31, 27, 22, .25)); mix-blend-mode: normal; }
+.cuvee__stage .cuvee__bottle { z-index: 2; bottom: 28%; height: 62%; }
+.cuvee__sheen { z-index: 3; }
+.cuvee__badge { z-index: 4; }
+.cuvee--hp { --stage: #E9DFCB; --stage-tex: url('../img/grok/strate-calcaire-asteries-1168.webp'); }
+.cuvee--lf { --stage: #E6D2A8; --stage-tex: url('../img/grok/strate-argile-rouge-1168.webp'); --socle-filter: sepia(.25) saturate(1.15); }
+.cuvee--bl { --stage: #ECD6CC; --stage-tex: none; --socle-filter: sepia(.15) hue-rotate(-8deg) brightness(1.04); }
+
+/* Millésimes : bords estompés et défilement aimanté sur petits écrans */
+@media (max-width: 1000px) {
+  .vtrack { -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 92%, transparent); mask-image: linear-gradient(90deg, transparent, #000 6%, #000 92%, transparent); scroll-snap-type: x proximity; }
+  .vtrack__inner { grid-template-columns: repeat(13, 56px); min-width: 0; width: max-content; padding-inline: 18px; }
+  .vyear { scroll-snap-align: center; }
+}
+.vintages { padding-block: var(--space-section); }
+
+/* Frise gravée : images de même hauteur, étalonnage commun */
+.era__img img { filter: sepia(.14) saturate(.84) contrast(1.02); }
+.era__img.is-archive img { filter: sepia(.38) contrast(1.06) saturate(.7); }
+
+/* Savoir-faire : aucun trait avant la révélation */
+@media (min-width: 1000px) { .craft__media .frame + .frame { clip-path: polygon(50% 0, 50% 0, 50% 100%, 50% 100%); } }
+
+/* Chai */
+.chai__count { min-height: .8em; }
+
+/* Visites empilées : sur téléphone, plus d'empilement */
+@media (max-width: 700px) { .tcard { position: relative; top: auto; min-height: 0; } .tcard__img { aspect-ratio: 16 / 10; min-height: 0; } }
+.tcard__img img { filter: saturate(.84) sepia(.08); }
+.tcard__img { overflow: hidden; }
+
+/* Parc : mosaïque sans trou, photos harmonisées */
+.mosaic .m1 { grid-column: 1 / 7; grid-row: 1 / 4; }
+.mosaic .m2 { grid-column: 1 / 4; grid-row: 4 / 7; }
+.mosaic .m3 { grid-column: 4 / 7; grid-row: 4 / 6; }
+.mosaic .m4 { grid-column: 4 / 7; grid-row: 6 / 9; }
+.mosaic .m5 { grid-column: 1 / 4; grid-row: 7 / 9; }
+.mosaic .m6 { grid-column: 1 / 7; grid-row: 9 / 12; }
+.mosaic img, .formule .frame img { filter: saturate(.84) sepia(.08) contrast(1.02); }
+
+/* Accès : colonnes équilibrées, libellés sur une ligne */
+.acces__grid { align-items: start; }
+@media (min-width: 1000px) { .map { position: sticky; top: calc(var(--hdr-h) + 30px); } }
+.acces__rows > div { display: grid; grid-template-columns: minmax(110px, max-content) 1fr; gap: 18px; justify-content: stretch; }
+.acces__rows dt { white-space: nowrap; }
+.acces__rows dd { text-align: left; }
+
+/* Boutique */
+.phero .cover { object-position: 78% 55%; }
+.phero__shade { background: linear-gradient(90deg, rgba(20, 15, 10, .9) 0%, rgba(20, 15, 10, .62) 42%, rgba(20, 15, 10, .15) 75%), linear-gradient(180deg, rgba(20, 15, 10, .5), transparent 30%); }
+.pcard { display: grid; grid-template-rows: auto 1fr; }
+.pcard__body { display: grid; grid-template-rows: auto auto auto 1fr auto auto; align-content: start; }
+.pcard__badge { left: auto; right: 10px; }
+.pcard__price { align-self: end; }
+.pcard__price small { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pcard__fmt .short { display: none; }
+@media (max-width: 520px) { .pcard__fmt .long { display: none; } .pcard__fmt .short { display: inline; } .pcard__body h3 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; } }
+.chip[aria-disabled="true"] { opacity: .35; pointer-events: none; }
+.pgrid__empty { display: grid; gap: 14px; justify-items: center; }
+.pgrid__empty .actions { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+.filters__apply { display: none; }
+@media (max-width: 1099px) {
+  .filters__panel.is-open { position: fixed; left: 0; right: 0; bottom: 0; z-index: 92; max-height: min(78svh, calc(100svh - var(--hdr-h) - 20px)); overflow-y: auto; padding: 22px var(--gutter) calc(var(--legal-h) + 90px); background: var(--papier); border-top: 1px solid var(--line); box-shadow: 0 -20px 60px rgba(0, 0, 0, .25); border-radius: 14px 14px 0 0; }
+  .filters__panel.is-open .filters__apply { display: flex; position: fixed; left: var(--gutter); right: var(--gutter); bottom: calc(var(--legal-h) + 14px); z-index: 93; }
+  .filters__scrim { position: fixed; inset: 0; z-index: 91; background: rgba(31, 27, 22, .4); }
+}
+.formats__ruler button { color: var(--encre); }
+.formats__ruler button[aria-pressed="true"] { background: var(--ocre); color: var(--encre); border-color: var(--ocre); }
+.formats__info { color: rgba(238, 231, 217, .78); }
+.formats__info .link { color: var(--calcaire); }
+
+/* Panier et commande */
+.cline label { display: inline-flex; align-items: center; gap: 8px; flex-wrap: nowrap; white-space: nowrap; }
+.paychips { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 6px; border: 0; padding: 0; margin: 0; }
+.paychips legend { font-size: 13px; font-weight: 650; margin-bottom: 6px; padding: 0; }
+.paychips label { position: relative; display: flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 10px; border: 1px solid var(--line); border-radius: 6px; background: #fff; font-size: 13px; font-weight: 650; cursor: pointer; transition: border-color .25s, box-shadow .25s; }
+.paychips input { position: absolute; opacity: 0; inset: 0; cursor: pointer; }
+.paychips label:has(input:checked) { border-color: var(--encre); box-shadow: inset 0 0 0 1px var(--encre); }
+.paychips label:has(input:focus-visible) { outline: 2px solid var(--argile); outline-offset: 2px; }
+.checkout__help { font-size: 12.5px; color: var(--encre-3); margin: 0; }
+
+/* Fiche vin */
+.whero__pack { max-height: calc(100svh - var(--hdr-h) - var(--legal-h) - 48px); width: auto; aspect-ratio: 791 / 1126; }
+.whero__visual { display: flex; justify-content: center; }
+.related { grid-template-columns: repeat(4, 1fr); }
+@media (max-width: 900px) { .related { grid-template-columns: repeat(2, 1fr); } }
+.service .frame { background: var(--papier); }
+.service .frame img { mix-blend-mode: multiply; filter: sepia(.12) saturate(.9); }
+
+/* Oenotourisme */
+.ecri__bg img { object-position: 85% 50%; }
+.ecri__bg::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(31, 27, 22, .92) 0%, rgba(31, 27, 22, .7) 45%, rgba(31, 27, 22, .25) 100%); }
+.ecri__bg { opacity: 1; }
+.booking__recap { display: grid; gap: 14px; margin-top: 26px; padding: 18px; background: var(--papier); border: 1px solid var(--line); }
+@media (min-width: 1000px) { .booking__side { position: sticky; top: calc(var(--hdr-h) + 30px); } }
+.booking__recap .frame { aspect-ratio: 16 / 9; }
+.booking__recap ul { display: grid; gap: 4px; font-size: 14.5px; }
+.booking__recap b { font: 400 1.4rem/1.15 var(--serif); font-variation-settings: "SOFT" 100; }
+.field-error { display: none; font-size: 13px; color: var(--argile); font-weight: 600; }
+.field.is-invalid .field-error, .check.is-invalid + .field-error { display: block; }
+.field.is-invalid input, .field.is-invalid select { border-color: var(--argile); box-shadow: 0 0 0 3px rgba(155, 75, 51, .15); }
+.booking__done { display: none; gap: 16px; background: var(--papier); padding: clamp(22px, 3vw, 40px); border: 1px solid var(--line); text-align: left; }
+.booking__done.is-on { display: grid; }
+.booking__done .ast { width: 54px; height: 54px; color: var(--ocre-ink); }
+.booking__done dl { display: grid; grid-template-columns: auto 1fr; gap: 6px 18px; font-size: 15px; margin: 0; }
+.booking__done dt { color: var(--encre-3); }
+.booking__done dd { margin: 0; font-weight: 600; }
+
+/* En-tête : infobulles sur les outils */
+.tool[data-tip] { position: relative; }
+.tool[data-tip]::after { content: attr(data-tip); position: absolute; top: calc(100% + 6px); left: 50%; transform: translate(-50%, -4px); padding: 6px 10px; border-radius: 4px; background: var(--encre); color: var(--calcaire); font: 600 12px/1.2 var(--sans); letter-spacing: .02em; text-transform: none; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s; }
+.tool[data-tip]:hover::after, .tool[data-tip]:focus-visible::after { opacity: 1; transform: translate(-50%, 0); }
+html[lang="en"] .tool[data-tip-en]::after { content: attr(data-tip-en); }
+
+/* Pied de page : labels monochromes, filigrane dégagé */
+.ftr__labels img { filter: grayscale(1) brightness(1.5) contrast(.9); opacity: .82; height: 52px; }
+.ftr__labels img.riviere { filter: invert(1) grayscale(1) brightness(1.7); height: 44px; }
+.ftr__big { margin-bottom: 10px; }
+
+/* Micro-interaction : astérie qui s'allume à chaque validation */
+.spark { position: fixed; z-index: 96; width: 46px; height: 46px; margin: -23px 0 0 -23px; color: var(--ocre); pointer-events: none; }
+.spark svg { width: 100%; height: 100%; fill: rgba(194, 155, 87, .35); stroke: var(--ocre); stroke-width: 2; }
+
+/* v2 · lisibilité du sur-titre de l'ouverture sur le feuillage */
+.hero__kicker, .hero__lead, .hero p { text-shadow: 0 1px 2px rgba(15, 11, 7, .55), 0 0 18px rgba(15, 11, 7, .45); }
+.hero__shade { background: linear-gradient(180deg, rgba(20, 15, 10, .5) 0%, rgba(20, 15, 10, 0) 26%), linear-gradient(90deg, rgba(20, 15, 10, .55) 0%, rgba(20, 15, 10, .25) 38%, rgba(20, 15, 10, 0) 62%), linear-gradient(15deg, rgba(20, 15, 10, .78) 0%, rgba(20, 15, 10, .35) 42%, rgba(20, 15, 10, 0) 70%); }

@@ -1,7 +1,7 @@
 // Accueil : ouverture, coupe géologique, vins, millésimes, frise gravée, savoir-faire, chai, visites, parc, accès.
-import { $, $$, L, eur, CALM, TOUCH, DESKTOP, hdrH, splitTitle } from '../core.js?v=1';
-import { heroLight, fossils } from '../gl.js?v=1';
-import { WINES, CHATEAUX, FORMATS } from '../data.js?v=1';
+import { $, $$, L, eur, CALM, TOUCH, DESKTOP, hdrH, splitTitle, padMasks } from '../core.js?v=2';
+import { heroLight, fossils } from '../gl.js?v=2';
+import { WINES, CHATEAUX, FORMATS } from '../data.js?v=2';
 
 const gsap = window.gsap; const ST = window.ScrollTrigger;
 let hero = null;
@@ -32,10 +32,11 @@ export function enter() {
 function heroIn() {
   const title = $('[data-hero-title]');
   const split = window.SplitText ? SplitText.create(title, { type: 'chars', mask: 'chars' }) : null;
+  if (split) padMasks(split, 'chars');
   const tl = gsap.timeline();
   tl.to('[data-hero-strata] span', { scaleY: 0, duration: 0.85, ease: 'expo.inOut', stagger: 0.09 }, 0)
     .to('[data-hero-img]', { scale: 1.03, duration: 2.0, ease: 'expo.out' }, 0);
-  if (split) tl.from(split.chars, { yPercent: 115, rotate: 4, duration: 0.75, ease: 'expo.out', stagger: 0.02 }, 0.1);
+  if (split) tl.from(split.chars, { yPercent: 115, rotate: 4, duration: 0.75, ease: 'expo.out', stagger: 0.02, onComplete: () => split.revert() }, 0.1);
   tl.to('[data-hdr]', { autoAlpha: 1, y: 0, duration: 0.6, ease: 'power3.out' }, 0.35)
     .to(['[data-hero-kicker]', '[data-hero-sub]', '[data-hero-ctas] > *', '[data-hero-meta]', '[data-hero-scroll]'], { autoAlpha: 1, y: 0, duration: 0.65, ease: 'power3.out', stagger: 0.04 }, 0.45)
     .add(() => startHeroGL(), 1.7);
@@ -62,7 +63,8 @@ function coupe() {
   const panels = $$('[data-panel]'); const ticks = $$('[data-tick]');
   const bars = $$('[data-bars] > *'); const legend = $$('[data-legend] > *');
   const fos = fossils($('[data-fossils]'));
-  gsap.set(panels, { autoAlpha: 0, y: 30, yPercent: DESKTOP() ? -50 : 0 });
+  gsap.set(panels, { autoAlpha: 0, y: 24 });
+  gsap.set('[data-panel-box]', { autoAlpha: 0 });
   gsap.set(bars, { width: 'calc(33.33% - 4px)' });
   const travel = () => stack.offsetHeight - frame.offsetHeight;
   const tl = gsap.timeline({ defaults: { ease: 'none' }, scrollTrigger: {
@@ -71,14 +73,17 @@ function coupe() {
     onToggle: (s) => { if (fos) s.isActive ? fos.start() : fos.stop(); },
     onUpdate: (s) => { const p = s.progress / 0.82; ticks.forEach((t, i) => t.classList.toggle('is-on', p >= [0, 0.22, 0.46, 0.66][i])); if (fos) fos.progress = gsap.utils.clamp(0, 1, (s.progress - 0.6) / 0.24); },
   } });
-  tl.to(stack, { y: () => -travel(), duration: 0.82 }, 0)
+  tl.to('[data-panel-box]', { autoAlpha: 1, duration: 0.03 }, 0)
+    .to('[data-panel-box]', { autoAlpha: 0, duration: 0.03 }, 0.82)
+    .to('[data-gauge]', { autoAlpha: 0, duration: 0.03 }, 0.82)
+    .to(stack, { y: () => -travel(), duration: 0.82 }, 0)
     .to('[data-gauge-fill]', { scaleY: 1, duration: 0.82 }, 0)
     .to('.coupe__layer .layer-img', { yPercent: -6, duration: 0.82 }, 0);
   const seg = [[0, 0.17], [0.22, 0.4], [0.46, 0.6], [0.66, 0.82]];
   panels.forEach((p, i) => {
     const [a, b] = seg[i];
-    tl.to(p, { autoAlpha: 1, y: 0, duration: 0.04, ease: 'power2.out' }, a === 0 ? 0.001 : a);
-    tl.to(p, { autoAlpha: 0, y: -30, duration: 0.04, ease: 'power2.in' }, b);
+    tl.to(p, { autoAlpha: 1, y: 0, duration: 0.035, ease: 'power2.out' }, a === 0 ? 0.001 : a);
+    if (i < 3) tl.to(p, { autoAlpha: 0, y: -24, duration: 0.03, ease: 'power2.in' }, b);
   });
   gsap.set('[data-core]', { xPercent: -50, yPercent: -30, autoAlpha: 0 });
   tl.fromTo('[data-core]', { autoAlpha: 0, scale: 0.7, rotate: -14, yPercent: -30 }, { autoAlpha: 1, scale: 1, rotate: 6, yPercent: -50, duration: 0.12, ease: 'power2.out' }, 0.64)
@@ -125,6 +130,7 @@ function buildVintages() {
   track.addEventListener('pointerover', (e) => { const b = e.target.closest('.vyear.is-avail'); if (b && !TOUCH) show(+b.dataset.year, b); });
   track.addEventListener('click', (e) => { const b = e.target.closest('.vyear.is-avail'); if (b) show(+b.dataset.year, b); });
   track.addEventListener('focusin', (e) => { const b = e.target.closest('.vyear.is-avail'); if (b) show(+b.dataset.year, b); });
+  const last = [...$$('.vyear.is-avail', track)].pop(); if (last) show(+last.dataset.year, last);
   if (!CALM) {
     gsap.from('[data-vline]', { scaleX: 0, duration: 1.6, ease: 'expo.inOut', scrollTrigger: { trigger: track, start: 'top 85%', once: true } });
     gsap.from($$('.vyear', track), { y: 30, autoAlpha: 0, rotate: -30, duration: 0.8, ease: 'back.out(1.6)', stagger: 0.05, delay: 0.3, scrollTrigger: { trigger: track, start: 'top 85%', once: true } });
@@ -135,7 +141,13 @@ function buildVintages() {
 function engrave(el, opts) {
   gsap.fromTo(el, { clipPath: 'inset(0 100% 0 0)' }, { clipPath: 'inset(0 0% 0 0)', duration: 1.1, ease: 'steps(14)', ...opts });
 }
+function equalizeEras() {
+  const bodies = $$('[data-era] .era__body'); bodies.forEach((b) => { b.style.minHeight = ''; });
+  if (innerWidth < 900) return;
+  const h = Math.max(...bodies.map((b) => b.offsetHeight)); bodies.forEach((b) => { b.style.minHeight = h + 'px'; });
+}
 function story() {
+  equalizeEras(); addEventListener('resize', equalizeEras); document.addEventListener('ahp:lang', equalizeEras);
   const frame = $('[data-story-frame]'); const track = $('[data-story-track]');
   const dates = $$('[data-engrave]');
   ST.matchMedia({
@@ -169,16 +181,17 @@ function crackPath(t, seed) {
   }
   return `polygon(${R.join(',')},${L.reverse().join(',')})`;
 }
+const CLOSED = 'polygon(50% 0, 50% 0, 50% 100%, 50% 100%)';
 function crack(el, seed, play = true) {
   const o = { t: 0.0 };
-  el.style.clipPath = crackPath(0.002, seed);
-  return gsap.to(o, { t: 1, duration: 1.25, ease: 'power3.inOut', paused: !play, onUpdate: () => { el.style.clipPath = crackPath(o.t, seed); }, onComplete: () => { el.style.clipPath = 'none'; } });
+  el.style.clipPath = CLOSED;
+  return gsap.to(o, { t: 1, duration: 1.25, ease: 'power3.inOut', paused: !play, onUpdate: () => { el.style.clipPath = o.t < 0.01 ? CLOSED : crackPath(o.t, seed); }, onComplete: () => { el.style.clipPath = 'none'; }, onReverseComplete: () => { el.style.clipPath = CLOSED; } });
 }
 function craft() {
   const frames = $$('[data-craft-frame]'); const steps = $$('[data-step]');
   ST.matchMedia({
     '(min-width: 1000px)': () => {
-      frames.forEach((f, i) => { if (i) f.style.clipPath = crackPath(0.002, i); });
+      frames.forEach((f, i) => { if (i) f.style.clipPath = CLOSED; });
       steps.forEach((s, i) => {
         if (!i) return;
         const tw = crack(frames[i], i, false);
@@ -211,7 +224,7 @@ function drawBarrels(cv, n) {
 }
 function chai() {
   const cv = $('[data-barrels]'); const count = $('[data-chai-count]'); const o = { n: 0 };
-  ST.create({ trigger: '[data-chai]', start: 'top 60%', once: true, onEnter: () => gsap.to(o, { n: 480, duration: 3.2, ease: 'power2.inOut', onUpdate: () => { const v = Math.round(o.n); count.textContent = v; drawBarrels(cv, v); } }) });
+  ST.create({ trigger: '[data-chai]', start: 'top 85%', once: true, onEnter: () => gsap.to(o, { n: 480, duration: 1.8, ease: 'power2.inOut', onUpdate: () => { const v = Math.round(o.n); count.textContent = v; drawBarrels(cv, v); } }) });
   addEventListener('resize', () => drawBarrels(cv, Math.round(o.n)));
   gsap.to('[data-chai-bg]', { yPercent: 10, ease: 'none', scrollTrigger: { trigger: '[data-chai]', start: 'top bottom', end: 'bottom top', scrub: true } });
   gsap.to('[data-beam]', { xPercent: 6, yPercent: -4, opacity: 0.85, duration: 7, ease: 'sine.inOut', yoyo: true, repeat: -1 });
@@ -222,7 +235,9 @@ function tours() {
   const cards = $$('[data-tcard]');
   cards.forEach((c, i) => {
     const next = cards[i + 1]; if (!next || getComputedStyle(c).position !== 'sticky') return;
-    gsap.to(c, { scale: 0.94, filter: 'brightness(0.9)', ease: 'none', scrollTrigger: { trigger: next, start: 'top bottom', end: () => `top ${hdrH() + 40}px`, scrub: true } });
+    const st = { trigger: next, start: 'top bottom', end: () => `top ${hdrH() + 40}px`, scrub: true };
+    gsap.to(c, { scale: 0.96, ease: 'none', scrollTrigger: st });
+    gsap.to($('.tcard__img img', c), { filter: 'saturate(.84) sepia(.08) brightness(.72)', ease: 'none', scrollTrigger: { ...st } });
   });
 }
 

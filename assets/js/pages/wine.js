@@ -1,7 +1,7 @@
 // Fiche vin : rendu depuis les données du site, bouteille qui pivote sur son socle.
-import { $, $$, L, eur, CALM, TOUCH, toast } from '../core.js?v=1';
-import { WINES, CHATEAUX, FORMATS, BOTTLES, TEXTURES } from '../data.js?v=1';
-import { addToCart } from '../cart.js?v=1';
+import { $, $$, L, eur, CALM, TOUCH, toast } from '../core.js?v=2';
+import { WINES, CHATEAUX, FORMATS, BOTTLES, TEXTURES } from '../data.js?v=2';
+import { addToCart } from '../cart.js?v=2';
 
 const gsap = window.gsap;
 let wine = null;
@@ -19,7 +19,7 @@ function render() {
   const id = new URLSearchParams(location.search).get('id');
   wine = WINES.find((w) => w.id === id) || WINES.find((w) => w.id === 'hp-2020');
   if (id && wine.id !== id) setTimeout(() => toast(L('Ce vin n\'existe pas&nbsp;: voici le Château Haut-Piquat 2020.', 'This wine does not exist: here is Château Haut-Piquat 2020.')), 1200);
-  const w = wine; const ch = CHATEAUX[w.ch]; const f = FORMATS[w.fmt];
+  const w = wine; const ch0 = CHATEAUX[w.ch]; const ch = { ...ch0, app: ch0.app.replace(/-/g, '\u2011') }; const f = FORMATS[w.fmt];
   document.title = `${ch.name} ${w.vintage} · Château Haut-Piquat`;
   $('[data-wine-pack]').innerHTML = `<img src="${w.img.big}" width="${w.img.w}" height="${w.img.h}" alt="${ch.name} ${w.vintage}, ${f.label.fr}" decoding="async">`;
   const blend = parseBlend(w.blend);

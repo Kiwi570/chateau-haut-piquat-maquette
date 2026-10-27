@@ -33,6 +33,7 @@ export const smooth = {
   max() { return document.documentElement.scrollHeight - innerHeight; },
   onWheel(e) {
     if (!this.enabled || e.ctrlKey || this.locked) return;
+    if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return; // gestes horizontaux (retour arrière, galeries) laissés au navigateur
     if (e.target.closest && e.target.closest('[data-native-scroll], dialog, .cart, .mmenu')) {
       const sc = e.target.closest('[data-native-scroll], dialog, .cart, .mmenu');
       if (Math.abs(e.deltaX) > Math.abs(e.deltaY) || sc.scrollHeight > sc.clientHeight) return;
@@ -107,11 +108,11 @@ function initHeader() {
   const upd = () => h.classList.toggle('is-solid', scrollY > 40 || document.body.dataset.page === 'vin' || document.body.dataset.page === 'informations');
   upd(); addEventListener('scroll', upd, { passive: true });
   const btn = $('[data-menu]'); const m = $('[data-mmenu]');
-  const close = () => { m.classList.remove('is-open'); m.setAttribute('aria-hidden', 'true'); btn.setAttribute('aria-expanded', 'false'); document.body.classList.remove('menu-open'); smooth.lock(false); };
+  const close = () => { if (!m.classList.contains('is-open')) return; m.classList.remove('is-open'); m.setAttribute('aria-hidden', 'true'); btn.setAttribute('aria-expanded', 'false'); document.body.classList.remove('menu-open'); smooth.lock(false); $$('main, footer').forEach((el) => { el.inert = false; }); btn.focus({ preventScroll: true }); };
   btn?.addEventListener('click', () => {
     const open = !m.classList.contains('is-open');
     if (!open) return close();
-    m.classList.add('is-open'); m.setAttribute('aria-hidden', 'false'); btn.setAttribute('aria-expanded', 'true'); document.body.classList.add('menu-open'); smooth.lock(true);
+    m.classList.add('is-open'); m.setAttribute('aria-hidden', 'false'); btn.setAttribute('aria-expanded', 'true'); document.body.classList.add('menu-open'); smooth.lock(true); $$('main, footer').forEach((el) => { el.inert = true; }); setTimeout(() => $('nav a', m).focus({ preventScroll: true }), 120);
     if (!CALM && gsap) gsap.from($$('nav a', m), { y: 40, autoAlpha: 0, stagger: 0.05, duration: 0.7, ease: 'power3.out', delay: 0.15 });
   });
   $$('a', m).forEach((a) => a.addEventListener('click', close));
@@ -221,15 +222,16 @@ export function ageGate(delay = 0) {
   return new Promise((resolve) => {
     if (html.classList.contains('age-ok')) return resolve();
     const g = $('[data-agegate]');
+    const bg = () => $$('main, footer, .hdr, .mmenu');
     const show = () => {
-      g.classList.add('is-open'); smooth.lock(true);
+      g.classList.add('is-open'); smooth.lock(true); bg().forEach((el) => { el.inert = true; });
       if (!CALM) gsap.from($('.agegate__card', g), { y: 50, autoAlpha: 0, duration: 0.8, ease: 'power3.out' });
       $('[data-age-yes]', g).focus({ preventScroll: true });
     };
     delay ? setTimeout(show, delay * 1000) : show();
     $('[data-age-yes]', g).addEventListener('click', () => {
       store.set('ahp-age', 'ok'); html.classList.add('age-ok');
-      const done = () => { g.classList.remove('is-open'); smooth.lock(false); resolve(); };
+      const done = () => { g.classList.remove('is-open'); smooth.lock(false); bg().forEach((el) => { el.inert = false; }); resolve(); };
       CALM ? done() : gsap.to(g, { autoAlpha: 0, duration: 0.45, onComplete: () => { g.style.cssText = ''; done(); } });
     });
     $('[data-age-no]', g).addEventListener('click', () => g.classList.add('is-refused'));
@@ -257,14 +259,34 @@ export function opening() {
 }
 
 /* ---------- Révélations, titres, compteurs ---------- */
+// Les masques de SplitText coupent l'italique et les jambages : on les élargit, puis on rend le texte d'origine.
+export function padMasks(split, kind) {
+  const items = split[kind] || [];
+  items.forEach((it) => { const m = it.parentElement; if (m && m !== split.elements?.[0]) { m.style.padding = '0.14em 0.2em 0.28em'; m.style.margin = '-0.14em -0.2em -0.28em'; } });
+}
 export function splitTitle(el, opts = {}) {
   if (CALM || !window.SplitText) return null;
-  const s = SplitText.create(el, { type: 'words', mask: 'words', wordsClass: 'w' });
-  gsap.set(s.words, { yPercent: 110 });
-  const anim = () => gsap.to(s.words, { yPercent: 0, duration: 1.05, ease: 'expo.out', stagger: 0.06, delay: opts.delay || 0 });
+  const s = SplitText.create(el, { type: 'words', mask: 'words' });
+  padMasks(s, 'words');
+  gsap.set(s.words, { yPercent: 115 });
+  const anim = () => {
+    gsap.to(s.words, { yPercent: 0, duration: 1.05, ease: 'expo.out', stagger: 0.06, delay: opts.delay || 0, onComplete: () => s.revert() });
+    gsap.fromTo(el, { fontVariationSettings: '"SOFT" 0, "WONK" 0' }, { fontVariationSettings: '"SOFT" 100, "WONK" 0', duration: 1.8, ease: 'power2.out', delay: (opts.delay || 0) + 0.2, clearProps: 'fontVariationSettings' });
+  };
   if (opts.now) anim(); else ScrollTrigger.create({ trigger: el, start: 'top 88%', once: true, onEnter: anim });
   return s;
 }
+// Petite astérie qui s'allume à chaque validation (ajout au panier, réservation…)
+export function spark(x, y) {
+  if (CALM || !gsap) return;
+  const d = document.createElement('div'); d.className = 'spark'; d.setAttribute('aria-hidden', 'true');
+  d.innerHTML = '<svg viewBox="-55 -55 110 110"><use href="#ast"/></svg>';
+  d.style.left = x + 'px'; d.style.top = y + 'px'; document.body.appendChild(d);
+  gsap.fromTo(d, { scale: 0.2, rotate: -40, autoAlpha: 0 }, { scale: 1.3, rotate: 36, autoAlpha: 1, duration: 0.45, ease: 'back.out(2)' });
+  gsap.to(d, { scale: 1.8, autoAlpha: 0, duration: 0.5, delay: 0.45, ease: 'power2.in', onComplete: () => d.remove() });
+}
+export function sparkAt(el) { if (!el) return; const r = el.getBoundingClientRect(); spark(r.left + r.width / 2, r.top + r.height / 2); }
+export function hideToast() { const t = $('[data-toast]'); if (t) t.classList.remove('is-on'); }
 function fmtCount(n, ref) {
   const s = Math.round(n).toString();
   return ref.includes(' ') ? s.replace(/\B(?=(\d{3})+(?!\d))/g, ' ') : s;

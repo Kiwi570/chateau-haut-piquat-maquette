@@ -1,4 +1,4 @@
-# Château Haut-Piquat · maquette v1
+# Château Haut-Piquat · maquette v2
 
 Maquette de démonstration du futur site du Château Haut-Piquat (Lussac Saint-Émilion), direction artistique « Calcaire à astéries ». Site statique en HTML, CSS et JavaScript, sans étape de construction, prêt pour Vercel.
 
@@ -29,7 +29,24 @@ Maquette de démonstration du futur site du Château Haut-Piquat (Lussac Saint-�
 1. Remplacer une image : déposer le nouveau fichier sous le même nom ; aucune règle de cache n'est à modifier.
 2. Changer un prix : modifier `assets/js/data.js`.
 3. À chaque version livrée, changer le numéro `?v=N` partout et à l'identique, dans les pages et dans les `import` JavaScript :
-   `grep -rl "?v=1" --include=*.html --include=*.js . | xargs sed -i "" "s/?v=1/?v=2/g"`
+   `grep -rl "?v=2" --include=*.html --include=*.js . | xargs sed -i "" "s/?v=2/?v=3/g"`
+
+## Version 2 : corrections issues de l'audit
+
+- Titres animés : les lettres ne sont plus rognées (italiques, accents, jambages) et le texte redevient du texte normal après l'animation.
+- Panier : plus d'ombre visible sur le bord droit quand il est fermé ; il n'est plus atteignable au clavier fermé ; le message de confirmation ne le recouvre plus.
+- Paiement : choix du moyen de paiement obligatoire avant de payer, avec un message d'aide.
+- Coupe géologique : un seul panneau lisible, la jauge s'efface avant l'assemblage, légende de l'assemblage alignée.
+- Contrastes renforcés sur les sections sombres et sur l'ouverture.
+- Millésimes : le dernier millésime est présélectionné.
+- Frise historique : cartes de même hauteur.
+- Savoir-faire : aucune ligne parasite avant l'animation.
+- Visites : cartes accessibles sur mobile, effet d'empilement plus doux.
+- Boutique : compteurs de filtres contextuels, filtres sans résultat désactivés, état vide avec des actions, filtres mobiles en panneau avec bouton « Voir N vins », formats courts sur mobile, règle des formats lisible.
+- Fiche vin : socles et fonds propres à chaque château, appellation sans coupure.
+- Réservation : récapitulatif de la formule, erreurs affichées sous chaque champ, écran de confirmation avec ajout au calendrier.
+- Marges alignées sur grand écran, rythme vertical régulier, libellés au survol des boutons de l'en-tête.
+- Images : tailles revues (jusqu'à 2 560 px pour les photos), textures allégées.
 
 ## À retirer pour la mise en ligne définitive
 

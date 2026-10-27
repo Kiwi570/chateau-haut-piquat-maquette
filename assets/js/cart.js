@@ -1,6 +1,6 @@
 // Panier simulé : tiroir toujours accessible, frais de port et minimum de commande du domaine.
-import { $, $$, L, eur, store, toast, smooth, CALM, TOUCH } from './core.js?v=1';
-import { WINES, CHATEAUX, FORMATS } from './data.js?v=1';
+import { $, $$, L, eur, store, toast, smooth, CALM, TOUCH, hideToast, sparkAt } from './core.js?v=2';
+import { WINES, CHATEAUX, FORMATS } from './data.js?v=2';
 
 const KEY = 'ahp-cart';
 const FREE = 350, SHIP = 35, MIN = 105;
@@ -33,7 +33,7 @@ function render() {
   body.innerHTML = lines.map((l, i) => {
     const w = wineById(l.id); const f = FORMATS[w.fmt];
     const unit = w.price + (l.wood && f.wood ? f.wood : 0);
-    const wood = f.wood ? `<label><input type="checkbox" data-wood="${i}" ${l.wood ? 'checked' : ''}> ${L('En caisse bois', 'In a wooden case')} (+${eur(f.wood)})</label>` : '';
+    const wood = f.wood ? `<label><input type="checkbox" data-wood="${i}" ${l.wood ? 'checked' : ''}><span>${L('En caisse bois', 'In a wooden case')} <span style="white-space:nowrap">+${eur(f.wood)}</span></span></label>` : '';
     return `<div class="cline"><img src="${w.img.small}" alt="" width="64" height="84" loading="lazy">
       <div><h3>${wineName(w)}</h3><p class="sub">${L(f.label.fr, f.label.en)}</p>
       <div class="qty" role="group" aria-label="Quantité"><button type="button" data-dec="${i}" aria-label="Retirer une caisse">−</button><span>${l.qty}</span><button type="button" data-inc="${i}" aria-label="Ajouter une caisse">+</button></div>
@@ -52,7 +52,8 @@ function render() {
     <div class="checkout" data-checkout-step>
       <label class="check"><input type="checkbox" data-c-age required> <span>${L('Je certifie avoir 18 ans ou plus.', 'I certify that I am 18 or older.')}</span></label>
       <label class="check"><input type="checkbox" data-c-cgv required> <span>${L('J\'ai pris connaissance des <a class="link" href="informations.html#cgv">conditions générales de vente</a> et je les accepte.', 'I have read and accept the <a class="link" href="informations.html#cgv">terms of sale</a>.')}</span></label>
-      <div class="paychips" aria-label="Moyens de paiement"><span>Visa</span><span>Mastercard</span><span>PayPal</span><span>${L('Chèque', 'Cheque')}</span><span>${L('Virement', 'Bank transfer')}</span></div>
+      <fieldset class="paychips" role="radiogroup"><legend>${L('Moyen de paiement', 'Payment method')}</legend>${[['visa', 'Visa', 'Visa'], ['mc', 'Mastercard', 'Mastercard'], ['paypal', 'PayPal', 'PayPal'], ['cheque', 'Chèque', 'Cheque'], ['virement', 'Virement', 'Transfer']].map(([v, f, e]) => `<label><input type="radio" name="pay" value="${v}" data-c-pay>${L(f, e)}</label>`).join('')}</fieldset>
+      <p class="checkout__help" data-c-help>${L('Cochez les deux cases et choisissez un moyen de paiement pour continuer.', 'Tick both boxes and choose a payment method to continue.')}</p>
       <button class="btn" type="button" data-pay disabled>${L('Payer (simulation)', 'Pay (simulation)')}</button>
       <p class="form-note">${L('Maquette&nbsp;: aucun paiement ni aucune commande n\'est enregistré.', 'Mock-up: no payment or order is recorded.')} ${L('L\'abus d\'alcool est dangereux pour la santé, à consommer avec modération.', 'Alcohol abuse is dangerous for your health; drink in moderation.')}</p>
     </div>`;
@@ -63,14 +64,17 @@ function bump() {
   if (!CALM && window.gsap) gsap.fromTo(c, { scale: 1.6 }, { scale: 1, duration: 0.6, ease: 'elastic.out(1, .4)' });
 }
 
+let lastFocus = null;
 export function openCart() {
   const c = $('[data-cart]'); const ov = $('[data-cart-ov]');
-  render(); c.classList.add('is-open'); ov.classList.add('is-open'); c.setAttribute('aria-hidden', 'false'); smooth.lock(true);
+  hideToast(); render(); c.inert = false; c.classList.add('is-open'); ov.classList.add('is-open'); c.setAttribute('aria-hidden', 'false'); smooth.lock(true);
+  lastFocus = document.activeElement;
   setTimeout(() => $('[data-cart-close]').focus({ preventScroll: true }), 50);
 }
 export function closeCart() {
   const c = $('[data-cart]'); const ov = $('[data-cart-ov]');
-  c.classList.remove('is-open'); ov.classList.remove('is-open'); c.setAttribute('aria-hidden', 'true'); smooth.lock(false);
+  c.classList.remove('is-open'); ov.classList.remove('is-open'); c.setAttribute('aria-hidden', 'true'); c.inert = true; smooth.lock(false);
+  if (lastFocus && lastFocus.focus) lastFocus.focus({ preventScroll: true });
 }
 
 function fly(fromImg, done) {
@@ -94,7 +98,7 @@ export function addToCart(id, qty = 1, fromImg = null) {
   const l = lines.find((x) => x.id === id);
   if (l) l.qty = Math.min(24, l.qty + qty); else lines.push({ id, qty, wood: false });
   save();
-  fly(fromImg, () => { renderCount(); bump(); });
+  fly(fromImg, () => { renderCount(); bump(); sparkAt($('.hdr [data-cart-open]')); });
   toast(L(`<b>${wineName(w)}</b> ajouté au panier.`, `<b>${wineName(w)}</b> added to your cart.`) + ` <button class="link" style="border:0;background:none;color:inherit;padding:0" type="button" data-cart-open>${L('Voir le panier', 'View cart')}</button>`);
 }
 
@@ -113,7 +117,15 @@ export function initCart() {
   });
   document.addEventListener('change', (e) => {
     if (e.target.matches('[data-wood]')) { lines[+e.target.dataset.wood].wood = e.target.checked; save(); render(); }
-    if (e.target.matches('[data-c-age],[data-c-cgv]')) { const ok = $('[data-c-age]').checked && $('[data-c-cgv]').checked; $('[data-pay]').disabled = !ok; }
+    if (e.target.matches('[data-c-age],[data-c-cgv],[data-c-pay]')) { const ok = $('[data-c-age]').checked && $('[data-c-cgv]').checked && !!$('[data-c-pay]:checked'); $('[data-pay]').disabled = !ok; $('[data-c-help]').style.visibility = ok ? 'hidden' : 'visible'; }
   });
-  addEventListener('keydown', (e) => { if (e.key === 'Escape' && $('[data-cart]').classList.contains('is-open')) closeCart(); });
+  addEventListener('keydown', (e) => {
+    const cart = $('[data-cart]'); if (!cart.classList.contains('is-open')) return;
+    if (e.key === 'Escape') { closeCart(); return; }
+    if (e.key === 'Tab') {
+      const f = $$('button:not([disabled]), a[href], input:not([disabled])', cart).filter((el) => el.offsetParent);
+      if (!f.length) return; const i = f.indexOf(document.activeElement);
+      if (e.shiftKey && i <= 0) { e.preventDefault(); f[f.length - 1].focus(); } else if (!e.shiftKey && i === f.length - 1) { e.preventDefault(); f[0].focus(); }
+    }
+  });
 }
