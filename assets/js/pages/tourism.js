@@ -1,6 +1,6 @@
 // Oenotourisme : passage de l'arche, atelier écriVins, journée dans le Libournais, réservation simulée.
-import { $, $$, L, eur, CALM, TOUCH, DESKTOP, hdrH, scrollToEl, toast, lang, padMasks, sparkAt } from '../core.js?v=2';
-import { ACTIVITIES } from '../data.js?v=2';
+import { $, $$, L, eur, CALM, TOUCH, DESKTOP, hdrH, scrollToEl, toast, lang, padMasks, sparkAt } from '../core.js?v=3';
+import { ACTIVITIES } from '../data.js?v=3';
 
 const gsap = window.gsap; const ST = window.ScrollTrigger;
 

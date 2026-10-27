@@ -1,4 +1,4 @@
-# Château Haut-Piquat · maquette v2
+# Château Haut-Piquat · maquette v3
 
 Maquette de démonstration du futur site du Château Haut-Piquat (Lussac Saint-Émilion), direction artistique « Calcaire à astéries ». Site statique en HTML, CSS et JavaScript, sans étape de construction, prêt pour Vercel.
 
@@ -29,7 +29,12 @@ Maquette de démonstration du futur site du Château Haut-Piquat (Lussac Saint-�
 1. Remplacer une image : déposer le nouveau fichier sous le même nom ; aucune règle de cache n'est à modifier.
 2. Changer un prix : modifier `assets/js/data.js`.
 3. À chaque version livrée, changer le numéro `?v=N` partout et à l'identique, dans les pages et dans les `import` JavaScript :
-   `grep -rl "?v=2" --include=*.html --include=*.js . | xargs sed -i "" "s/?v=2/?v=3/g"`
+   `grep -rl "?v=3" --include=*.html --include=*.js . | xargs sed -i "" "s/?v=3/?v=4/g"`
+
+## Version 3
+
+- Fin de la coupe géologique : nouvelle scène « L'assemblage du Château Haut-Piquat » sur fond sombre uni. Une barre aux couleurs des trois cépages se remplit d'un seul geste, avec chiffres animés et étiquettes reliées ; la scène reste à l'écran le temps de la lire.
+- Le titre « Trois strates, trois cépages » est retiré : le site du domaine n'établit pas de lien entre sols et cépages.
 
 ## Version 2 : corrections issues de l'audit
 

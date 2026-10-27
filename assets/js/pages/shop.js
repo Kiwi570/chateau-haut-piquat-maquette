@@ -1,7 +1,7 @@
 // Boutique : filtres, cartes inclinables, ajout au panier, règle des formats.
-import { $, $$, L, eur, CALM, TOUCH, scrollToEl, sparkAt } from '../core.js?v=2';
-import { WINES, CHATEAUX, FORMATS } from '../data.js?v=2';
-import { addToCart } from '../cart.js?v=2';
+import { $, $$, L, eur, CALM, TOUCH, scrollToEl, sparkAt } from '../core.js?v=3';
+import { WINES, CHATEAUX, FORMATS } from '../data.js?v=3';
+import { addToCart } from '../cart.js?v=3';
 
 const gsap = window.gsap; const Flip = window.Flip;
 const ORDER = WINES.map((w) => w.id);

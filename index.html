@@ -25,8 +25,8 @@
 <link rel="preload" href="assets/fonts/fraunces-latin-full-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="assets/fonts/manrope-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" as="image" href="assets/img/photos/vigne-chateau-matin-1920.webp" imagesrcset="assets/img/photos/vigne-chateau-matin-640.webp 640w, assets/img/photos/vigne-chateau-matin-1024.webp 1024w, assets/img/photos/vigne-chateau-matin-1440.webp 1440w, assets/img/photos/vigne-chateau-matin-1920.webp 1920w, assets/img/photos/vigne-chateau-matin-2560.webp 2560w" imagesizes="100vw" fetchpriority="high">
-<link rel="stylesheet" href="assets/css/style.css?v=2">
-<link rel="modulepreload" href="assets/js/main.js?v=2">
+<link rel="stylesheet" href="assets/css/style.css?v=3">
+<link rel="modulepreload" href="assets/js/main.js?v=3">
 <script>(function(d){var h=d.documentElement;h.className=h.className.replace('no-js','js');try{var s=localStorage;var l=s.getItem('ahp-lang');if(l==='en'){h.lang='en';}var c=s.getItem('ahp-calm');if(c==='1'||(c===null&&matchMedia('(prefers-reduced-motion: reduce)').matches)){h.classList.add('calm');}if(s.getItem('ahp-age')==='ok'){h.classList.add('age-ok');}if(sessionStorage.getItem('ahp-trans')==='1'){h.classList.add('trans-in');}}catch(e){}setTimeout(function(){if(!window.__ahpReady){h.classList.add('calm');h.classList.remove('trans-in');}},4500);})(document);</script>
 </head>
 <body data-page="index">
@@ -159,14 +159,20 @@
     </div></div>
     <div class="coupe__assemblage" data-assemblage>
       <div class="assemblage">
-        <h3 class="h3"><span lang="fr">Trois strates, <em>trois cépages</em></span><span lang="en">Three layers, <em>three grapes</em></span></h3>
-        <div class="assemblage__bars" data-bars>
-          <div class="assemblage__bar" data-pct="80" style="background-image:url('assets/img/grok/strate-calcaire-asteries-1168.webp')"><b>80&nbsp;%</b></div>
-          <div class="assemblage__bar" data-pct="15" style="background-image:url('assets/img/grok/strate-argile-rouge-1168.webp')"><b>15&nbsp;%</b></div>
-          <div class="assemblage__bar" data-pct="5" style="background-image:url('assets/img/grok/strate-terre-1168.webp')"><b>5&nbsp;%</b></div>
+        <p class="kicker" data-asm-head><span lang="fr">Cépages</span><span lang="en">Grapes</span></p>
+        <h3 class="h3" data-asm-head><span lang="fr">L'assemblage du <em>Château Haut-Piquat</em></span><span lang="en">The <em>Château Haut-Piquat</em> blend</span></h3>
+        <div class="asm-chart" data-asm>
+          <div class="asm-bar" role="img" aria-label="80 % merlot, 15 % cabernet sauvignon, 5 % malbec" data-aria-en="80% merlot, 15% cabernet sauvignon, 5% malbec">
+            <span class="asm-seg is-m" style="--w:80" data-asm-seg></span><span class="asm-seg is-cs" style="--w:15" data-asm-seg></span><span class="asm-seg is-mb" style="--w:5" data-asm-seg></span>
+          </div>
+          <i class="asm-lead is-cs" aria-hidden="true" data-asm-lead></i><i class="asm-lead is-mb" aria-hidden="true" data-asm-lead></i>
+          <ul class="asm-labs">
+            <li class="asm-lab is-m" data-asm-lab><b><span data-count="80">80</span>&nbsp;%</b><span class="name">Merlot</span><span class="desc"><span lang="fr">élégance raffinée, gras en bouche</span><span lang="en">refined elegance, roundness</span></span></li>
+            <li class="asm-lab is-cs" data-asm-lab><b><span data-count="15">15</span>&nbsp;%</b><span class="name">Cabernet sauvignon</span><span class="desc"><span lang="fr">notes épicées, tannins</span><span lang="en">spice, tannins</span></span></li>
+            <li class="asm-lab is-mb" data-asm-lab><b><span data-count="5">5</span>&nbsp;%</b><span class="name">Malbec</span></li>
+          </ul>
         </div>
-        <div class="assemblage__legend" data-legend><span data-pct="80"><b>80&nbsp;%</b>Merlot · <span lang="fr">élégance raffinée, gras en bouche</span><span lang="en">refined elegance, roundness</span></span><span data-pct="15"><b>15&nbsp;%</b>Cabernet sauvignon · <span lang="fr">épices, tannins</span><span lang="en">spice, tannins</span></span><span data-pct="5"><b>5&nbsp;%</b>Malbec</span></div>
-        <p class="assemblage__note"><span lang="fr">Assemblage du Château Haut-Piquat selon le site.</span><span lang="en">Château Haut-Piquat blend according to the website.</span> <span class="todo"><span lang="fr">Fiche technique&nbsp;: 80/14/6 depuis 2018</span><span lang="en">Tech sheet: 80/14/6 since 2018</span></span></p>
+        <p class="assemblage__note" data-asm-note><span lang="fr">Assemblage du Château Haut-Piquat selon le site.</span><span lang="en">Château Haut-Piquat blend according to the website.</span> <span class="todo"><span lang="fr">Fiche technique&nbsp;: 80/14/6 depuis 2018</span><span lang="en">Tech sheet: 80/14/6 since 2018</span></span></p>
       </div>
     </div>
   </div>
@@ -536,6 +542,6 @@
 <script src="assets/vendor/gsap/DrawSVGPlugin.min.js" defer></script>
 <script src="assets/vendor/gsap/CustomEase.min.js" defer></script>
 <script src="assets/vendor/gsap/Flip.min.js" defer></script>
-<script type="module" src="assets/js/main.js?v=2"></script>
+<script type="module" src="assets/js/main.js?v=3"></script>
 </body>
 </html>

@@ -1,7 +1,7 @@
 // Accueil : ouverture, coupe géologique, vins, millésimes, frise gravée, savoir-faire, chai, visites, parc, accès.
-import { $, $$, L, eur, CALM, TOUCH, DESKTOP, hdrH, splitTitle, padMasks } from '../core.js?v=2';
-import { heroLight, fossils } from '../gl.js?v=2';
-import { WINES, CHATEAUX, FORMATS } from '../data.js?v=2';
+import { $, $$, L, eur, CALM, TOUCH, DESKTOP, hdrH, splitTitle, padMasks } from '../core.js?v=3';
+import { heroLight, fossils } from '../gl.js?v=3';
+import { WINES, CHATEAUX, FORMATS } from '../data.js?v=3';
 
 const gsap = window.gsap; const ST = window.ScrollTrigger;
 let hero = null;
@@ -61,17 +61,23 @@ async function startHeroGL() {
 function coupe() {
   const frame = $('[data-coupe-frame]'); const stack = $('[data-coupe-stack]');
   const panels = $$('[data-panel]'); const ticks = $$('[data-tick]');
-  const bars = $$('[data-bars] > *'); const legend = $$('[data-legend] > *');
+  const T = 1.08; const blend = blendTimeline(); let played = false;
   const fos = fossils($('[data-fossils]'));
   gsap.set(panels, { autoAlpha: 0, y: 24 });
   gsap.set('[data-panel-box]', { autoAlpha: 0 });
-  gsap.set(bars, { width: 'calc(33.33% - 4px)' });
   const travel = () => stack.offsetHeight - frame.offsetHeight;
   const tl = gsap.timeline({ defaults: { ease: 'none' }, scrollTrigger: {
-    trigger: frame, start: () => `top top+=${hdrH()}`, end: () => `+=${frame.offsetHeight * (DESKTOP() ? 4.2 : 3.6)}`,
+    trigger: frame, start: () => `top top+=${hdrH()}`, end: () => `+=${frame.offsetHeight * (DESKTOP() ? 4.2 : 3.6) * T}`,
     pin: true, scrub: 0.8, anticipatePin: 1, invalidateOnRefresh: true,
     onToggle: (s) => { if (fos) s.isActive ? fos.start() : fos.stop(); },
-    onUpdate: (s) => { const p = s.progress / 0.82; ticks.forEach((t, i) => t.classList.toggle('is-on', p >= [0, 0.22, 0.46, 0.66][i])); if (fos) fos.progress = gsap.utils.clamp(0, 1, (s.progress - 0.6) / 0.24); },
+    onLeave: () => { if (blend && !played) { played = true; blend.progress(1); } },
+    onUpdate: (s) => {
+      const t = s.progress * T; const p = t / 0.82;
+      ticks.forEach((k, i) => k.classList.toggle('is-on', p >= [0, 0.22, 0.46, 0.66][i]));
+      if (fos) fos.progress = gsap.utils.clamp(0, 1, (t - 0.6) / 0.24);
+      if (blend && !played && t >= 0.87) { played = true; blend.restart(); }
+      else if (blend && played && t < 0.84) { played = false; blend.pause(0); }
+    },
   } });
   tl.to('[data-panel-box]', { autoAlpha: 1, duration: 0.03 }, 0)
     .to('[data-panel-box]', { autoAlpha: 0, duration: 0.03 }, 0.82)
@@ -90,10 +96,29 @@ function coupe() {
     .to('[data-core]', { rotate: -4, duration: 0.08 }, 0.76)
     .to('[data-core]', { autoAlpha: 0, duration: 0.03 }, 0.83)
     .to('[data-assemblage]', { autoAlpha: 1, duration: 0.04 }, 0.84)
-    .from('.assemblage h3', { y: 30, autoAlpha: 0, duration: 0.04 }, 0.85);
-  bars.forEach((b) => { tl.to(b, { width: `calc(${b.dataset.pct}% - 4px)`, duration: 0.1, ease: 'power2.inOut' }, 0.88); });
-  tl.from(legend, { y: 16, autoAlpha: 0, duration: 0.05, stagger: 0.01 }, 0.9);
-  tl.to({}, { duration: 0.02 }, 0.98);
+    .from('[data-asm-head]', { y: 26, autoAlpha: 0, duration: 0.035, stagger: 0.01 }, 0.845);
+  tl.to({}, { duration: 0.01 }, T - 0.01);
+}
+
+/* Assemblage : la barre se remplit comme un vin versé, joué en entier une fois la scène atteinte */
+function blendTimeline() {
+  const segs = $$('[data-asm-seg]'); const labs = $$('[data-asm-lab]'); const leads = $$('[data-asm-lead]'); const note = $('[data-asm-note]');
+  if (!segs.length) return null;
+  const closed = 'inset(0% 100% 0% 0%)'; const open = 'inset(0% 0% 0% 0%)';
+  const count = (lab, at, dur) => { const n = $('[data-count]', lab); const v = +n.dataset.count; b.fromTo(n, { textContent: 0 }, { textContent: v, duration: dur, ease: 'power2.out', snap: { textContent: 1 } }, at); };
+  const b = gsap.timeline({ paused: true, defaults: { overwrite: 'auto' } });
+  b.fromTo(segs[0], { clipPath: closed }, { clipPath: open, duration: 1.05, ease: 'power2.inOut' }, 0)
+    .fromTo(labs[0], { y: 14, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.6, ease: 'power3.out' }, 0.25)
+    .fromTo(segs[1], { clipPath: closed }, { clipPath: open, duration: 0.4, ease: 'power1.inOut' }, 0.98)
+    .fromTo(leads[0], { scaleY: 0 }, { scaleY: 1, duration: 0.3, ease: 'power2.out' }, 1.1)
+    .fromTo(labs[1], { y: 14, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.55, ease: 'power3.out' }, 1.15)
+    .fromTo(segs[2], { clipPath: closed }, { clipPath: open, duration: 0.3, ease: 'power2.out' }, 1.34)
+    .fromTo(leads[1], { scaleY: 0 }, { scaleY: 1, duration: 0.3, ease: 'power2.out' }, 1.46)
+    .fromTo(labs[2], { y: -12, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.55, ease: 'power3.out' }, 1.5)
+    .fromTo(note, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.6 }, 1.7);
+  count(labs[0], 0.05, 1.0); count(labs[1], 1.0, 0.45); count(labs[2], 1.36, 0.35);
+  b.pause(0);
+  return b;
 }
 
 /* ---------- Trois vins ---------- */
