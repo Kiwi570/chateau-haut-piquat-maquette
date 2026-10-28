@@ -296,8 +296,9 @@ export function initReveals(root = document) {
   $$('[data-split]', root).forEach((el) => splitTitle(el));
   ScrollTrigger.batch($$('[data-reveal]', root), { start: 'top 90%', once: true, onEnter: (els) => gsap.to(els, { autoAlpha: 1, y: 0, duration: 1, ease: 'power3.out', stagger: 0.1 }) });
   $$('[data-count]', root).forEach((el) => {
-    const ref = el.dataset.count; const end = parseFloat(ref.replace(/\s/g, '')); if (isNaN(end)) return;
-    const o = { v: end > 1900 ? end - 60 : 0 };
+    const ref = el.dataset.count; if (!/^[\d\s]+$/.test(ref)) return;
+    const end = parseFloat(ref.replace(/\s/g, '')); if (isNaN(end) || (end >= 1800 && end <= 2100)) return;
+    const o = { v: 0 };
     el.textContent = fmtCount(o.v, ref);
     ScrollTrigger.create({ trigger: el, start: 'top 92%', once: true, onEnter: () => gsap.to(o, { v: end, duration: 1.6, ease: 'power3.out', onUpdate: () => { el.textContent = fmtCount(o.v, ref); } }) });
   });
@@ -343,6 +344,15 @@ function initForms() {
 }
 
 /* ---------- Démarrage ---------- */
+/* Fil de lecture : une ligne ocre sous l'en-tête suit la progression dans la page */
+function initProgress() {
+  const hdr = $('.hdr'); if (!hdr) return;
+  const bar = document.createElement('span'); bar.className = 'hdr__progress'; bar.setAttribute('aria-hidden', 'true'); hdr.appendChild(bar);
+  let raf = 0;
+  const upd = () => { raf = 0; const max = document.documentElement.scrollHeight - innerHeight; bar.style.transform = `scaleX(${max > 0 ? Math.min(1, scrollY / max).toFixed(4) : 0})`; };
+  addEventListener('scroll', () => { if (!raf) raf = requestAnimationFrame(upd); }, { passive: true });
+  addEventListener('resize', upd); upd();
+}
 export function initCore() {
   gsap = window.gsap; ScrollTrigger = window.ScrollTrigger;
   window.__ahpReady = true;
@@ -351,6 +361,6 @@ export function initCore() {
   initBars(); initLang(); initHeader(); initCalm(); initSound(); initForms();
   smooth.init();
   if (!CALM) { initCursor(); initMagnetic(); initVeil(); }
-  initTransitions();
+  initTransitions(); initProgress();
   return { gsap, ScrollTrigger };
 }

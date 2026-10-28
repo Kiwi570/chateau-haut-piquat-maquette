@@ -1,6 +1,7 @@
-// Oenotourisme : passage de l'arche, atelier écriVins, journée dans le Libournais, réservation simulée.
-import { $, $$, L, eur, CALM, TOUCH, DESKTOP, hdrH, scrollToEl, toast, lang, padMasks, sparkAt } from '../core.js?v=3';
-import { ACTIVITIES } from '../data.js?v=3';
+// Visites & événements : passage de l'arche, atelier écriVins, journée dans le Libournais, réservation simulée, accès et parc.
+import { $, $$, L, eur, CALM, TOUCH, DESKTOP, hdrH, scrollToEl, toast, lang, padMasks, sparkAt } from '../core.js?v=5';
+import { ACTIVITIES } from '../data.js?v=5';
+import { parc, buildMap, mapAnim } from './places.js?v=5';
 
 const gsap = window.gsap; const ST = window.ScrollTrigger;
 
@@ -43,7 +44,7 @@ function initBooking() {
     }
     alert.innerHTML = msg; alert.classList.toggle('is-on', !!msg); submit.disabled = block;
   }
-  const IMG = { visite: 'salle-degustation-table', ecrivins: 'table-ecrivins', journee: 'cour-tables-barriques', repas: 'parc-pelouse-cedre' };
+  const IMG = { visite: 'chateau-facade', ecrivins: 'table-ecrivins', journee: 'cour-tables-barriques', repas: 'parc-pelouse-cedre' };
   const recap = $('[data-brecap]'); const done = $('[data-bdone]');
   function renderRecap() {
     if (!recap) return;
@@ -82,7 +83,7 @@ function initBooking() {
       <h3 class="h3" style="margin:0">${L('Demande prête', 'Request ready')}</h3>
       <p class="muted" style="margin:0">${L('Simulation&nbsp;: rien n\'a été envoyé. Sur le site réel, le domaine confirmerait l\'horaire par e-mail.', 'Simulation: nothing was sent. On the live site, the estate would confirm the time by email.')}</p>
       <dl><dt>${L('Formule', 'Experience')}</dt><dd>${L(a.name.fr, a.name.en)}</dd><dt>Date</dt><dd>${dl}</dd><dt>${L('Personnes', 'People')}</dt><dd>${people}</dd><dt>Total</dt><dd>${eur(a.price * people)}</dd></dl>
-      <div style="display:flex;flex-wrap:wrap;gap:10px"><a class="btn btn--sm" href="${ics(a, date.value, people)}" download="visite-chateau-haut-piquat.ics">${L('Ajouter au calendrier', 'Add to calendar')}</a><a class="btn btn--ghost btn--sm" href="index.html#acces">${L('Comment venir', 'Getting here')}</a><button class="link small" type="button" style="border:0;background:none;padding:0;min-height:44px" data-bagain>${L('Nouvelle réservation', 'New booking')}</button></div>`;
+      <div style="display:flex;flex-wrap:wrap;gap:10px"><a class="btn btn--sm" href="${ics(a, date.value, people)}" download="visite-chateau-haut-piquat.ics">${L('Ajouter au calendrier', 'Add to calendar')}</a><a class="btn btn--ghost btn--sm" href="#acces">${L('Comment venir', 'Getting here')}</a><button class="link small" type="button" style="border:0;background:none;padding:0;min-height:44px" data-bagain>${L('Nouvelle réservation', 'New booking')}</button></div>`;
     form.hidden = true; done.classList.add('is-on'); scrollToEl(done); setTimeout(() => { done.focus({ preventScroll: true }); sparkAt($('.ast', done)); }, 700);
     if (window.gsap && !CALM) gsap.from(done.children, { y: 18, autoAlpha: 0, duration: 0.7, ease: 'power3.out', stagger: 0.06 });
   });
@@ -116,8 +117,12 @@ function initEcri() {
       `<b>Dominante ${GRAPES[d].name.toLowerCase()} (${vals[d]}&nbsp;%)</b>&nbsp;: ${GRAPES[d].fr}.` + rest.map((k) => ` Le ${GRAPES[k].name.toLowerCase()} (${vals[k]}&nbsp;%) apporte ${GRAPES[k].fr}.`).join(''),
       `<b>${GRAPES[d].name}-led (${vals[d]}%)</b>: ${GRAPES[d].en}.` + rest.map((k) => ` ${GRAPES[k].name} (${vals[k]}%) brings ${GRAPES[k].en}.`).join(''));
   };
+  // la robe tourne dans le verre quand on déplace un curseur
+  const disc = $('[data-robe]', box); let spin = 0;
+  const swirl = !CALM && window.gsap ? gsap.quickTo(disc, 'rotation', { duration: 0.9, ease: 'power3.out' }) : null;
   inputs.forEach((inp) => inp.addEventListener('input', () => {
-    const k = inp.dataset.grape; const v = +inp.value; const others = Object.keys(vals).filter((x) => x !== k);
+    const k = inp.dataset.grape; const v = +inp.value;
+    if (swirl) { spin += (v - vals[k]) * 2.4; swirl(spin); gsap.fromTo(disc, { scale: 0.95 }, { scale: 1, duration: 0.7, ease: 'elastic.out(1, .45)', overwrite: 'auto' }); } const others = Object.keys(vals).filter((x) => x !== k);
     const restOld = others.reduce((s, x) => s + vals[x], 0); const restNew = 100 - v;
     vals[k] = v;
     if (restOld === 0) { others.forEach((x) => { vals[x] = Math.round(restNew / 2); }); }
@@ -146,7 +151,7 @@ function buildDayMap() {
     <g class="home"><circle class="pulse" cx="${hx}" cy="${hy}" r="16"/><circle cx="${hx}" cy="${hy}" r="9" fill="#9B4B33"/><text x="${hx - 14}" y="${hy - 16}" text-anchor="end" font-family="Fraunces, Georgia, serif" font-size="18" fill="#1F1B16">Château Haut-Piquat</text><text x="${hx - 14}" y="${hy + 2}" text-anchor="end" font-size="12" fill="#6B6052" font-family="Manrope, sans-serif">Lussac</text></g>`;
 }
 
-export function setup() { initBooking(); initEcri(); buildDayMap(); }
+export function setup() { initBooking(); initEcri(); buildDayMap(); buildMap(); }
 
 export function enter() {
   if (CALM) return;
@@ -162,4 +167,6 @@ export function enter() {
   $$('[data-tl-item]').forEach((li) => gsap.from(li, { x: -20, autoAlpha: 0, duration: 0.7, ease: 'power3.out', scrollTrigger: { trigger: li, start: 'top 85%', once: true } }));
   gsap.from('[data-dayroute]', { drawSVG: '0%', duration: 2, ease: 'power2.inOut', scrollTrigger: { trigger: '[data-daymap]', start: 'top 75%', once: true } });
   gsap.from('[data-robe]', { scale: 0.6, autoAlpha: 0, duration: 1.2, ease: 'back.out(1.6)', scrollTrigger: { trigger: '[data-ecri]', start: 'top 80%', once: true } });
+  parc();
+  mapAnim();
 }

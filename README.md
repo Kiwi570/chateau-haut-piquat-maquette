@@ -1,4 +1,4 @@
-# Château Haut-Piquat · maquette v3
+# Château Haut-Piquat · maquette v5
 
 Maquette de démonstration du futur site du Château Haut-Piquat (Lussac Saint-Émilion), direction artistique « Calcaire à astéries ». Site statique en HTML, CSS et JavaScript, sans étape de construction, prêt pour Vercel.
 
@@ -6,17 +6,18 @@ Maquette de démonstration du futur site du Château Haut-Piquat (Lussac Saint-�
 
 | Page | Fichier | Contenu |
 |---|---|---|
-| Accueil | `index.html` | Ouverture, coupe géologique épinglée, trois vins, millésimes, frise « 2 000 ans gravés dans la pierre », savoir-faire, chai, visites, parc, accès |
+| Accueil | `index.html` | Ouverture, chiffres clés, coupe géologique et assemblage, trois vins, millésimes, bandeaux vers Le domaine et Visites & événements |
+| Le domaine | `domaine.html` | Frise « 2 000 ans gravés dans la pierre », savoir-faire en cinq étapes, chai de 480 barriques |
 | Boutique | `boutique.html` | 24 références filtrables, panier, règle des formats, caisses cadeaux et primeurs |
 | Fiche vin | `vin.html?id=…` | Une fiche pour chaque référence (ex. `vin.html?id=lf-2016`) |
-| Oenotourisme | `oenotourisme.html` | Passage de l'arche, quatre formules, atelier écriVins, journée dans le Libournais, réservation simulée |
+| Visites & événements | `oenotourisme.html` | Passage de l'arche, quatre formules, atelier écriVins, journée dans le Libournais, réservation simulée, plan d'accès, parc et événements |
 | Informations | `informations.html` | Mentions légales, données personnelles, principales conditions de vente |
 | 404 | `404.html` | Page introuvable |
 
 ## Structure
 
 - `assets/css/style.css` : styles
-- `assets/js/main.js` : point d'entrée ; `core.js` (défilement, ouverture, langue, mode calme, filtre d'âge, transitions), `cart.js` (panier), `gl.js` (WebGL), `pages/*.js`
+- `assets/js/main.js` : point d'entrée ; `core.js` (défilement, ouverture, langue, mode calme, filtre d'âge, transitions), `cart.js` (panier), `gl.js` (WebGL), `pages/*.js` (`home.js` accueil, `domain.js` Le domaine, `tourism.js` et `places.js` Visites & événements, `shop.js`, `wine.js`)
 - `assets/js/data.js` : vins, formats, châteaux et formules, repris des fiches du site actuel (prix d'octobre 2026)
 - `assets/img/photos`, `assets/img/vins`, `assets/img/logos` : photos du site actuel, étalonnées, en WebP
 - `assets/img/grok` : textures et détails générés avec Grok (strates, pierre, socle, chêne, lumière)
@@ -29,7 +30,27 @@ Maquette de démonstration du futur site du Château Haut-Piquat (Lussac Saint-�
 1. Remplacer une image : déposer le nouveau fichier sous le même nom ; aucune règle de cache n'est à modifier.
 2. Changer un prix : modifier `assets/js/data.js`.
 3. À chaque version livrée, changer le numéro `?v=N` partout et à l'identique, dans les pages et dans les `import` JavaScript :
-   `grep -rl "?v=3" --include=*.html --include=*.js . | xargs sed -i "" "s/?v=3/?v=4/g"`
+   `grep -rl "?v=5" --include=*.html --include=*.js . | xargs sed -i "" "s/?v=5/?v=6/g"`
+
+## Version 5
+
+- Accueil raccourci de moitié : il garde l'ouverture, le terroir, les vins et les millésimes, puis renvoie vers les autres pages par deux bandeaux.
+- Nouvelle page « Le domaine » : histoire, savoir-faire et chai.
+- La page Oenotourisme devient « Visites & événements » et accueille le plan d'accès et le parc.
+- Menu : Le domaine · Les vins · Boutique · Visites & événements · Venir.
+
+## Version 4
+
+- Panier : une caisse en bois de six bouteilles se remplit jusqu'au port offert (350 €), puis affiche « Port offert ».
+- Fil de lecture ocre sous l'en-tête, qui suit la progression dans la page.
+- Atelier écriVins : la robe tourne dans le verre quand on déplace un curseur.
+- Coupe géologique : panneaux enchaînés sans boîte vide, passage direct vers l'assemblage.
+- Visites : les photos des cartes recouvertes ne virent plus au noir.
+- Boutique : boutons « Ajouter » de taille identique sur toutes les cartes.
+- Chiffres : les années et les plages (2015, 2–3) ne sont plus animées ni tronquées ; altitude sur une ligne.
+- Fiche vin : assemblage aux couleurs des cépages, nom du château jamais coupé.
+- Frise : archives fondues dans le papier, fond de pierre adouci. Parc : texte qui accompagne la mosaïque.
+- Pied de page : labels HVE et Vignobles & Découvertes présentés fidèlement. Grands formats : légendes en double retirées.
 
 ## Version 3
 

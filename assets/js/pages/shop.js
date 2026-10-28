@@ -1,7 +1,7 @@
 // Boutique : filtres, cartes inclinables, ajout au panier, règle des formats.
-import { $, $$, L, eur, CALM, TOUCH, scrollToEl, sparkAt } from '../core.js?v=3';
-import { WINES, CHATEAUX, FORMATS } from '../data.js?v=3';
-import { addToCart } from '../cart.js?v=3';
+import { $, $$, L, eur, CALM, TOUCH, scrollToEl, sparkAt } from '../core.js?v=5';
+import { WINES, CHATEAUX, FORMATS } from '../data.js?v=5';
+import { addToCart } from '../cart.js?v=5';
 
 const gsap = window.gsap; const Flip = window.Flip;
 const ORDER = WINES.map((w) => w.id);
@@ -23,7 +23,7 @@ function card(w) {
   return `<article class="pcard" data-id="${w.id}" data-flip-id="${w.id}">
     <a class="pcard__img" href="vin.html?id=${w.id}" aria-label="${ch.name} ${w.vintage}">${badge}<img src="${w.img.src}" width="${w.img.w}" height="${w.img.h}" alt="${ch.name} ${w.vintage}, ${f.label.fr}" loading="lazy" decoding="async" data-pimg></a>
     <div class="pcard__body">
-      <h3><a href="vin.html?id=${w.id}">${ch.name} <span class="num">${w.vintage}</span></a></h3>
+      <h3><a href="vin.html?id=${w.id}">${ch.name.replace('Haut-Piquat', '<span class="nw">Haut-Piquat</span>')} <span class="num">${w.vintage}</span></a></h3>
       <p class="pcard__fmt"><span class="long">${L(f.label.fr, f.label.en)}</span><span class="short">${f.units} × ${f.cl} cl</span></p>
       ${dist ? `<p class="pcard__dist">${dist}</p>` : ''}
       <div class="pcard__price"><b>${eur(w.price)}</b>${w.old ? `<s>${eur(w.old)}</s>` : ''}<small>${L(`${eur(per)} / ${f.unit.fr === 'bouteille' ? 'bt' : f.unit.fr}`, `${eur(per)} / ${f.unit.en === 'bottle' ? 'btl' : f.unit.en}`)}${w.promo51 ? L(' · 5 + 1 offerte', ' · 5 + 1 free') : ''}</small></div>

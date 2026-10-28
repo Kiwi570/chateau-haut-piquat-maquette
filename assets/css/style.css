@@ -1064,3 +1064,103 @@ html[lang="en"] .tool[data-tip-en]::after { content: attr(data-tip-en); }
   .asm-lab .desc { grid-column: 2; }
 }
 html.calm .coupe__assemblage .assemblage { margin-inline: auto; }
+
+/* ============ v4 · corrections et finitions ============ */
+.nw { white-space: nowrap; }
+/* chiffres clés : la plage d'altitude tient sur une ligne */
+.fact b.is-range { white-space: nowrap; font-size: clamp(1.9rem, 3.1vw, 2.9rem); }
+.fact b small { font-size: .5em; letter-spacing: 0; }
+/* cartes produit : bouton toujours de la même taille, aligné en bas */
+.pcard__body { display: flex; flex-direction: column; }
+.pcard__price { margin-top: auto; padding-top: 10px; }
+.pcard__add { align-self: stretch; flex: none; height: auto; min-height: 44px; }
+/* frise : archives fondues dans le papier, fond de pierre adouci */
+.era__img.is-archive { background: #EFE6D3; }
+.era__img.is-archive img { mix-blend-mode: multiply; }
+.story__bg { filter: blur(1.5px) saturate(.8); transform: scale(1.03); }
+.story__bg::after { background: linear-gradient(180deg, rgba(238, 231, 217, .62), rgba(228, 212, 182, .5)); }
+/* parc : la colonne de texte reste à l'écran le long de la mosaïque */
+.parc { overflow: visible; overflow-x: clip; }
+/* chai : motif des barriques plus compact sur mobile */
+@media (max-width: 700px) { .chai__barrels { aspect-ratio: 24 / 11; } }
+/* grands formats : on retire les légendes incrustées dans la photo, doublons des boutons */
+.formats__img { overflow: hidden; aspect-ratio: 720 / 646; }
+.formats__img img { height: 100%; object-fit: cover; object-position: 50% 0; }
+/* pied de page : labels présentés fidèlement, sur pastille */
+.ftr__labels { gap: 12px; }
+.ftr__labels img, .ftr__labels img:not(.riviere) { filter: none; opacity: 1; height: 54px; padding: 6px; background: #F6F1E7; border-radius: 6px; box-sizing: content-box; }
+.ftr__labels img.riviere { padding: 0; background: none; height: 44px; filter: invert(1) grayscale(1) brightness(1.7); }
+/* fiche vin : assemblage aux couleurs des cépages */
+.blend.is-wine span { background: linear-gradient(180deg, rgba(255, 255, 255, .14), transparent 40%), var(--c); }
+.blend.is-wine span::after { display: none; }
+.blend-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.blend-legend span::before { content: ""; width: 10px; height: 10px; border-radius: 2px; background: var(--c, var(--ocre)); }
+.blend-legend b { font-weight: 700; color: var(--encre); }
+/* atelier écriVins : robe au-dessus du profil sur mobile */
+@media (max-width: 560px) {
+  .robe { grid-template-columns: 1fr; justify-items: start; }
+  .robe__disc { width: 88px; height: 88px; }
+}
+/* panier : caisse en bois qui se remplit jusqu'au port offert */
+.ship-case { margin: -4px 0 2px; }
+.ship-case svg { display: block; width: 100%; max-width: 300px; height: auto; margin-inline: auto; overflow: visible; }
+.ship-case .b-out { fill: rgba(31, 27, 22, .05); stroke: rgba(31, 27, 22, .32); stroke-width: 1.2; stroke-dasharray: 3 3; }
+.ship-case .b-fill { fill: #7A1F38; }
+.ship-case .b-cap { fill: var(--ocre); }
+.ship-case .crate rect { fill: #B98552; }
+.ship-case .crate path { stroke: rgba(70, 40, 18, .35); stroke-width: 1; fill: none; }
+.ship-case .crate text { font: 700 9px/1 var(--sans); letter-spacing: .24em; fill: rgba(60, 34, 14, .0); transition: fill .5s; }
+.ship-case.is-full .crate text { fill: rgba(60, 34, 14, .78); }
+.ship-case.is-full .b-out { stroke-dasharray: none; stroke: rgba(31, 27, 22, .15); }
+/* fil de lecture sous l'en-tête */
+.hdr__progress { position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; background: linear-gradient(90deg, var(--ocre), #9B4B33); transform: scaleX(0); transform-origin: left; pointer-events: none; }
+body.menu-open .hdr__progress { opacity: 0; }
+
+/* ============ v5 · accueil plus court, bandeaux vers les pages ============ */
+/* Le domaine (bandeau sombre) */
+.tdom__grid { display: grid; gap: clamp(32px, 5vw, 80px); align-items: center; }
+@media (min-width: 1000px) { .tdom__grid { grid-template-columns: 1.05fr .95fr; } }
+.tdom__media { display: block; aspect-ratio: 4 / 3; overflow: hidden; border-radius: 2px; }
+.tdom__media img { width: 100%; height: 100%; object-fit: cover; transition: filter .6s; }
+.tdom__media:hover img { filter: brightness(1.06); }
+.tdom__text .h2 { margin: 12px 0 0; }
+.tdates { list-style: none; margin: clamp(26px, 4vw, 40px) 0 22px; padding: 0; display: grid; gap: 0; border-top: 1px solid rgba(238, 231, 217, .16); }
+.tdates li { display: grid; grid-template-columns: 7.5rem 1fr; align-items: baseline; gap: 18px; padding: 14px 0; border-bottom: 1px solid rgba(238, 231, 217, .16); }
+.tdates b { font: 330 clamp(1.9rem, 3vw, 2.6rem)/1 var(--serif); font-variation-settings: "SOFT" 100; color: var(--ocre); white-space: nowrap; }
+.tdates li > span { color: rgba(238, 231, 217, .86); font-size: 15.5px; }
+.tdom .muted { color: rgba(238, 231, 217, .7); }
+.tdom__links { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 26px; margin-top: 26px; }
+.tdom__links .link { color: var(--calcaire); min-height: 44px; display: inline-flex; align-items: center; background-position: 0 calc(100% - 10px); }
+/* Visites & événements : quatre tuiles */
+.vtiles { display: grid; gap: 18px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr)); }
+.vtile { position: relative; display: grid; gap: 6px; text-decoration: none; color: var(--encre); padding-bottom: 16px; border-bottom: 1px solid var(--line); }
+.vtile__img { display: block; aspect-ratio: 4 / 3; overflow: hidden; margin-bottom: 10px; border-radius: 2px; }
+.vtile__img img { width: 100%; height: 100%; object-fit: cover; transform: scale(1.01); transition: transform .9s var(--ease), filter .6s; filter: saturate(.9); }
+.vtile:hover .vtile__img img, .vtile:focus-visible .vtile__img img { transform: scale(1.07); filter: saturate(1); }
+.vtile__n { font-size: 12px; letter-spacing: .2em; font-weight: 650; color: var(--ocre-ink); }
+.vtile__name { font: 400 clamp(1.25rem, 1.7vw, 1.5rem)/1.15 var(--serif); font-variation-settings: "SOFT" 100; }
+.vtile__meta { font-size: 14.5px; color: var(--encre-3); }
+.vtile__meta small { font-size: 12.5px; }
+.vtile__cta { display: inline-flex; align-items: center; gap: 8px; margin-top: 6px; font-size: 13px; font-weight: 650; letter-spacing: .12em; text-transform: uppercase; }
+.vtile__cta svg, .tmore__arrow { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.6; transition: transform .45s var(--ease); }
+.vtile:hover .vtile__cta svg, .tmore:hover .tmore__arrow { transform: translateX(6px); }
+.tvis__more { display: grid; gap: 18px; margin-top: clamp(36px, 5vw, 60px); }
+@media (min-width: 900px) { .tvis__more { grid-template-columns: 1fr 1fr; } }
+.tmore { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 20px; padding: 16px 22px 16px 16px; background: var(--papier); border: 1px solid var(--line); text-decoration: none; color: var(--encre); transition: border-color .4s, box-shadow .4s; }
+.tmore:hover { border-color: rgba(31, 27, 22, .3); box-shadow: 0 18px 40px -26px rgba(31, 27, 22, .4); }
+.tmore__img, .tmore picture img { width: clamp(88px, 10vw, 128px); aspect-ratio: 4 / 3; object-fit: cover; border-radius: 2px; }
+.tmore picture { display: block; }
+.tmore__pin { display: grid; place-items: center; width: clamp(88px, 10vw, 128px); aspect-ratio: 4 / 3; background: var(--calcaire-2); border-radius: 2px; }
+.tmore__pin svg { width: 34px; height: 34px; fill: none; stroke: var(--argile); stroke-width: 1.5; }
+.tmore > span { display: grid; gap: 4px; }
+.tmore small { font-size: 12px; letter-spacing: .2em; text-transform: uppercase; font-weight: 650; color: var(--ocre-ink); }
+.tmore b { font: 400 clamp(1.15rem, 1.6vw, 1.4rem)/1.2 var(--serif); font-variation-settings: "SOFT" 100; }
+.tmore i { font-style: normal; font-size: 14px; color: var(--encre-3); }
+@media (max-width: 520px) { .tmore { grid-template-columns: auto 1fr; } .tmore__arrow { display: none; } }
+/* Page Le domaine */
+.dhero__nav { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 26px; }
+.dhero__nav a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 18px; border: 1px solid rgba(246, 241, 231, .45); border-radius: 99px; color: var(--calcaire); text-decoration: none; font-size: 13px; font-weight: 650; letter-spacing: .12em; text-transform: uppercase; transition: background-color .3s, color .3s; }
+.dhero__nav a:hover { background: var(--calcaire); color: var(--encre); }
+.dnext { text-align: center; }
+.dnext .kicker { justify-content: center; }
+.dnext__ctas { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 30px; }

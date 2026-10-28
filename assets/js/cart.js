@@ -1,6 +1,6 @@
 // Panier simulé : tiroir toujours accessible, frais de port et minimum de commande du domaine.
-import { $, $$, L, eur, store, toast, smooth, CALM, TOUCH, hideToast, sparkAt } from './core.js?v=3';
-import { WINES, CHATEAUX, FORMATS } from './data.js?v=3';
+import { $, $$, L, eur, store, toast, smooth, CALM, TOUCH, hideToast, sparkAt } from './core.js?v=5';
+import { WINES, CHATEAUX, FORMATS } from './data.js?v=5';
 
 const KEY = 'ahp-cart';
 const FREE = 350, SHIP = 35, MIN = 105;
@@ -28,6 +28,7 @@ function render() {
   if (!lines.length) {
     body.innerHTML = `<div class="cart__empty"><svg class="ast" aria-hidden="true"><use href="#ast"/></svg><p>${L('Votre panier est vide.', 'Your cart is empty.')}</p><a class="btn btn--sm" href="boutique.html">${L('Voir la boutique', 'Visit the shop')}</a></div>`;
     foot.innerHTML = `<p class="form-note">${L('Port offert dès 350&nbsp;€ en France métropolitaine.', 'Free delivery from €350 in mainland France.')}</p>`;
+    lastRatio = 0;
     return;
   }
   body.innerHTML = lines.map((l, i) => {
@@ -44,7 +45,7 @@ function render() {
   const left = Math.max(0, FREE - t.sub);
   const minOk = t.sub >= MIN;
   foot.innerHTML = `
-    <div class="ship-meter" aria-hidden="true"><span style="transform:scaleX(${Math.min(1, t.sub / FREE).toFixed(3)})"></span></div>
+    ${caseMeter(lastRatio)}
     <p class="small" style="margin:0">${left > 0 ? L(`Plus que <b>${eur(left)}</b> pour le port offert.`, `Only <b>${eur(left)}</b> more for free delivery.`) : L('<b>Port offert</b> en France métropolitaine.', '<b>Free delivery</b> in mainland France.')}</p>
     <div class="cart__rows"><div><span>${L('Sous-total', 'Subtotal')}</span><span>${eur(t.sub)}</span></div><div><span>${L('Livraison (France métropolitaine)', 'Delivery (mainland France)')}</span><span>${t.ship ? eur(t.ship) : L('Offerte', 'Free')}</span></div><div class="total"><span>${L('Total TTC', 'Total incl. VAT')}</span><span>${eur(t.total)}</span></div></div>
     <p class="cart__msg" role="status">${minOk ? '' : L(`Commande minimum de ${eur(MIN)} hors port.`, `Minimum order ${eur(MIN)} excluding delivery.`)}</p>
@@ -57,6 +58,31 @@ function render() {
       <button class="btn" type="button" data-pay disabled>${L('Payer (simulation)', 'Pay (simulation)')}</button>
       <p class="form-note">${L('Maquette&nbsp;: aucun paiement ni aucune commande n\'est enregistré.', 'Mock-up: no payment or order is recorded.')} ${L('L\'abus d\'alcool est dangereux pour la santé, à consommer avec modération.', 'Alcohol abuse is dangerous for your health; drink in moderation.')}</p>
     </div>`;
+  animateCase(Math.min(1, t.sub / FREE));
+}
+
+/* Caisse en bois : six bouteilles se remplissent jusqu'au port offert */
+let lastRatio = 0; let caseTween = null;
+const BOTTLE = 'M8 0h6v14c0 4 8 6 8 14v40a3 3 0 0 1-3 3H3a3 3 0 0 1-3-3V28c0-8 8-10 8-14z';
+const lvl = (r, i) => Math.max(0, Math.min(1, r * 6 - i));
+function caseMeter(r) {
+  const b = [0, 1, 2, 3, 4, 5].map((i) => { const h = 71 * lvl(r, i); return `<g transform="translate(${27 + i * 33} 8)"><path class="b-out" d="${BOTTLE}"/><rect class="b-fill" clip-path="url(#ship-b)" x="0" y="${71 - h}" width="22" height="${h}" data-b="${i}"/><rect class="b-cap" x="7.5" y="0" width="7" height="${lvl(r, i) >= 1 ? 9 : 0}" rx="1" data-cap="${i}"/></g>`; }).join('');
+  return `<div class="ship-case${r >= 1 ? ' is-full' : ''}" data-ship-case aria-hidden="true"><svg viewBox="0 0 250 96"><defs><clipPath id="ship-b"><path d="${BOTTLE}"/></clipPath></defs>${b}
+    <g class="crate"><rect x="8" y="62" width="234" height="30" rx="2"/><path d="M8 72h234M8 82h234" /><text x="125" y="80.5" text-anchor="middle"><tspan lang="fr">PORT OFFERT</tspan><tspan lang="en">FREE DELIVERY</tspan></text></g></svg></div>`;
+}
+function animateCase(r) {
+  if (!$('[data-ship-case]') || !$('[data-cart]')?.classList.contains('is-open')) return;
+  const set = (rr) => {
+    lastRatio = rr; const box = $('[data-ship-case]'); if (!box) return;
+    $$('[data-b]', box).forEach((el) => { const h = 71 * lvl(rr, +el.dataset.b); el.setAttribute('y', 71 - h); el.setAttribute('height', h); });
+    $$('[data-cap]', box).forEach((el) => el.setAttribute('height', lvl(rr, +el.dataset.cap) >= 1 ? 9 : 0));
+  };
+  const was = lastRatio;
+  if (caseTween) caseTween.kill();
+  const done = () => { const box = $('[data-ship-case]'); if (!box) return; box.classList.toggle('is-full', r >= 1); if (r >= 1 && was < 1 && !CALM && window.gsap) { gsap.fromTo($('.crate', box), { y: -6 }, { y: 0, duration: 0.7, ease: 'bounce.out' }); sparkAt(box); } };
+  if (CALM || !window.gsap || was === r) { set(r); done(); return; }
+  const o = { r: was };
+  caseTween = gsap.to(o, { r, duration: 0.8 + Math.abs(r - was) * 0.8, delay: 0.25, ease: 'power2.inOut', onUpdate: () => set(o.r), onComplete: done });
 }
 
 function bump() {
@@ -67,7 +93,7 @@ function bump() {
 let lastFocus = null;
 export function openCart() {
   const c = $('[data-cart]'); const ov = $('[data-cart-ov]');
-  hideToast(); render(); c.inert = false; c.classList.add('is-open'); ov.classList.add('is-open'); c.setAttribute('aria-hidden', 'false'); smooth.lock(true);
+  hideToast(); c.inert = false; c.classList.add('is-open'); render(); ov.classList.add('is-open'); c.setAttribute('aria-hidden', 'false'); smooth.lock(true);
   lastFocus = document.activeElement;
   setTimeout(() => $('[data-cart-close]').focus({ preventScroll: true }), 50);
 }
