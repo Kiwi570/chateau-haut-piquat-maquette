@@ -1,6 +1,6 @@
 // Les vins : ouverture, tour de la cave, l'accord parfait, servir votre vin.
-import { $, $$, L, eur, CALM, TOUCH, hdrH, padMasks, sparkAt, smooth, thudSound } from '../core.js?v=14';
-import { WINES, CHATEAUX, FORMATS } from '../data.js?v=14';
+import { $, $$, L, eur, CALM, TOUCH, hdrH, padMasks, sparkAt, smooth, thudSound } from '../core.js?v=15';
+import { WINES, CHATEAUX, FORMATS } from '../data.js?v=15';
 
 const gsap = window.gsap; const ST = window.ScrollTrigger;
 const ORDER = ['hp', 'lf', 'bl'];
@@ -77,7 +77,7 @@ function stageFx(c) {
   return { c, stage, bottle, shadow, dust, socle: $('.socle', c), num: $('.cave__num', c), words: split ? split.words : [name], items, note: $('.cave__note', c) };
 }
 // hauteur à laquelle la bouteille sort du cadre par le haut
-const liftY = (P) => { const b = P.bottle.getBoundingClientRect(); const r = P.c.getBoundingClientRect(); return -(b.bottom - r.top + 40); };
+const liftY = (P) => -(P.stage.offsetTop + P.bottle.offsetTop + P.bottle.offsetHeight + 40);
 function puff(P) {
   $$('i', P.dust).forEach((d, k) => {
     const side = k % 2 ? 1 : -1; const far = 36 + Math.random() * 110;
@@ -112,55 +112,92 @@ function cave() {
   ST.matchMedia({
     '(min-width: 900px) and (min-height: 700px)': () => {
       frame.classList.add('is-pinned');
-      let cur = -1; let xtl = null;
-      P.forEach((p) => { gsap.set(p.bottle, { y: liftY(p) }); gsap.set(p.shadow, { autoAlpha: 0 }); gsap.set([...p.items, p.note], { autoAlpha: 0 }); gsap.set(p.words, { yPercent: 110 }); });
       // chaque chapitre forme sa propre couche : le décor qui s'ouvre passe bien au-dessus du précédent
       chs.forEach((c, k) => gsap.set(c, { zIndex: k + 1, isolation: 'isolate' }));
-      gsap.set(chs.slice(1), { visibility: 'hidden' });
-      const mark = (j) => dots.forEach((d, k) => { d.classList.toggle('is-on', k === j); const b = $('button', d); if (b) b.setAttribute('aria-current', k === j ? 'true' : 'false'); });
-      // le socle reste en place ; la bouteille qui part est soulevée, le décor suivant s'ouvre en cercle, la nouvelle bouteille est posée
-      const go = (j) => {
-        if (j === cur) return; const i = cur; cur = j; mark(j);
-        if (xtl) { xtl.progress(1); xtl.kill(); xtl = null; }
-        if (i < 0) {
-          chs.forEach((c, k) => gsap.set(c, { visibility: k === j ? 'visible' : 'hidden', clipPath: 'none' }));
-          xtl = gsap.timeline().add(drop(P[j]), 0.1).add(panelIn(P[j], intros[j]), 0.35);
-          return;
+      const N = chs.length;
+      // découpage du défilement épinglé : un temps de pose par vin, un passage entre deux vins
+      const REST = 0.16; const PASS = (1 - REST * N) / (N - 1);
+      const zone = (k) => REST * (k + 1) + PASS * k; // début du passage du vin k au vin k + 1
+      const rests = chs.map((_, k) => [k ? zone(k - 1) + PASS : 0, zone(k)]);
+      const center = (P) => { const x = P.stage.offsetLeft + P.socle.offsetLeft + P.socle.offsetWidth / 2; const y = P.stage.offsetTop + P.socle.offsetTop + P.socle.offsetHeight * 0.1; const w = P.c.offsetWidth; const h = P.c.offsetHeight; return [x, y, Math.hypot(Math.max(x, w - x), Math.max(y, h - y)) + 30]; };
+      const circ = (P, full) => { const [x, y, R] = center(P); return `circle(${full ? R : 0}px at ${x}px ${y}px)`; };
+      // le passage suit exactement le défilement (les états de départ sont posés par les vins qui arrivent) ; seuls la pose (poussière, choc, son) et l'animation du texte de détail sont déclenchées
+      const tl = gsap.timeline({ defaults: { ease: 'none' } });
+      for (let k = 0; k < N - 1; k++) {
+        const A = P[k]; const B = P[k + 1]; const at = zone(k); const d = PASS;
+        tl.fromTo(A.words, { yPercent: 0 }, { yPercent: -110, duration: d * 0.22, ease: 'power2.in', stagger: d * 0.02, immediateRender: false }, at)
+          .fromTo([...A.items, A.note], { y: 0, autoAlpha: 1 }, { y: -16, autoAlpha: 0, duration: d * 0.2, ease: 'power1.in', stagger: d * 0.012, immediateRender: false }, at)
+          .fromTo(A.bottle, { y: 0, rotation: 0 }, { y: () => liftY(A), rotation: 3, duration: d * 0.38, ease: 'power2.in', immediateRender: false }, at)
+          .fromTo(A.shadow, { scale: 1, autoAlpha: 1 }, { scale: 0.3, autoAlpha: 0, duration: d * 0.25, ease: 'power1.in', immediateRender: false }, at)
+          .fromTo(A.num, { yPercent: 0, autoAlpha: 1 }, { yPercent: -25, autoAlpha: 0, duration: d * 0.3, immediateRender: false }, at)
+          .fromTo(B.c, { clipPath: () => circ(B, false) }, { clipPath: () => circ(B, true), duration: d * 0.55, ease: 'power2.inOut' }, at + d * 0.16)
+          .fromTo(B.num, { yPercent: 25, autoAlpha: 0 }, { yPercent: 0, autoAlpha: 1, duration: d * 0.3, ease: 'power2.out' }, at + d * 0.45)
+          .fromTo(B.bottle, { y: () => liftY(B), rotation: -4 }, { y: 0, rotation: 0, duration: d * 0.5, ease: 'power1.out' }, at + d * 0.5)
+          .fromTo(B.shadow, { scale: 0.25, autoAlpha: 0 }, { scale: 1, autoAlpha: 1, duration: d * 0.5, ease: 'power2.in' }, at + d * 0.5)
+          .fromTo(B.words, { yPercent: 110 }, { yPercent: 0, duration: d * 0.3, ease: 'power2.out', stagger: d * 0.025 }, at + d * 0.58)
+          .fromTo(B.items, { y: 22, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: d * 0.3, ease: 'power2.out', stagger: d * 0.015 }, at + d * 0.62);
+      }
+      tl.to({}, { duration: 0.001 }, 0.999);
+      // la pose : poussière, petit choc, son, puis jauge, médailles et avis
+      const land = (k) => { const p = P[k]; puff(p); thudSound(); gsap.timeline().to(p.bottle, { scaleY: 0.982, scaleX: 1.014, duration: 0.07, ease: 'power1.out' }).to(p.bottle, { scaleY: 1, scaleX: 1, duration: 0.6, ease: 'elastic.out(1, 0.4)' }); gsap.timeline().to(p.socle, { y: 3, duration: 0.06 }).to(p.socle, { y: 0, duration: 0.5, ease: 'elastic.out(1, 0.5)' }); intros[k].restart(); };
+      const local = (k, pr) => gsap.utils.clamp(0, 1, (pr - zone(k)) / PASS);
+      const prev = chs.slice(1).map(() => 0); let active = -1; let lastRest = 0;
+      const mark = (j) => { if (j === active) return; active = j; dots.forEach((dd, k) => { dd.classList.toggle('is-on', k === j); const b = $('button', dd); if (b) b.setAttribute('aria-current', k === j ? 'true' : 'false'); }); chs.forEach((c, k) => { c.inert = k !== j; }); };
+      tl.eventCallback('onUpdate', () => {
+        const pr = tl.progress();
+        for (let k = 0; k < N - 1; k++) {
+          const l = local(k, pr);
+          // la pose se déclenche au contact réel de la bouteille avec le socle
+          if (prev[k] < 0.97 && l >= 0.97) land(k + 1);
+          else if (prev[k] > 0.02 && l <= 0.02) land(k);
+          prev[k] = l;
         }
-        const A = P[i]; const B = P[j]; const fwd = j > i;
-        chs.forEach((c, k) => { if (k !== i && k !== j) gsap.set(c, { visibility: 'hidden', clipPath: 'none' }); });
-        gsap.set([A.c, B.c], { visibility: 'visible' });
-        gsap.set(B.bottle, { y: liftY(B) }); gsap.set(B.shadow, { autoAlpha: 0 }); gsap.set(B.items, { autoAlpha: 0 }); gsap.set(B.words, { yPercent: 110 });
-        const top = fwd ? B : A; const r = top.c.getBoundingClientRect(); const sr = top.socle.getBoundingClientRect();
-        // en avançant, le décor s'ouvre depuis le socle ; en reculant, il se referme vers le texte pour dégager le socle d'abord
-        const cx = fwd ? sr.left + sr.width / 2 - r.left : r.width; const cy = fwd ? sr.top + sr.height * 0.1 - r.top : r.height / 2;
-        const R = Math.hypot(Math.max(cx, r.width - cx), Math.max(cy, r.height - cy)) + 30;
-        const circ = (rad) => `circle(${rad}px at ${cx}px ${cy}px)`;
-        xtl = gsap.timeline({ onComplete: () => { gsap.set(A.c, { visibility: 'hidden', clipPath: 'none' }); gsap.set(B.c, { clipPath: 'none' }); gsap.set(A.num, { clearProps: 'opacity,visibility,transform' }); } });
-        xtl.to(A.words, { yPercent: -110, duration: 0.45, ease: 'power3.in', stagger: 0.03 }, 0)
-          .to([...A.items, A.note], { y: -16, autoAlpha: 0, duration: 0.32, ease: 'power2.in', stagger: 0.02 }, 0)
-          .to(A.bottle, { y: liftY(A), rotation: 3, duration: 0.62, ease: 'power3.in' }, 0)
-          .to(A.shadow, { scale: 0.3, autoAlpha: 0, duration: 0.45, ease: 'power2.in' }, 0)
-          .to(A.num, { yPercent: -25, autoAlpha: 0, duration: 0.4, ease: 'power2.in' }, 0)
-          .fromTo(fwd ? B.c : A.c, { clipPath: circ(fwd ? 0 : R) }, { clipPath: circ(fwd ? R : 0), duration: 0.95, ease: 'power2.inOut' }, 0.32)
-          .fromTo(B.num, { yPercent: 25, autoAlpha: 0 }, { yPercent: 0, autoAlpha: 1, duration: 0.8, ease: 'power3.out' }, 0.7)
-          .add(drop(B), 0.86)
-          .add(panelIn(B, intros[j]), 0.95);
+        mark(rests.findIndex(([, b], k) => k === N - 1 || pr < b + PASS / 2));
+      });
+      const trackRest = (s) => { const r = rests.findIndex(([a, b]) => s.progress >= a && s.progress <= b); if (r >= 0) lastRest = r; };
+      // un vin s'aimante quand on s'arrête au milieu d'un passage : jamais de bouteille suspendue en l'air
+      // le sens vient du dernier geste du visiteur (molette, doigt, clavier), sinon du dernier vin où il s'est arrêté
+      let userDir = 0;
+      const onWheel = (e) => { if (e.deltaY) userDir = Math.sign(e.deltaY); };
+      let ty = 0; const onTouchStart = (e) => { ty = e.touches[0].clientY; }; const onTouchMove = (e) => { const y = e.touches[0].clientY; if (Math.abs(y - ty) > 4) { userDir = y < ty ? 1 : -1; ty = y; } };
+      const onKey = (e) => { if (['ArrowDown', 'PageDown', ' ', 'End'].includes(e.key)) userDir = 1; else if (['ArrowUp', 'PageUp', 'Home'].includes(e.key)) userDir = -1; };
+      addEventListener('wheel', onWheel, { passive: true }); addEventListener('touchstart', onTouchStart, { passive: true }); addEventListener('touchmove', onTouchMove, { passive: true }); addEventListener('keydown', onKey);
+      const snapTo = (v) => {
+        if (rests.some(([a, b]) => v >= a && v <= b)) return v;
+        const k = rests.findIndex(([, b]) => v < b + PASS); const a = rests[k][1]; const b = rests[k + 1][0]; const l = (v - a) / PASS;
+        const fwd = userDir > 0 ? l > 0.2 : userDir < 0 ? l > 0.8 : lastRest <= k ? l > 0.2 : l > 0.8;
+        return fwd ? b + 0.005 : a - 0.005;
       };
-      // un peu d'hystérésis : un léger retour en arrière près d'un seuil ne relance pas la transition
-      const B1 = [0.34, 0.68];
-      const pick = (p) => { const cand = p < B1[0] ? 0 : p < B1[1] ? 1 : 2; if (cur < 0) return cand; if (cand > cur && p < B1[cand - 1] + 0.015) return cur; if (cand < cur && p > B1[cand] - 0.015) return cur; return cand; };
-      const st = ST.create({ trigger: frame, start: () => `top top+=${hdrH()}`, end: () => `+=${innerHeight * 2.4}`, pin: true, anticipatePin: 1, invalidateOnRefresh: true, onUpdate: (s) => go(pick(s.progress)) });
-      // première bouteille posée dès que la section entre dans l'écran
-      const first = ST.create({ trigger: frame, start: 'top 70%', once: true, onEnter: () => { if (cur < 0) go(0); } });
-      const onGo = (e) => { const b = e.target.closest('[data-cave-go]'); if (!b) return; const k = +b.dataset.caveGo; smooth.to(st.start + (st.end - st.start) * [0.12, 0.51, 0.86][k]); };
+      const st = ST.create({ trigger: frame, start: () => `top top+=${hdrH()}`, end: () => `+=${innerHeight * 3}`, pin: true, anticipatePin: 1, invalidateOnRefresh: true, scrub: 0.5, animation: tl, onUpdate: trackRest });
+      // aimantation faite avec le défilement fluide du site (une aimantation ScrollTrigger se battrait avec lui)
+      let idle = 0;
+      const settle = () => { if (!st.isActive) return; const pr = st.progress; const to = snapTo(pr); if (Math.abs(to - pr) > 0.002) smooth.to(st.start + (st.end - st.start) * to); };
+      const onScroll = () => { clearTimeout(idle); idle = setTimeout(() => { if (smooth.raf) onScroll(); else settle(); }, 220); };
+      addEventListener('scroll', onScroll, { passive: true });
+      // le premier vin : la bouteille descend sur le socle à mesure que la section arrive, son texte entre avec elle
+      const A0 = P[0];
+      const entry = gsap.timeline({ defaults: { ease: 'none' }, scrollTrigger: { trigger: frame, start: 'top 85%', end: () => `top top+=${hdrH()}`, scrub: 0.5, invalidateOnRefresh: true } });
+      // détection sur l'animation elle-même (et non sur le défilement, qu'elle suit avec un léger retard)
+      entry.eventCallback('onUpdate', () => {
+        const e = entry.progress(); if (e >= 0.97 && !A0.landed) { A0.landed = true; land(0); } else if (e < 0.9) A0.landed = false;
+        if (tl.progress() > 0) syncFirst();
+      });
+      // si la page s'ouvre (ou se redimensionne) au milieu des trois vins, le passage reprend la main sur le premier vin
+      function syncFirst() { if (st.progress > 0.0005) { const pr = tl.progress(); tl.progress(0, true).progress(pr, true); } }
+      ST.addEventListener('refresh', syncFirst); requestAnimationFrame(syncFirst);
+      entry.fromTo(A0.bottle, { y: () => liftY(A0), rotation: -4 }, { y: 0, rotation: 0, duration: 0.75, ease: 'power1.out' }, 0.25)
+        .fromTo(A0.shadow, { scale: 0.25, autoAlpha: 0 }, { scale: 1, autoAlpha: 1, duration: 0.75, ease: 'power2.in' }, 0.25)
+        .fromTo(A0.words, { yPercent: 110 }, { yPercent: 0, duration: 0.35, ease: 'power2.out', stagger: 0.04 }, 0.2)
+        .fromTo(A0.items, { y: 22, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.35, ease: 'power2.out', stagger: 0.025 }, 0.3);
+      gsap.set(P.slice(1).map((p) => p.note), { autoAlpha: 0 });
+      mark(0);
+      const onGo = (e) => { const b = e.target.closest('[data-cave-go]'); if (!b) return; const k = +b.dataset.caveGo; const [a, bb] = rests[k]; smooth.to(st.start + (st.end - st.start) * (k === 0 ? a + 0.02 : k === N - 1 ? bb - 0.02 : (a + bb) / 2)); };
       frame.addEventListener('click', onGo);
       return () => {
-        frame.removeEventListener('click', onGo); first.kill(); if (xtl) xtl.kill();
-        frame.classList.remove('is-pinned');
+        frame.removeEventListener('click', onGo); removeEventListener('scroll', onScroll); removeEventListener('wheel', onWheel); removeEventListener('touchstart', onTouchStart); removeEventListener('touchmove', onTouchMove); removeEventListener('keydown', onKey); ST.removeEventListener('refresh', syncFirst); clearTimeout(idle); entry.scrollTrigger && entry.scrollTrigger.kill(); entry.kill();
+        frame.classList.remove('is-pinned'); chs.forEach((c) => { c.inert = false; });
         gsap.set(chs, { clearProps: 'all' });
-        P.forEach((p) => gsap.set([p.bottle, p.shadow, p.socle, p.num, ...p.items, p.note, ...p.words], { clearProps: 'opacity,visibility,transform' }));
-        P.forEach((p) => { gsap.set([p.bottle, p.shadow, p.dust], { xPercent: -50 }); });
+        P.forEach((p) => { gsap.set([p.bottle, p.shadow, p.socle, p.num, ...p.items, p.note, ...p.words], { clearProps: 'opacity,visibility,transform' }); gsap.set([p.bottle, p.shadow, p.dust], { xPercent: -50 }); p.landed = false; });
       };
     },
     '(max-width: 899px), (max-height: 699px)': () => {

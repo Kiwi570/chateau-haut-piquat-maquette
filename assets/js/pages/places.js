@@ -1,5 +1,5 @@
 // Parc et accès : mosaïque en parallaxe, plan schématique et boussole.
-import { $, $$, L, TOUCH } from '../core.js?v=14';
+import { $, $$, L, TOUCH } from '../core.js?v=15';
 
 const gsap = window.gsap; const ST = window.ScrollTrigger;
 

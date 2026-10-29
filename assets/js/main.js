@@ -1,15 +1,15 @@
 // Point d'entrée : socle commun, panier, puis module de la page.
-import { initCore, initReveals, opening, ageGate, CALM, $, scrollToEl } from './core.js?v=14';
-import { initCart } from './cart.js?v=14';
+import { initCore, initReveals, opening, ageGate, CALM, $, scrollToEl } from './core.js?v=15';
+import { initCart } from './cart.js?v=15';
 
 const page = document.body.dataset.page;
 const loaders = {
-  index: () => import('./pages/home.js?v=14'),
-  boutique: () => import('./pages/shop.js?v=14'),
-  vin: () => import('./pages/wine.js?v=14'),
-  oenotourisme: () => import('./pages/tourism.js?v=14'),
-  domaine: () => import('./pages/domain.js?v=14'),
-  vins: () => import('./pages/cellar.js?v=14'),
+  index: () => import('./pages/home.js?v=15'),
+  boutique: () => import('./pages/shop.js?v=15'),
+  vin: () => import('./pages/wine.js?v=15'),
+  oenotourisme: () => import('./pages/tourism.js?v=15'),
+  domaine: () => import('./pages/domain.js?v=15'),
+  vins: () => import('./pages/cellar.js?v=15'),
 };
 
 async function boot() {

@@ -1,4 +1,4 @@
-# Château Haut-Piquat · maquette v14
+# Château Haut-Piquat · maquette v15
 
 Maquette de démonstration du futur site du Château Haut-Piquat (Lussac Saint-Émilion), direction artistique « Calcaire à astéries ». Site statique en HTML, CSS et JavaScript, sans étape de construction, prêt pour Vercel.
 
@@ -32,7 +32,16 @@ Maquette de démonstration du futur site du Château Haut-Piquat (Lussac Saint-�
 1. Remplacer une image : déposer le nouveau fichier sous le même nom ; aucune règle de cache n'est à modifier.
 2. Changer un prix : modifier `assets/js/data.js`.
 3. À chaque version livrée, changer le numéro `?v=N` partout et à l'identique, dans les pages et dans les `import` JavaScript :
-   `grep -rl "?v=14" --include=*.html --include=*.js . | xargs sed -i "" "s/?v=14/?v=15/g"`
+   `grep -rl "?v=15" --include=*.html --include=*.js . | xargs sed -i "" "s/?v=15/?v=16/g"`
+
+## Version 15 : les bouteilles suivent le défilement
+
+- Page Les vins : les passages d'un vin à l'autre (bouteille soulevée, décor qui s'ouvre en cercle, nouvelle bouteille posée, texte) suivent désormais exactement le défilement, dans un sens comme dans l'autre, à n'importe quelle vitesse. En v14 ils duraient 2,3 s quelle que soit la vitesse : en défilant normalement, une transition était coupée en route et la section se libérait avec la dernière bouteille encore en l'air.
+- Seuls la pose (poussière, petit choc, son) et l'animation de la jauge, des médailles et de l'avis restent déclenchées, au contact réel de la bouteille avec le socle.
+- La première bouteille descend sur son socle à mesure que la section arrive à l'écran.
+- Aimantation : si l'on s'arrête au milieu d'un passage, la page glisse doucement jusqu'au vin suivant (ou revient au précédent si l'on remontait). Jamais de bouteille suspendue en l'air.
+- Chaque vin a un temps de pose pendant le défilement ; la section est un peu plus longue (3 hauteurs d'écran au lieu de 2,4).
+- Une page ouverte ou redimensionnée au milieu des trois vins se remet dans le bon état.
 
 ## Version 14 : les bouteilles se posent sur le socle
 
