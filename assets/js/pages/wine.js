@@ -1,7 +1,7 @@
 // Fiche vin : rendu depuis les données du site, bouteille qui pivote sur son socle.
-import { $, $$, L, eur, CALM, TOUCH, toast } from '../core.js?v=6';
-import { WINES, CHATEAUX, FORMATS, BOTTLES, TEXTURES } from '../data.js?v=6';
-import { addToCart } from '../cart.js?v=6';
+import { $, $$, L, eur, CALM, TOUCH, toast } from '../core.js?v=7';
+import { WINES, CHATEAUX, FORMATS, BOTTLES, TEXTURES } from '../data.js?v=7';
+import { addToCart } from '../cart.js?v=7';
 
 const gsap = window.gsap;
 let wine = null;

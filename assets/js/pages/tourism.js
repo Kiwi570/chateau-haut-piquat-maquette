@@ -1,7 +1,7 @@
 // Visites & événements : passage de l'arche, atelier écriVins, journée dans le Libournais, réservation simulée, accès et parc.
-import { $, $$, L, eur, CALM, TOUCH, DESKTOP, hdrH, scrollToEl, toast, lang, padMasks, sparkAt } from '../core.js?v=6';
-import { ACTIVITIES } from '../data.js?v=6';
-import { parc, buildMap, mapAnim } from './places.js?v=6';
+import { $, $$, L, eur, CALM, TOUCH, DESKTOP, hdrH, scrollToEl, toast, lang, padMasks, sparkAt } from '../core.js?v=7';
+import { ACTIVITIES } from '../data.js?v=7';
+import { parc, buildMap, mapAnim } from './places.js?v=7';
 
 const gsap = window.gsap; const ST = window.ScrollTrigger;
 

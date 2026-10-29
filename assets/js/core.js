@@ -166,7 +166,7 @@ function initCursor() {
   document.addEventListener('pointerover', (e) => {
     const t = e.target;
     c.classList.toggle('is-hover', !!t.closest('a, button, label, select, [data-cursor-hover]'));
-    c.classList.toggle('is-dark', !!t.closest('.is-dark, .hero, .coupe, .phero, .ohero, .chai, .ftr, .mmenu'));
+    c.classList.toggle('on-dark', !!t.closest('.is-dark, .hero, .coupe, .phero, .ohero, .chai, .ftr, .mmenu'));
   });
 }
 function initMagnetic() {
