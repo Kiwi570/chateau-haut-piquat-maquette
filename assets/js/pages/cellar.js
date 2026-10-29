@@ -1,6 +1,6 @@
 // Les vins : ouverture, tour de la cave, l'accord parfait, servir votre vin.
-import { $, $$, L, eur, CALM, TOUCH, hdrH, padMasks, sparkAt, smooth, thudSound } from '../core.js?v=15';
-import { WINES, CHATEAUX, FORMATS } from '../data.js?v=15';
+import { $, $$, L, eur, CALM, TOUCH, hdrH, padMasks, splitHold, sparkAt, smooth, thudSound, anticipate, pinType } from '../core.js?v=16';
+import { WINES, CHATEAUX, FORMATS } from '../data.js?v=16';
 
 const gsap = window.gsap; const ST = window.ScrollTrigger;
 const ORDER = ['hp', 'lf', 'bl'];
@@ -38,8 +38,8 @@ function fillChapters() {
 /* ---------- Ouverture ---------- */
 function heroIn() {
   const t = $('[data-hero-title]');
-  const s = window.SplitText ? SplitText.create(t, { type: 'words', mask: 'words' }) : null;
-  if (s) { padMasks(s, 'words'); gsap.from(s.words, { yPercent: 110, duration: 1.1, ease: 'expo.out', stagger: 0.08, delay: 0.1, onComplete: () => s.revert() }); }
+  const s = splitHold(t, 'words');
+  if (s) gsap.from(s.words, { yPercent: 110, duration: 1.1, ease: 'expo.out', stagger: 0.08, delay: 0.1, onComplete: s.done });
   gsap.from('.vhero__text .kicker, .vhero__text .lead, .vhero__text .hero__ctas > *', { y: 24, autoAlpha: 0, duration: 0.9, ease: 'power3.out', stagger: 0.08, delay: 0.35 });
   const plinths = $$('.vhero__plinth');
   gsap.from(plinths, { y: 80, autoAlpha: 0, duration: 1.2, ease: 'expo.out', stagger: 0.12, delay: 0.25 });
@@ -168,7 +168,7 @@ function cave() {
         const fwd = userDir > 0 ? l > 0.2 : userDir < 0 ? l > 0.8 : lastRest <= k ? l > 0.2 : l > 0.8;
         return fwd ? b + 0.005 : a - 0.005;
       };
-      const st = ST.create({ trigger: frame, start: () => `top top+=${hdrH()}`, end: () => `+=${innerHeight * 3}`, pin: true, anticipatePin: 1, invalidateOnRefresh: true, scrub: 0.5, animation: tl, onUpdate: trackRest });
+      const st = ST.create({ trigger: frame, start: () => `top top+=${hdrH()}`, end: () => `+=${innerHeight * 3}`, pin: true, anticipatePin: anticipate(), pinType: pinType(), invalidateOnRefresh: true, scrub: 0.5, animation: tl, onUpdate: trackRest });
       // aimantation faite avec le défilement fluide du site (une aimantation ScrollTrigger se battrait avec lui)
       let idle = 0;
       const settle = () => { if (!st.isActive) return; const pr = st.progress; const to = snapTo(pr); if (Math.abs(to - pr) > 0.002) smooth.to(st.start + (st.end - st.start) * to); };
@@ -222,6 +222,8 @@ const CATS = [
   ['terroir', L('Cèpes et terroir', 'Ceps and local fare'), /./],
 ];
 const catOf = (dish) => CATS.find(([, , re]) => re.test(dish))[0];
+// format dans le titre quand ce n'est pas la caisse de 75 cl (deux fiches 2019 : demi-bouteilles et magnums)
+const FMT_NAME = { d37: L('demi-bouteilles', 'half bottles'), m150: L('magnums', 'magnums'), dm300: L('double magnum', 'double magnum'), i600: L('impériale', 'impériale') };
 let accCat = 'canard';
 function buildAccords() {
   const chips = $('[data-acc-chips]'); if (!chips) return;
@@ -245,7 +247,7 @@ function renderAccords(animate) {
     if (animate && on && !was && !CALM) gsap.fromTo(el, { y: 8 }, { y: 0, duration: 0.7, ease: 'elastic.out(1, .45)' });
   });
   const box = $('[data-acc-results]');
-  box.innerHTML = hits.map(({ w, dishes }) => `<a class="acc-card" href="vin.html?id=${w.id}"><img src="${w.img.small}" alt="" width="${w.img.w}" height="${w.img.h}" loading="lazy"><span><b>${CHATEAUX[w.ch].name.replace('Haut-Piquat', '<span class="nw">Haut-Piquat</span>')} ${w.vintage}</b><i>${dishes.join(' · ')}</i><small>${L(FORMATS[w.fmt].label.fr, FORMATS[w.fmt].label.en)} · ${eur(w.price)}</small></span></a>`).join('');
+  box.innerHTML = hits.map(({ w, dishes }) => `<a class="acc-card" href="vin.html?id=${w.id}"><img src="${w.img.small}" alt="" width="${w.img.w}" height="${w.img.h}" loading="lazy"><span><b>${CHATEAUX[w.ch].name.replace('Haut-Piquat', '<span class="nw">Haut-Piquat</span>')} ${w.vintage}${FMT_NAME[w.fmt] ? ` <span class="acc-fmt">· ${FMT_NAME[w.fmt]}</span>` : ''}</b><i>${dishes.join(' · ')}</i><small>${L(FORMATS[w.fmt].label.fr, FORMATS[w.fmt].label.en)} · ${eur(w.price)}</small></span></a>`).join('');
   if (animate && !CALM) gsap.from($$('.acc-card', box), { y: 18, autoAlpha: 0, duration: 0.6, ease: 'power3.out', stagger: 0.04 });
 }
 

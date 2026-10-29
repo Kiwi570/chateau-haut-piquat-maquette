@@ -23,11 +23,12 @@
 <meta name="twitter:image" content="https://chateau-haut-piquat-maquette.vercel.app/assets/img/og/og-accueil.jpg">
 <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
 <link rel="preload" href="assets/fonts/fraunces-latin-full-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/fraunces-latin-full-italic.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="assets/fonts/manrope-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
 
-<link rel="stylesheet" href="assets/css/style.css?v=15">
-<link rel="modulepreload" href="assets/js/main.js?v=15">
-<script>(function(d){var h=d.documentElement;h.className=h.className.replace('no-js','js');try{var s=localStorage;var l=s.getItem('ahp-lang');if(l==='en'){h.lang='en';}if(matchMedia('(prefers-reduced-motion: reduce)').matches){h.classList.add('calm');}if(s.getItem('ahp-age')==='ok'){h.classList.add('age-ok');}if(sessionStorage.getItem('ahp-trans')==='1'){h.classList.add('trans-in');}}catch(e){}setTimeout(function(){if(!window.__ahpReady){h.classList.add('calm');h.classList.remove('trans-in');}},4500);})(document);</script>
+<link rel="stylesheet" href="assets/css/style.css?v=16">
+<link rel="modulepreload" href="assets/js/main.js?v=16">
+<script>(function(d){var h=d.documentElement;h.className=h.className.replace('no-js','js');try{var s=localStorage;var l=s.getItem('ahp-lang');if(l==='en'){h.lang='en';}if(matchMedia('(prefers-reduced-motion: reduce)').matches||s.getItem('ahp-calm')==='1'){h.classList.add('calm');}if(s.getItem('ahp-age')==='ok'){h.classList.add('age-ok');}if(sessionStorage.getItem('ahp-trans')==='1'){h.classList.add('trans-in');}}catch(e){}setTimeout(function(){if(!window.__ahpReady){h.classList.add('calm');h.classList.remove('trans-in');}},4500);})(document);</script>
 </head>
 <body data-page="informations">
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
@@ -56,7 +57,6 @@
   <nav class="hdr__nav" aria-label="Navigation principale" data-aria-en="Main navigation"><a href="domaine.html"><span lang="fr">Le domaine</span><span lang="en">The estate</span></a><a href="vins.html"><span lang="fr">Les vins</span><span lang="en">The wines</span></a><a href="boutique.html"><span lang="fr">Boutique</span><span lang="en">Shop</span></a><a href="oenotourisme.html"><span lang="fr">Visites & événements</span><span lang="en">Visits & events</span></a><a href="oenotourisme.html#acces"><span lang="fr">Venir</span><span lang="en">Visit us</span></a></nav>
   <div class="hdr__tools">
     <button class="tool tool--lang" type="button" data-lang-toggle aria-label="English version" data-aria-en="Version française"><span class="l-fr" aria-hidden="true">FR</span><span class="l-sep" aria-hidden="true">/</span><span class="l-en" aria-hidden="true">EN</span></button>
-    <button class="tool hide-sm" type="button" data-sound aria-pressed="false" aria-label="Ambiance sonore" data-aria-en="Ambient sound" data-tip="Ambiance sonore" data-tip-en="Ambient sound"><svg><use href="#i-sound"/></svg></button>
     <a class="hdr__cta magnetic" href="oenotourisme.html#reserver"><span lang="fr">Réserver</span><span lang="en">Book</span></a>
     <button class="tool tool--cart" type="button" data-cart-open aria-label="Ouvrir le panier" data-aria-en="Open cart" data-tip="Panier" data-tip-en="Cart"><svg><use href="#i-cart"/></svg><span class="cart-count" data-cart-count></span></button>
     <button class="tool tool--menu" type="button" data-menu aria-expanded="false" aria-controls="mmenu" aria-label="Menu"><svg><use href="#i-menu"/></svg></button>
@@ -67,7 +67,8 @@
   <div>
     <div class="mmenu__ctas"><a class="btn btn--light" href="oenotourisme.html#reserver"><span lang="fr">Réserver une visite</span><span lang="en">Book a visit</span></a><a class="btn btn--ghost" href="boutique.html"><span lang="fr">Boutique en ligne</span><span lang="en">Online shop</span></a></div>
     <div class="mmenu__tools">
-      <button class="tool" type="button" data-sound aria-pressed="false"><span lang="fr">Son</span><span lang="en">Sound</span></button>
+      <button class="tool" type="button" data-sound aria-pressed="false"><span lang="fr">Son d'ambiance</span><span lang="en">Ambient sound</span></button>
+      <button class="tool" type="button" data-calm-toggle><span lang="fr">Réduire les animations</span><span lang="en">Reduce motion</span></button>
     </div>
     <p class="mmenu__foot">Château Haut-Piquat · 33570 Lussac · <a href="tel:+33685304242">+33 6 85 30 42 42</a></p>
   </div>
@@ -80,14 +81,15 @@
   <div class="doc__grid">
     <nav class="doc__nav" aria-label="Sommaire" data-aria-en="Contents"><a href="#mentions"><span lang="fr">Mentions légales</span><span lang="en">Legal notice</span></a><a href="#donnees"><span lang="fr">Données personnelles</span><span lang="en">Personal data</span></a><a href="#cgv"><span lang="fr">Conditions de vente</span><span lang="en">Terms of sale</span></a><a href="#alcool"><span lang="fr">Vente d'alcool</span><span lang="en">Alcohol sales</span></a></nav>
     <article>
-      <div class="flag"><span lang="fr">Page de maquette reprenant les informations du site actuel. Les éléments marqués «&nbsp;à compléter&nbsp;» doivent être fournis par le domaine avant la mise en ligne.</span><span lang="en">Mock-up page using the information on the current website. Items marked “to complete” must be supplied by the estate before launch.</span></div>
+      <div class="flag"><span lang="fr">Page de maquette. Les éléments marqués «&nbsp;à compléter&nbsp;» doivent être fournis par le domaine avant la mise en ligne.</span><span lang="en">Mock-up page. Items marked “to complete” must be supplied by the estate before launch.</span></div>
       <h2 id="mentions"><span lang="fr">Mentions légales</span><span lang="en">Legal notice</span></h2>
       <h3><span lang="fr">Éditeur</span><span lang="en">Publisher</span></h3>
       <p>SARL Vignoble Rivière Jean Pierre, Château Haut-Piquat, 33570 Lussac. <span lang="fr">Capital, RCS, SIRET et numéro de TVA&nbsp;:</span><span lang="en">Share capital, trade register, SIRET and VAT numbers:</span> <span class="todo"><span lang="fr">à compléter</span><span lang="en">to complete</span></span></p>
       <h3><span lang="fr">Directeur de la publication</span><span lang="en">Publishing director</span></h3><p>Jean-Pierre Rivière</p>
       <h3>Contact</h3><p>+33 6 85 30 42 42 · <a class="link" href="mailto:jpriviere@chateau-haut-piquat.com">jpriviere@chateau-haut-piquat.com</a> · Château Haut-Piquat, 33570 Lussac</p>
-      <h3><span lang="fr">Hébergement</span><span lang="en">Hosting</span></h3><p><span class="todo"><span lang="fr">à compléter selon l'hébergeur retenu</span><span lang="en">to complete once the host is chosen</span></span></p>
+      <h3><span lang="fr">Hébergement</span><span lang="en">Hosting</span></h3><p><span lang="fr">Maquette hébergée par</span><span lang="en">Mock-up hosted by</span> Vercel Inc., 440 N Barranca Avenue #4133, Covina, CA 91723, <span lang="fr">États-Unis</span><span lang="en">United States</span> (vercel.com). <span lang="fr">Hébergeur du site définitif&nbsp;:</span><span lang="en">Host of the final website:</span> <span class="todo"><span lang="fr">à compléter</span><span lang="en">to complete</span></span></p>
       <div class="flag"><span lang="fr">Le texte actuel mentionne «&nbsp;La petite boutique des couleurs&nbsp;», copié d'un autre site, et ne précise ni la raison sociale ni le SIRET.</span><span lang="en">The current text mentions “La petite boutique des couleurs”, copied from another site, and gives neither company name nor SIRET.</span></div>
+      <h3><span lang="fr">Crédits</span><span lang="en">Credits</span></h3><p><span lang="fr">Photographies&nbsp;: Château Haut-Piquat. Textures, pierre, socles, strates du sol, fonds de cave et rayon de lumière&nbsp;: illustrations générées avec Grok (xAI), signalées sur chaque visuel par la mention «&nbsp;Illustration générée&nbsp;», à conserver sur le site définitif. Polices Fraunces et Manrope (SIL Open Font License), animations GSAP et OGL.</span><span lang="en">Photographs: Château Haut-Piquat. Textures, stone, plinths, soil layers, cellar backdrops and light beam: illustrations generated with Grok (xAI), each marked “AI-generated illustration”, to be kept on the final website. Fraunces and Manrope typefaces (SIL Open Font License), GSAP and OGL animation.</span></p>
       <h2 id="donnees"><span lang="fr">Données personnelles</span><span lang="en">Personal data</span></h2>
       <p><span lang="fr">Les informations recueillies par les formulaires sont enregistrées par Jean-Pierre Rivière sur la base de votre consentement et conservées un an. Vous pouvez y accéder, les rectifier ou demander leur effacement en écrivant à</span><span lang="en">Information collected through the forms is recorded by Jean-Pierre Rivière on the basis of your consent and kept for one year. You may access, correct or request deletion of it by writing to</span> <a class="link" href="mailto:jpriviere@chateau-haut-piquat.com">jpriviere@chateau-haut-piquat.com</a>. <span lang="fr">Plus d'informations sur cnil.fr.</span><span lang="en">More information at cnil.fr.</span></p>
       <div class="flag"><span lang="fr">Le texte actuel nomme comme contact «&nbsp;Clémentine Decoursier&nbsp;» avec l'adresse de Jean-Pierre Rivière&nbsp;: à corriger.</span><span lang="en">The current text names “Clémentine Decoursier” as contact with Jean-Pierre Rivière's address: to be corrected.</span></div>
@@ -162,6 +164,7 @@
       <span>© 2026 Château Haut-Piquat · SARL Vignoble Rivière Jean Pierre</span>
       <span><span lang="fr">Maquette de démonstration&nbsp;: paiement, réservation et formulaires simulés, rien n'est envoyé.</span><span lang="en">Demonstration mock-up: payment, booking and forms are simulated, nothing is sent.</span></span>
       <span><span lang="fr">La vente d'alcool est interdite aux mineurs.</span><span lang="en">The sale of alcohol to minors is prohibited.</span></span>
+      <span class="ftr__tools"><button class="ftr__tool" type="button" data-sound aria-pressed="false"><span lang="fr">Son d'ambiance</span><span lang="en">Ambient sound</span></button><button class="ftr__tool" type="button" data-calm-toggle><span lang="fr">Réduire les animations</span><span lang="en">Reduce motion</span></button></span>
     </div>
     <div class="ftr__big" aria-hidden="true">Haut-Piquat</div>
   </div>
@@ -201,6 +204,6 @@
 <script src="assets/vendor/gsap/DrawSVGPlugin.min.js" defer></script>
 <script src="assets/vendor/gsap/CustomEase.min.js" defer></script>
 <script src="assets/vendor/gsap/Flip.min.js" defer></script>
-<script type="module" src="assets/js/main.js?v=15"></script>
+<script type="module" src="assets/js/main.js?v=16"></script>
 </body>
 </html>

@@ -1,7 +1,9 @@
 // Visites & événements : passage de l'arche, atelier écriVins, journée dans le Libournais, réservation simulée, accès et parc.
-import { $, $$, L, eur, CALM, TOUCH, DESKTOP, hdrH, scrollToEl, toast, lang, padMasks, sparkAt } from '../core.js?v=15';
-import { ACTIVITIES } from '../data.js?v=15';
-import { parc, buildMap, mapAnim } from './places.js?v=15';
+import { $, $$, L, eur, CALM, TOUCH, DESKTOP, hdrH, scrollToEl, toast, lang, padMasks, splitHold, sparkAt, anticipate, pinType } from '../core.js?v=16';
+import { ACTIVITIES } from '../data.js?v=16';
+// taille de groupe : « à compléter » quand le domaine ne l'a pas donnée (formule avec repas vigneron)
+const grp = (a) => (a.sizeTodo ? `<span class="todo">${L('groupe à compléter', 'group size to complete')}</span>` : L(`${a.min} à ${a.max} pers.`, `${a.min} to ${a.max} people`));
+import { parc, buildMap, mapAnim } from './places.js?v=16';
 
 const gsap = window.gsap; const ST = window.ScrollTrigger;
 
@@ -24,7 +26,7 @@ function initBooking() {
   const list = $('[data-formule-list]'); const date = $('[data-bdate]'); const n = $('[data-bn]');
   const alert = $('[data-balert]'); const sum = $('[data-bsum]'); const sumL = $('[data-bsum-label]'); const submit = $('[data-bsubmit]');
   const pre = new URLSearchParams(location.search).get('formule');
-  list.innerHTML = ACTIVITIES.map((a, i) => `<label><input type="radio" name="formule" value="${a.id}" ${(pre ? pre === a.id : i === 0) ? 'checked' : ''}><span><b>${L(a.name.fr, a.name.en)}</b><small>${L(a.dur.fr, a.dur.en)} · ${L(`${a.min} à ${a.max} pers.`, `${a.min} to ${a.max} people`)}</small></span><span class="p">${eur(a.price)}</span></label>`).join('');
+  list.innerHTML = ACTIVITIES.map((a, i) => `<label><input type="radio" name="formule" value="${a.id}" ${(pre ? pre === a.id : i === 0) ? 'checked' : ''}><span><b>${L(a.name.fr, a.name.en)}</b><small>${L(a.dur.fr, a.dur.en)} · ${grp(a)}</small></span><span class="p">${eur(a.price)}</span></label>`).join('');
   const t = new Date(); t.setDate(t.getDate() + 1); date.min = iso(new Date(Date.UTC(t.getFullYear(), t.getMonth(), t.getDate())));
   const cur = () => ACTIVITIES.find((a) => a.id === (form.formule.value || 'visite'));
   function update() {
@@ -51,9 +53,9 @@ function initBooking() {
     const a = cur(); const card = $(`[data-pick="${a.id}"]`)?.closest('.tcard'); const ul = card ? $('ul', card) : null;
     recap.innerHTML = `<span class="frame"><img src="assets/img/photos/${IMG[a.id]}-640.webp" alt="" width="640" height="360" loading="lazy" decoding="async" style="width:100%;height:100%;object-fit:cover"></span>
       <b>${L(a.name.fr, a.name.en)}</b>
-      <p class="small muted" style="margin:0">${L(a.dur.fr, a.dur.en)} · ${L(`${a.min} à ${a.max} pers.`, `${a.min} to ${a.max} people`)} · ${L(`${a.price}&nbsp;€ par personne`, `€${a.price} per person`)}</p>
+      <p class="small muted" style="margin:0">${L(a.dur.fr, a.dur.en)} · ${grp(a)} · ${L(`${a.price}&nbsp;€ par personne`, `€${a.price} per person`)}</p>
       ${ul ? `<ul>${ul.innerHTML}</ul>` : ''}
-      <p class="form-note" style="margin:0">${a.online ? L('Réservable en ligne sur le site actuel.', 'Bookable online on the current website.') : L('Sur demande auprès du domaine.', 'On request from the estate.')}</p>`;
+      <p class="form-note" style="margin:0">${a.online ? L('Réservable en ligne du lundi au vendredi.', 'Bookable online Monday to Friday.') : L('Sur demande auprès du domaine.', 'On request from the estate.')}</p>`;
   }
   const fieldOf = (el) => el.closest('.field') || el.closest('.check');
   function setErr(el, bad) { const f = fieldOf(el); if (f) f.classList.toggle('is-invalid', bad); el.setAttribute('aria-invalid', bad ? 'true' : 'false'); }
@@ -156,11 +158,11 @@ export function setup() { initBooking(); initEcri(); buildDayMap(); buildMap(); 
 export function enter() {
   if (CALM) return;
   const t = $('[data-hero-title]');
-  const s = window.SplitText ? SplitText.create(t, { type: 'chars', mask: 'chars' }) : null;
-  if (s) { padMasks(s, 'chars'); gsap.from(s.chars, { yPercent: 115, duration: 1, ease: 'expo.out', stagger: 0.03, delay: 0.1, onComplete: () => s.revert() }); }
+  const s = splitHold(t, 'chars');
+  if (s) gsap.from(s.chars, { yPercent: 115, duration: 1, ease: 'expo.out', stagger: 0.03, delay: 0.1, onComplete: s.done });
   gsap.from('.ohero__content p, .ohero__content .hero__ctas, .ohero__label', { y: 24, autoAlpha: 0, duration: 0.9, ease: 'power3.out', stagger: 0.1, delay: 0.45 });
   // passer l'arche : l'image grandit au défilement, on entre dans le vignoble
-  gsap.fromTo('[data-arch]', { scale: 1.06 }, { scale: DESKTOP() ? 2.3 : 1.7, ease: 'none', scrollTrigger: { trigger: '[data-ohero]', start: 'top top', end: () => `+=${innerHeight * 0.9}`, scrub: 0.6, pin: true, anticipatePin: 1 } });
+  gsap.fromTo('[data-arch]', { scale: 1.06 }, { scale: DESKTOP() ? 1.75 : 1.35, ease: 'none', scrollTrigger: { trigger: '[data-ohero]', start: 'top top', end: () => `+=${innerHeight * 0.9}`, scrub: 0.6, pin: true, anticipatePin: anticipate(), pinType: pinType() } });
   gsap.to('.ohero__content', { autoAlpha: 0, y: -60, ease: 'none', scrollTrigger: { trigger: '[data-ohero]', start: 'top top', end: () => `+=${innerHeight * 0.5}`, scrub: true } });
   // frise de la journée
   gsap.to('[data-tl-fill]', { scaleY: 1, ease: 'none', scrollTrigger: { trigger: '[data-tl]', start: 'top 75%', end: 'bottom 55%', scrub: true } });

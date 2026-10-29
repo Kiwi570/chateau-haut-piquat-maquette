@@ -1,9 +1,10 @@
 // Boutique : filtres, cartes inclinables, ajout au panier, règle des formats.
-import { $, $$, L, eur, CALM, TOUCH, scrollToEl, sparkAt } from '../core.js?v=15';
-import { WINES, CHATEAUX, FORMATS } from '../data.js?v=15';
-import { addToCart } from '../cart.js?v=15';
+import { $, $$, L, eur, CALM, TOUCH, scrollToEl, sparkAt, splitHold, fmtShort } from '../core.js?v=16';
+import { WINES, CHATEAUX, FORMATS } from '../data.js?v=16';
+import { addToCart } from '../cart.js?v=16';
 
 const gsap = window.gsap; const Flip = window.Flip;
+const pw = (u) => +((u.match(/-(\d+)\.webp$/) || [0, 840])[1]); // largeur du fichier, lue dans son nom
 const ORDER = WINES.map((w) => w.id);
 const LIMIT = 12; let expanded = false;
 const state = { ch: new Set(), vin: new Set(), fmt: new Set(), coeur: false, promo: false, sort: 'default' };
@@ -22,10 +23,10 @@ function card(w) {
   const badge = w.badge === 'coeur' ? `<span class="pcard__badge is-coeur">${L('Coup de cœur', 'Favourite')}</span>` : w.badge === 'promo' ? `<span class="pcard__badge is-promo">${L('Promotion', 'Offer')}</span>` : '';
   const dist = w.dist.filter((d) => d.k !== 'hve').slice(0, 2).map((d) => L(d.t.fr, d.t.en)).join(' · ');
   return `<article class="pcard" data-id="${w.id}" data-flip-id="${w.id}">
-    <a class="pcard__img" href="vin.html?id=${w.id}" aria-label="${ch.name} ${w.vintage}">${badge}<img src="${w.img.src}" width="${w.img.w}" height="${w.img.h}" alt="${ch.name} ${w.vintage}, ${f.label.fr}" loading="lazy" decoding="async" data-pimg></a>
+    <a class="pcard__img" href="vin.html?id=${w.id}" aria-label="${ch.name} ${w.vintage}">${badge}<img src="${w.img.src}" srcset="${w.img.small} 420w, ${w.img.src} ${pw(w.img.src)}w" sizes="(min-width: 1100px) 320px, (min-width: 700px) 32vw, 48vw" width="${w.img.w}" height="${w.img.h}" alt="${ch.name} ${w.vintage}, ${f.label.fr}" loading="lazy" decoding="async" data-pimg></a>
     <div class="pcard__body">
       <h3><a href="vin.html?id=${w.id}">${ch.name.replace('Haut-Piquat', '<span class="nw">Haut-Piquat</span>')} <span class="num">${w.vintage}</span></a></h3>
-      <p class="pcard__fmt"><span class="long">${L(f.label.fr, f.label.en)}</span><span class="short">${f.units} × ${f.cl} cl</span></p>
+      <p class="pcard__fmt"><span class="long">${L(f.label.fr, f.label.en)}</span><span class="short">${fmtShort(f)}</span></p>
       ${dist ? `<p class="pcard__dist">${dist}</p>` : ''}
       <div class="pcard__price"><b>${eur(w.price)}</b>${w.old ? `<s>${eur(w.old)}</s>` : ''}<small>${L(`${eur(per)} / ${f.unit.fr === 'bouteille' ? 'bt' : f.unit.fr}`, `${eur(per)} / ${f.unit.en === 'bottle' ? 'btl' : f.unit.en}`)}${w.promo51 ? L(' · 5 + 1 offerte', ' · 5 + 1 free') : ''}</small></div>
       <button class="btn btn--sm pcard__add" type="button" data-add="${w.id}">${L('Ajouter', 'Add')}</button>
@@ -183,8 +184,8 @@ export function setup() {
 export function enter() {
   if (CALM) return;
   const t = $('[data-hero-title]');
-  const s = window.SplitText ? SplitText.create(t, { type: 'words', mask: 'words' }) : null;
-  if (s) gsap.from(s.words, { yPercent: 110, duration: 1.1, ease: 'expo.out', stagger: 0.07, delay: 0.1 });
+  const s = splitHold(t, 'words');
+  if (s) gsap.from(s.words, { yPercent: 110, duration: 1.1, ease: 'expo.out', stagger: 0.07, delay: 0.1, onComplete: s.done });
   gsap.from('.phero__content .kicker, .phero__content .lead', { y: 24, autoAlpha: 0, duration: 0.9, ease: 'power3.out', stagger: 0.1, delay: 0.4 });
   gsap.fromTo('[data-parallax-img]', { scale: 1.15 }, { scale: 1, duration: 2, ease: 'expo.out' });
   gsap.to('[data-parallax-img]', { yPercent: 12, ease: 'none', scrollTrigger: { trigger: '[data-phero]', start: 'top top', end: 'bottom top', scrub: true } });

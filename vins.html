@@ -23,11 +23,12 @@
 <meta name="twitter:image" content="https://chateau-haut-piquat-maquette.vercel.app/assets/img/og/og-vins.jpg">
 <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
 <link rel="preload" href="assets/fonts/fraunces-latin-full-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/fraunces-latin-full-italic.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="assets/fonts/manrope-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" as="image" href="assets/img/grok/socle-detoure-800.webp" imagesrcset="assets/img/grok/socle-detoure-400.webp 400w, assets/img/grok/socle-detoure-800.webp 800w" imagesizes="100vw" fetchpriority="high">
-<link rel="stylesheet" href="assets/css/style.css?v=15">
-<link rel="modulepreload" href="assets/js/main.js?v=15">
-<script>(function(d){var h=d.documentElement;h.className=h.className.replace('no-js','js');try{var s=localStorage;var l=s.getItem('ahp-lang');if(l==='en'){h.lang='en';}if(matchMedia('(prefers-reduced-motion: reduce)').matches){h.classList.add('calm');}if(s.getItem('ahp-age')==='ok'){h.classList.add('age-ok');}if(sessionStorage.getItem('ahp-trans')==='1'){h.classList.add('trans-in');}}catch(e){}setTimeout(function(){if(!window.__ahpReady){h.classList.add('calm');h.classList.remove('trans-in');}},4500);})(document);</script>
+<link rel="stylesheet" href="assets/css/style.css?v=16">
+<link rel="modulepreload" href="assets/js/main.js?v=16">
+<script>(function(d){var h=d.documentElement;h.className=h.className.replace('no-js','js');try{var s=localStorage;var l=s.getItem('ahp-lang');if(l==='en'){h.lang='en';}if(matchMedia('(prefers-reduced-motion: reduce)').matches||s.getItem('ahp-calm')==='1'){h.classList.add('calm');}if(s.getItem('ahp-age')==='ok'){h.classList.add('age-ok');}if(sessionStorage.getItem('ahp-trans')==='1'){h.classList.add('trans-in');}}catch(e){}setTimeout(function(){if(!window.__ahpReady){h.classList.add('calm');h.classList.remove('trans-in');}},4500);})(document);</script>
 </head>
 <body data-page="vins">
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
@@ -56,7 +57,6 @@
   <nav class="hdr__nav" aria-label="Navigation principale" data-aria-en="Main navigation"><a href="domaine.html"><span lang="fr">Le domaine</span><span lang="en">The estate</span></a><a href="vins.html" aria-current="page"><span lang="fr">Les vins</span><span lang="en">The wines</span></a><a href="boutique.html"><span lang="fr">Boutique</span><span lang="en">Shop</span></a><a href="oenotourisme.html"><span lang="fr">Visites & événements</span><span lang="en">Visits & events</span></a><a href="oenotourisme.html#acces"><span lang="fr">Venir</span><span lang="en">Visit us</span></a></nav>
   <div class="hdr__tools">
     <button class="tool tool--lang" type="button" data-lang-toggle aria-label="English version" data-aria-en="Version française"><span class="l-fr" aria-hidden="true">FR</span><span class="l-sep" aria-hidden="true">/</span><span class="l-en" aria-hidden="true">EN</span></button>
-    <button class="tool hide-sm" type="button" data-sound aria-pressed="false" aria-label="Ambiance sonore" data-aria-en="Ambient sound" data-tip="Ambiance sonore" data-tip-en="Ambient sound"><svg><use href="#i-sound"/></svg></button>
     <a class="hdr__cta magnetic" href="oenotourisme.html#reserver"><span lang="fr">Réserver</span><span lang="en">Book</span></a>
     <button class="tool tool--cart" type="button" data-cart-open aria-label="Ouvrir le panier" data-aria-en="Open cart" data-tip="Panier" data-tip-en="Cart"><svg><use href="#i-cart"/></svg><span class="cart-count" data-cart-count></span></button>
     <button class="tool tool--menu" type="button" data-menu aria-expanded="false" aria-controls="mmenu" aria-label="Menu"><svg><use href="#i-menu"/></svg></button>
@@ -67,7 +67,8 @@
   <div>
     <div class="mmenu__ctas"><a class="btn btn--light" href="oenotourisme.html#reserver"><span lang="fr">Réserver une visite</span><span lang="en">Book a visit</span></a><a class="btn btn--ghost" href="boutique.html"><span lang="fr">Boutique en ligne</span><span lang="en">Online shop</span></a></div>
     <div class="mmenu__tools">
-      <button class="tool" type="button" data-sound aria-pressed="false"><span lang="fr">Son</span><span lang="en">Sound</span></button>
+      <button class="tool" type="button" data-sound aria-pressed="false"><span lang="fr">Son d'ambiance</span><span lang="en">Ambient sound</span></button>
+      <button class="tool" type="button" data-calm-toggle><span lang="fr">Réduire les animations</span><span lang="en">Reduce motion</span></button>
     </div>
     <p class="mmenu__foot">Château Haut-Piquat · 33570 Lussac · <a href="tel:+33685304242">+33 6 85 30 42 42</a></p>
   </div>
@@ -87,6 +88,7 @@
       <div class="vhero__plinth is-lf"><img class="socle" src="assets/img/grok/socle-detoure-800.webp" srcset="assets/img/grok/socle-detoure-400.webp 400w, assets/img/grok/socle-detoure-800.webp 800w" sizes="18vw" width="573" height="447" alt="" loading="lazy" decoding="async"><img class="vhero__bottle" src="assets/img/vins/bouteille-la-fleur-736.webp" srcset="assets/img/vins/bouteille-la-fleur-360.webp 360w, assets/img/vins/bouteille-la-fleur-720.webp 720w, assets/img/vins/bouteille-la-fleur-736.webp 736w" sizes="8vw" width="736" height="2689" alt="" loading="lazy" decoding="async" data-vh-bottle></div>
       <div class="vhero__plinth is-hp"><img class="socle" src="assets/img/grok/socle-detoure-800.webp" srcset="assets/img/grok/socle-detoure-400.webp 400w, assets/img/grok/socle-detoure-800.webp 800w" sizes="22vw" width="573" height="447" alt="" loading="lazy" decoding="async"><img class="vhero__bottle" src="assets/img/vins/bouteille-haut-piquat-675.webp" srcset="assets/img/vins/bouteille-haut-piquat-360.webp 360w, assets/img/vins/bouteille-haut-piquat-675.webp 675w" sizes="10vw" width="675" height="2675" alt="" loading="lazy" decoding="async" data-vh-bottle></div>
       <div class="vhero__plinth is-bl"><img class="socle" src="assets/img/grok/socle-detoure-800.webp" srcset="assets/img/grok/socle-detoure-400.webp 400w, assets/img/grok/socle-detoure-800.webp 800w" sizes="18vw" width="573" height="447" alt="" loading="lazy" decoding="async"><img class="vhero__bottle" src="assets/img/vins/bouteille-beaulieu-676.webp" srcset="assets/img/vins/bouteille-beaulieu-360.webp 360w, assets/img/vins/bouteille-beaulieu-676.webp 676w" sizes="8vw" width="676" height="2672" alt="" loading="lazy" decoding="async" data-vh-bottle></div>
+      <span class="gen-tag"><span lang="fr">Illustration générée</span><span lang="en">AI-generated illustration</span></span>
     </div>
   </div>
 </section>
@@ -99,6 +101,8 @@
     <span class="cave__num" aria-hidden="true">01</span>
     <img class="socle" src="assets/img/grok/socle-detoure-800.webp" srcset="assets/img/grok/socle-detoure-400.webp 400w, assets/img/grok/socle-detoure-800.webp 800w" sizes="(min-width:900px) 34vw, 80vw" width="573" height="447" alt="" loading="lazy" decoding="async">
     <img class="cave__bottle" src="assets/img/vins/bouteille-haut-piquat-675.webp" srcset="assets/img/vins/bouteille-haut-piquat-360.webp 360w, assets/img/vins/bouteille-haut-piquat-675.webp 675w" sizes="(min-width:900px) 14vw, 34vw" width="675" height="2675" alt="Bouteille de Château Haut-Piquat, Lussac Saint-Émilion" loading="lazy" decoding="async" data-cave-bottle>
+    <span class="cave__label"><span lang="fr">Étiquette du millésime 2018</span><span lang="en">2018 vintage label</span></span>
+    <span class="gen-tag"><span lang="fr">Illustration générée</span><span lang="en">AI-generated illustration</span></span>
   </div>
   <div class="cave__panel" data-cave-panel>
     <p class="kicker"><span lang="fr">Le vin du château · Lussac Saint-Émilion</span><span lang="en">The château wine · Lussac Saint-Émilion</span></p>
@@ -113,14 +117,16 @@
 </article><article class="cave__chapter cuvee--lf" data-cave-chapter="lf" aria-labelledby="cv-lf">
   <div class="cave__stage" data-cave-stage>
     <span class="cave__num" aria-hidden="true">02</span>
-    <img class="socle" src="assets/img/grok/socle-detoure-800.webp" srcset="assets/img/grok/socle-detoure-400.webp 400w, assets/img/grok/socle-detoure-800.webp 800w" sizes="(min-width:900px) 34vw, 80vw" width="573" height="447" alt="" loading="lazy" decoding="async">
+    <img class="socle" src="assets/img/grok/socle-detoure-lf-800.webp" srcset="assets/img/grok/socle-detoure-lf-400.webp 400w, assets/img/grok/socle-detoure-lf-800.webp 800w" sizes="(min-width:900px) 34vw, 80vw" width="573" height="447" alt="" loading="lazy" decoding="async">
     <img class="cave__bottle" src="assets/img/vins/bouteille-la-fleur-736.webp" srcset="assets/img/vins/bouteille-la-fleur-360.webp 360w, assets/img/vins/bouteille-la-fleur-720.webp 720w, assets/img/vins/bouteille-la-fleur-736.webp 736w" sizes="(min-width:900px) 14vw, 34vw" width="736" height="2689" alt="Bouteille de La Fleur de Château Haut-Piquat, Lussac Saint-Émilion" loading="lazy" decoding="async" data-cave-bottle>
+    <span class="cave__label"><span lang="fr">Étiquette du millésime 2018</span><span lang="en">2018 vintage label</span></span>
+    <span class="gen-tag"><span lang="fr">Illustration générée</span><span lang="en">AI-generated illustration</span></span>
   </div>
   <div class="cave__panel" data-cave-panel>
     <p class="kicker"><span lang="fr">Cuvée prestige · 100 % merlot</span><span lang="en">Prestige cuvée · 100% merlot</span></p>
     <h3 class="h2 cave__name" id="cv-lf">La Fleur de Château <span class="nw">Haut-Piquat</span></h3>
     <p class="cave__offer small" data-cave-offer="lf"></p>
-    <dl class="specs"><dt><span lang="fr">Surface</span><span lang="en">Area</span></dt><dd>4 ha</dd><dt><span lang="fr">Sol</span><span lang="en">Soil</span></dt><dd><span lang="fr">plateaux calcaires et côtes d'argiles rouges</span><span lang="en">limestone plateaus, red clay slopes</span></dd><dt><span lang="fr">Élevage</span><span lang="en">Ageing</span></dt><dd><span lang="fr">12 mois en fûts de chêne, 80 % neufs</span><span lang="en">12 months in oak, 80% new</span></dd></dl>
+    <dl class="specs"><dt><span lang="fr">Surface</span><span lang="en">Area</span></dt><dd>4 ha</dd><dt><span lang="fr">Sol</span><span lang="en">Soil</span></dt><dd><span class="todo"><span lang="fr">à compléter</span><span lang="en">to complete</span></span></dd><dt><span lang="fr">Élevage</span><span lang="en">Ageing</span></dt><dd><span lang="fr">12 mois en fûts de chêne, 80 % neufs</span><span lang="en">12 months in oak, 80% new</span></dd></dl>
     <div class="blend is-wine cave__blend"><span style="flex:100 1 0;--c:#8E2742"  data-cv-seg><i>100&nbsp;%</i></span></div><div class="blend-legend"><span style="--c:#8E2742"><b>100&nbsp;%</b> merlot</span></div>
     <div class="medals"><span class="medal is-or"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/><circle cx="12" cy="12" r="6"/></svg><span lang="fr">Or · Mâcon 2019 (2016)</span><span lang="en">Gold · Mâcon 2019 (2016)</span></span><span class="medal is-note"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/><circle cx="12" cy="12" r="6"/></svg>Wine Enthusiast 91 (2016)</span><span class="medal is-note"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/><circle cx="12" cy="12" r="6"/></svg>Guide Hachette ★ (2017, 2019)</span></div>
     <figure class="cave__note" data-cave-note="lf-2016"></figure>
@@ -129,8 +135,10 @@
 </article><article class="cave__chapter cuvee--bl" data-cave-chapter="bl" aria-labelledby="cv-bl">
   <div class="cave__stage" data-cave-stage>
     <span class="cave__num" aria-hidden="true">03</span>
-    <img class="socle" src="assets/img/grok/socle-detoure-800.webp" srcset="assets/img/grok/socle-detoure-400.webp 400w, assets/img/grok/socle-detoure-800.webp 800w" sizes="(min-width:900px) 34vw, 80vw" width="573" height="447" alt="" loading="lazy" decoding="async">
+    <img class="socle" src="assets/img/grok/socle-detoure-bl-800.webp" srcset="assets/img/grok/socle-detoure-bl-400.webp 400w, assets/img/grok/socle-detoure-bl-800.webp 800w" sizes="(min-width:900px) 34vw, 80vw" width="573" height="447" alt="" loading="lazy" decoding="async">
     <img class="cave__bottle" src="assets/img/vins/bouteille-beaulieu-676.webp" srcset="assets/img/vins/bouteille-beaulieu-360.webp 360w, assets/img/vins/bouteille-beaulieu-676.webp 676w" sizes="(min-width:900px) 14vw, 34vw" width="676" height="2672" alt="Bouteille de Château de Beaulieu, Montagne Saint-Émilion" loading="lazy" decoding="async" data-cave-bottle>
+    <span class="cave__label"><span lang="fr">Étiquette du millésime 2018</span><span lang="en">2018 vintage label</span></span>
+    <span class="gen-tag"><span lang="fr">Illustration générée</span><span lang="en">AI-generated illustration</span></span>
   </div>
   <div class="cave__panel" data-cave-panel>
     <p class="kicker"><span lang="fr">Rive droite · Montagne Saint-Émilion</span><span lang="en">Right Bank · Montagne Saint-Émilion</span></p>
@@ -159,7 +167,7 @@
     <span data-acc-ch="bl"><img src="assets/img/vins/bouteille-beaulieu-676.webp" srcset="assets/img/vins/bouteille-beaulieu-360.webp 360w, assets/img/vins/bouteille-beaulieu-676.webp 676w" sizes="60px" width="676" height="2672" alt="" loading="lazy" decoding="async"><small>Beaulieu</small></span>
   </div>
   <div class="accords__results" data-acc-results aria-live="polite"></div>
-  <p class="form-note"><span lang="fr">Accords repris des fiches de chaque millésime sur le site du domaine.</span><span lang="en">Pairings taken from each vintage's sheet on the estate's website.</span></p>
+  <p class="form-note"><span lang="fr">Accords conseillés par le domaine sur la fiche de chaque millésime.</span><span lang="en">Pairings recommended by the estate on each vintage's sheet.</span></p>
 </section>
 
 <section class="section serve" id="servir" aria-labelledby="serve-title">
@@ -264,6 +272,7 @@
       <span>© 2026 Château Haut-Piquat · SARL Vignoble Rivière Jean Pierre</span>
       <span><span lang="fr">Maquette de démonstration&nbsp;: paiement, réservation et formulaires simulés, rien n'est envoyé.</span><span lang="en">Demonstration mock-up: payment, booking and forms are simulated, nothing is sent.</span></span>
       <span><span lang="fr">La vente d'alcool est interdite aux mineurs.</span><span lang="en">The sale of alcohol to minors is prohibited.</span></span>
+      <span class="ftr__tools"><button class="ftr__tool" type="button" data-sound aria-pressed="false"><span lang="fr">Son d'ambiance</span><span lang="en">Ambient sound</span></button><button class="ftr__tool" type="button" data-calm-toggle><span lang="fr">Réduire les animations</span><span lang="en">Reduce motion</span></button></span>
     </div>
     <div class="ftr__big" aria-hidden="true">Haut-Piquat</div>
   </div>
@@ -303,6 +312,6 @@
 <script src="assets/vendor/gsap/DrawSVGPlugin.min.js" defer></script>
 <script src="assets/vendor/gsap/CustomEase.min.js" defer></script>
 <script src="assets/vendor/gsap/Flip.min.js" defer></script>
-<script type="module" src="assets/js/main.js?v=15"></script>
+<script type="module" src="assets/js/main.js?v=16"></script>
 </body>
 </html>

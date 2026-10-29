@@ -1,4 +1,4 @@
-# Château Haut-Piquat · maquette v15
+# Château Haut-Piquat · maquette v16
 
 Maquette de démonstration du futur site du Château Haut-Piquat (Lussac Saint-Émilion), direction artistique « Calcaire à astéries ». Site statique en HTML, CSS et JavaScript, sans étape de construction, prêt pour Vercel.
 
@@ -27,12 +27,40 @@ Maquette de démonstration du futur site du Château Haut-Piquat (Lussac Saint-�
 - `assets/vendor` : GSAP 3.15 (ScrollTrigger, SplitText, DrawSVG, Flip, CustomEase) et OGL, hébergés avec le site
 - `assets/fonts` : Fraunces et Manrope en WOFF2
 
+## Audit automatique
+
+Le dossier `_audit/` contient le script d'audit (Playwright) relancé à chaque version : `node _audit/audit.js` (complet, environ 30 minutes) ou `node _audit/audit.js --rapide`. Il sert le site en local avec des adresses sans « .html », comme Vercel, et écrit `_audit/rapport.md`. Le dossier est exclu de la mise en ligne par `.vercelignore`.
+
 ## Mettre à jour
 
 1. Remplacer une image : déposer le nouveau fichier sous le même nom ; aucune règle de cache n'est à modifier.
 2. Changer un prix : modifier `assets/js/data.js`.
 3. À chaque version livrée, changer le numéro `?v=N` partout et à l'identique, dans les pages et dans les `import` JavaScript :
-   `grep -rl "?v=15" --include=*.html --include=*.js . | xargs sed -i "" "s/?v=15/?v=16/g"`
+   `grep -rl "?v=16" --include=*.html --include=*.js . | xargs sed -i "" "s/?v=16/?v=17/g"`
+
+## Version 16 : audit complet et fluidité
+
+- Défilement natif sur Mac, iPhone et iPad (le défilement adouci reste réservé aux ordinateurs Windows et Linux avec souris) : plus de décalage entre la molette ou le pavé tactile et l'image.
+- Sections épinglées : plus aucun saut à l'entrée ni à la sortie. La page ne bouge plus toute seule pendant le chargement ni pendant le défilement (stabilité mesurée à 0 sur toutes les pages, toutes tailles).
+- Fluidité : plus aucun flou ni mode de fusion au-dessus d'éléments animés. Les effets sont cuits dans les images (socles teintés, fonds texturés, pierre floutée, rayon de lumière, archives sur papier).
+- Mode calme : lien discret « Réduire les animations » dans le pied de page et dans le menu, la page reste à la même section après le changement. Le bouton son quitte l'en-tête (pied de page et menu) ; quand le son joue, une petite pastille permet de l'arrêter.
+- Téléphone : plus aucun débordement horizontal à 320 px ; téléphone tenu à l'horizontale, les ouvertures montrent le titre et les boutons au-dessus du bandeau sanitaire ; la fiche vin montre le titre et le prix dès l'ouverture ; boutons et liens d'au moins 44 px.
+- Lisibilité : contrastes corrigés (bronze de la frise, noms des vins de la cave, pastilles des cartes), noms longs jamais tronqués dans la boutique ni dans la barre d'achat, formats écrits à la française (12 × 37,5 cl, 1 × 6 L), consigne « Faites glisser » sur la frise tactile.
+- Images : chaque section a son visuel (portrait dans la citation d'accueil, trois photos dans « Goûter le domaine », en bas de la page Le domaine), bouteilles et cartes servies en taille adaptée à l'écran.
+- Sans JavaScript : la boutique donne le téléphone et l'adresse e-mail pour commander, la fiche vin renvoie vers Les vins et le téléphone.
+- Mise en ligne : en-têtes de sécurité ajoutés (la maquette reste non indexée), hébergeur Vercel indiqué dans les mentions légales, données structurées du domaine (Winery) sur l'accueil.
+- Relecture par un second regard :
+  - mention « Illustration générée » sur chaque visuel créé avec Grok (strates, socles, fonds de cave, pierre, rayon de lumière, baies, astérie), et crédits dans les mentions légales ;
+  - accroche de l'accueil : « depuis 1875 », la date de l'étiquette (au lieu de « plus de trois cents ans », non sourcé) ;
+  - distances : 40 km de Bordeaux à vol d'oiseau, 56 km par la route ;
+  - « à compléter » pour le sol de La Fleur et la taille de groupe de la journée avec repas vigneron ;
+  - mention « Étiquette du millésime 2018 » sous les bouteilles détourées ;
+  - photos en double retirées de la frise ; cadrages du portrait de Jean-Pierre Rivière et du chai revus ;
+  - chai dessiné en 480 fonds de barriques empilés ;
+  - navigation de la cave sur fond clair ;
+  - typographie : Iᵉʳ s., −30 Ma, GPS à la française, horaires « 9 h 30 – 16 h », écriVins©, noms composés insécables ;
+  - grands vides resserrés.
+- Dossier `_audit/` (script d'audit relancé à chaque version) et `CHANGELOG.md` (fichiers modifiés, ajoutés, supprimés).
 
 ## Version 15 : les bouteilles suivent le défilement
 
@@ -173,7 +201,7 @@ Maquette de démonstration du futur site du Château Haut-Piquat (Lussac Saint-�
 
 - Le degré d'alcool et la mention des sulfites de chaque vin, obligatoires avant l'achat en ligne.
 - L'assemblage de Château de Beaulieu sur les fiches boutique. La maquette reprend celui de la fiche technique.
-- La raison sociale complète, le SIRET, le RCS, le numéro de TVA et l'hébergeur.
+- La raison sociale complète, le SIRET, le RCS, le numéro de TVA et l'hébergeur du site définitif (la maquette est hébergée par Vercel).
 - Le responsable des données personnelles.
 - Une photo du calcaire à astéries en haute définition : celle du site actuel fait 220 px.
 - Une photo de Château Chatain.

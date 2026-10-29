@@ -1,7 +1,7 @@
 // Fiche vin : rendu depuis les données du site, bouteille qui pivote sur son socle.
-import { $, $$, L, eur, CALM, TOUCH, toast } from '../core.js?v=15';
-import { WINES, CHATEAUX, FORMATS, BOTTLES, TEXTURES } from '../data.js?v=15';
-import { addToCart } from '../cart.js?v=15';
+import { $, $$, L, eur, CALM, TOUCH, toast, fmtShort } from '../core.js?v=16';
+import { WINES, CHATEAUX, FORMATS, BOTTLES, TEXTURES } from '../data.js?v=16';
+import { addToCart } from '../cart.js?v=16';
 
 const gsap = window.gsap;
 let wine = null;
@@ -54,11 +54,12 @@ function render() {
     ${w.pairs.length ? `<div class="panel"><h2>${L('Accords gastronomiques', 'Food pairings')}</h2><ul class="pairs">${w.pairs.map((p) => `<li><svg class="ast" aria-hidden="true"><use href="#ast"/></svg>${p}</li>`).join('')}</ul></div>` : ''}
     ${w.flag ? `<div class="flag">${L(w.flag.fr, w.flag.en)}</div>` : ''}`;
   // la cuvée
-  $('[data-wcuvee-bottle]').src = BOTTLES[ch.bottle];
+  { const bt = $('[data-wcuvee-bottle]'); const big = BOTTLES[ch.bottle]; const small = big.replace(/-\d+\.webp$/, '-360.webp'); bt.sizes = '(min-width: 900px) 10vw, 28vw'; bt.srcset = `${small} 360w, ${big} ${+big.match(/-(\d+)\.webp$/)[1]}w`; bt.src = small; }
   $('[data-wcuvee-bottle]').alt = `Bouteille de ${ch.name}`;
   $('[data-wcuvee-title]').innerHTML = ch.name;
   $('[data-wcuvee-specs]').innerHTML = `<dt>${L('Appellation', 'Appellation')}</dt><dd>${ch.app}</dd><dt>${L('Surface', 'Area')}</dt><dd>${ch.area}</dd><dt>${L('Sol', 'Soil')}</dt><dd>${L(ch.soil.fr, ch.soil.en)}</dd><dt>${L('Élevage', 'Ageing')}</dt><dd>${L(ch.aging.fr, ch.aging.en)}</dd>`;
-  $('[data-wcuvee-note]').innerHTML = L(ch.note.fr, ch.note.en);
+  // les bouteilles détourées portent l'étiquette 2018 : on le dit quand la fiche est celle d'un autre millésime
+  $('[data-wcuvee-note]').innerHTML = L(ch.note.fr, ch.note.en) + (String(w.vintage) !== '2018' ? `<br>${L('Bouteille présentée : étiquette du millésime 2018.', 'Bottle shown: 2018 vintage label.')}` : '');
   // vous aimerez aussi
   const rel = WINES.filter((x) => x.id !== w.id && x.ch === w.ch).slice(0, 3).concat(WINES.filter((x) => x.ch !== w.ch && x.badge === 'coeur').slice(0, 1));
   $('[data-related]').innerHTML = rel.map((x) => `<a class="pcard" href="vin.html?id=${x.id}" style="text-decoration:none"><span class="pcard__img"><img src="${x.img.small}" alt="" loading="lazy" width="${x.img.w}" height="${x.img.h}"></span><span class="pcard__body"><span style="font-weight:600">${CHATEAUX[x.ch].name.replace('Haut-Piquat', '<span class="nw">Haut-Piquat</span>')} ${x.vintage}</span><span class="pcard__fmt">${L(FORMATS[x.fmt].label.fr, FORMATS[x.fmt].label.en)}</span><span class="pcard__price"><b>${eur(x.price)}</b></span></span></a>`).join('');
@@ -78,14 +79,17 @@ function buyBar() {
   const btn = $('[data-add-wine]'); if (!btn) return;
   const w = wine; const ch = CHATEAUX[w.ch]; const f = FORMATS[w.fmt];
   const bar = document.createElement('div'); bar.className = 'buybar'; bar.setAttribute('data-buybar', '');
-  bar.innerHTML = `<img src="${w.img.small}" alt="" width="${w.img.w}" height="${w.img.h}"><span><b>${ch.name} ${w.vintage}</b><small>${eur(w.price)} · ${L(f.label.fr, f.label.en)}</small></span><button class="btn btn--sm" type="button" data-buybar-add>${L('Ajouter', 'Add')}</button>`;
+  bar.innerHTML = `<img src="${w.img.small}" alt="" width="${w.img.w}" height="${w.img.h}"><span><b>${ch.name.replace('Haut-Piquat', '<span class="nw">Haut-Piquat</span>')} <span class="nw">${w.vintage}</span></b><small>${eur(w.price)} · ${fmtShort(f)}</small></span><button class="btn btn--sm" type="button" data-buybar-add>${L('Ajouter', 'Add')}</button>`;
   bar.inert = true; document.body.appendChild(bar);
-  let raf = 0; let was = null;
+  let raf = 0; let was = null; let edge = 0;
+  // position du bouton mesurée hors défilement (chargement, redimensionnement, changement de hauteur)
+  const measure = () => { edge = btn.getBoundingClientRect().bottom + scrollY - 60; check(); };
+  if (window.ResizeObserver) new ResizeObserver(measure).observe(document.body); addEventListener('resize', measure);
   const check = () => {
-    raf = 0; const on = btn.getBoundingClientRect().bottom < 60; if (on === was) return; was = on;
+    raf = 0; const on = scrollY > edge; if (on === was) return; was = on;
     bar.classList.toggle('is-on', on); bar.inert = !on; document.body.classList.toggle('has-buybar', on);
   };
-  addEventListener('scroll', () => { if (!raf) raf = requestAnimationFrame(check); }, { passive: true }); check();
+  addEventListener('scroll', () => { if (!raf) raf = requestAnimationFrame(check); }, { passive: true }); measure();
   bar.addEventListener('click', (e) => { if (e.target.closest('[data-buybar-add]')) addToCart(wine.id, Math.max(1, +$('[data-qv]').textContent || 1), $('img', bar)); });
 }
 export function setup() { render(); bind(); buyBar(); }

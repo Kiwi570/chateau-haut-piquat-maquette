@@ -1,7 +1,7 @@
 // Accueil : ouverture, coupe géologique, vins, millésimes, puis deux bandeaux vers Le domaine et Visites & événements.
-import { $, $$, L, eur, CALM, TOUCH, DESKTOP, hdrH, splitTitle, padMasks, pourSound } from '../core.js?v=15';
-import { heroLight, fossils } from '../gl.js?v=15';
-import { WINES, CHATEAUX, FORMATS } from '../data.js?v=15';
+import { $, $$, L, eur, CALM, TOUCH, DESKTOP, hdrH, splitTitle, splitHold, padMasks, pourSound, anticipate, pinType } from '../core.js?v=16';
+import { heroLight, fossils } from '../gl.js?v=16';
+import { WINES, CHATEAUX, FORMATS } from '../data.js?v=16';
 
 const gsap = window.gsap; const ST = window.ScrollTrigger;
 let hero = null;
@@ -33,12 +33,11 @@ function teasers() {
 /* ---------- Ouverture ---------- */
 function heroIn() {
   const title = $('[data-hero-title]');
-  const split = window.SplitText ? SplitText.create(title, { type: 'chars', mask: 'chars' }) : null;
-  if (split) padMasks(split, 'chars');
+  const split = splitHold(title, 'chars');
   const tl = gsap.timeline();
   tl.to('[data-hero-strata] span', { scaleY: 0, duration: 0.85, ease: 'expo.inOut', stagger: 0.09 }, 0)
     .to(['[data-hero-img]', '[data-hero-video]'], { scale: 1.03, duration: 2.0, ease: 'expo.out' }, 0);
-  if (split) tl.from(split.chars, { yPercent: 115, rotate: 4, duration: 0.75, ease: 'expo.out', stagger: 0.02, onComplete: () => split.revert() }, 0.1);
+  if (split) tl.from(split.chars, { yPercent: 115, rotate: 4, duration: 0.75, ease: 'expo.out', stagger: 0.02, onComplete: split.done }, 0.1);
   tl.to('[data-hdr]', { autoAlpha: 1, y: 0, duration: 0.6, ease: 'power3.out' }, 0.35)
     .to(['[data-hero-kicker]', '[data-hero-sub]', '[data-hero-ctas] > *', '[data-hero-meta]', '[data-hero-scroll]'], { autoAlpha: 1, y: 0, duration: 0.65, ease: 'power3.out', stagger: 0.04 }, 0.45)
     .add(() => startHeroVideo(), 0.2);
@@ -91,7 +90,7 @@ function coupe() {
   const travel = () => stack.offsetHeight - frame.offsetHeight;
   const tl = gsap.timeline({ defaults: { ease: 'none' }, scrollTrigger: {
     trigger: frame, start: () => `top top+=${hdrH()}`, end: () => `+=${frame.offsetHeight * (DESKTOP() ? 4.2 : 3.6) * T}`,
-    pin: true, scrub: 0.8, anticipatePin: 1, invalidateOnRefresh: true,
+    pin: true, scrub: 0.8, anticipatePin: anticipate(), pinType: pinType(), invalidateOnRefresh: true,
     onToggle: (s) => { if (fos) s.isActive ? fos.start() : fos.stop(); },
     onLeave: () => { if (!headIn) { headIn = true; gsap.set(head, { y: 0, autoAlpha: 1 }); } if (!blend) return; if (!played) { played = true; blend.progress(1); } else { blend.scroll(1); blend.hurry(); } },
     onUpdate: (s) => {

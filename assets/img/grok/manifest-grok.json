@@ -121,5 +121,39 @@
    400,
    800
   ]
+ },
+ "socle-detoure-lf": {
+  "dir": "grok",
+  "w": 573,
+  "h": 447,
+  "sizes": [
+   400,
+   800
+  ]
+ },
+ "socle-detoure-bl": {
+  "dir": "grok",
+  "w": 573,
+  "h": 447,
+  "sizes": [
+   400,
+   800
+  ]
+ },
+ "pierre-taillee-blonde-flou": {
+  "dir": "grok",
+  "w": 1168,
+  "h": 784,
+  "sizes": [
+   1168
+  ]
+ },
+ "rayon-lumiere-chai-lumiere": {
+  "dir": "grok",
+  "w": 1168,
+  "h": 784,
+  "sizes": [
+   1168
+  ]
  }
 }

@@ -6,8 +6,11 @@ export const CALM = html.classList.contains('calm');
 export const TOUCH = matchMedia('(pointer: coarse)').matches;
 export const DESKTOP = () => innerWidth >= 900;
 export const L = (fr, en) => (en == null ? fr : `<span lang="fr">${fr}</span><span lang="en">${en}</span>`);
+// Format court d'une caisse : « 6 × 75 cl », « 12 × 37,5 cl », « 1 × 6 L »
+export function fmtShort(f) { const n = f.units + ' × '; if (f.cl >= 300) return L(n + String(f.cl / 100).replace('.', ',') + ' L', n + f.cl / 100 + ' L'); return L(n + String(f.cl).replace('.', ',') + ' cl', n + f.cl + ' cl'); }
 export const lang = () => (html.lang === 'en' ? 'en' : 'fr');
-export const eur = (n) => L(n.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' }), n.toLocaleString('en-GB', { style: 'currency', currency: 'EUR' }));
+// espace insécable ordinaire avant € (l'espace fine du navigateur se voyait à peine sur les petits prix barrés)
+export const eur = (n) => L(n.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' }).replace(/\u202f/g, '\u00a0'), n.toLocaleString('en-GB', { style: 'currency', currency: 'EUR' }));
 export const store = {
   get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
   set(k, v) { try { localStorage.setItem(k, v); } catch (e) { /* stockage indisponible */ } },
@@ -19,18 +22,33 @@ export const legalH = () => ($('[data-legal]')?.offsetHeight || 32);
 
 let gsap, ScrollTrigger;
 
-/* ---------- Défilement fluide (module maison, inspiré de Lenis) ---------- */
+/* ---------- Hauteur de page, mesurée au chargement et quand la page change de taille (jamais pendant le défilement) ---------- */
+export const doc = { max: 1 };
+const measureDoc = () => { doc.max = Math.max(1, document.documentElement.scrollHeight - innerHeight); };
+measureDoc();
+if (window.ResizeObserver) new ResizeObserver(measureDoc).observe(document.documentElement);
+addEventListener('resize', measureDoc);
+
+/* ---------- Défilement fluide (module maison, inspiré de Lenis) ----------
+   Réservé à la molette sous Windows et Linux : sur Mac, iPhone, iPad et écrans tactiles, le défilement natif est déjà fluide.
+   Le lissage dépend du temps écoulé, pas du nombre d'images : même vitesse sur un appareil lent. */
+const APPLE = /Mac|iPhone|iPad|iPod/i.test(navigator.platform || '') || /Mac OS X|iPhone|iPad/.test(navigator.userAgent);
+// Anticipation des épinglages : utile avec le défilement natif (le navigateur défile avant le script),
+// nuisible avec le défilement adouci du site, déjà synchronisé : la section sauterait vers le haut juste avant de se figer.
+export const anticipate = () => (smooth.enabled ? 0 : 1);
+// Avec le défilement adouci, l'épinglage se fait par transformation (synchrone, aucun décalage de mise en page compté) ; sinon en position fixe.
+export const pinType = () => (smooth.enabled ? 'transform' : 'fixed');
 export const smooth = {
   enabled: false, target: 0, current: 0, raf: 0, locked: false,
   init() {
-    if (CALM || TOUCH) return;
+    if (CALM || TOUCH || APPLE) return;
     this.enabled = true;
     this.target = this.current = scrollY;
     addEventListener('wheel', (e) => this.onWheel(e), { passive: false });
     addEventListener('scroll', () => { if (!this.raf) { this.target = this.current = scrollY; } }, { passive: true });
     addEventListener('resize', () => { this.target = this.current = scrollY; });
   },
-  max() { return document.documentElement.scrollHeight - innerHeight; },
+  max() { return doc.max; },
   onWheel(e) {
     if (!this.enabled || e.ctrlKey || this.locked) return;
     if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return; // gestes horizontaux (retour arrière, galeries) laissés au navigateur
@@ -44,12 +62,15 @@ export const smooth = {
     this.target = Math.max(0, Math.min(this.max(), this.target + d));
     this.start();
   },
-  start() { if (!this.raf) this.raf = requestAnimationFrame(() => this.tick()); },
-  tick() {
-    this.current += (this.target - this.current) * 0.12;
-    if (Math.abs(this.target - this.current) < 0.5) { this.current = this.target; scrollTo(0, this.current); this.raf = 0; return; }
+  start() { if (!this.raf) { this.last = performance.now(); this.raf = requestAnimationFrame((t) => this.tick(t)); } },
+  tick(now = performance.now()) {
+    const dt = Math.min(0.05, Math.max(0, (now - this.last) / 1000)); this.last = now;
+    this.current += (this.target - this.current) * (1 - Math.pow(0.88, dt * 60));
+    if (Math.abs(this.target - this.current) < 0.5) { this.current = this.target; scrollTo(0, this.current); if (ScrollTrigger) ScrollTrigger.update(); this.raf = 0; return; }
     scrollTo(0, this.current);
-    this.raf = requestAnimationFrame(() => this.tick());
+    // les sections épinglées se mettent à jour dans la même image que le défilement : pas de sursaut au début ni à la fin d'un épinglage
+    if (ScrollTrigger) ScrollTrigger.update();
+    this.raf = requestAnimationFrame((t) => this.tick(t));
   },
   to(y, immediate = false) {
     y = Math.max(0, Math.min(this.max(), y));
@@ -120,11 +141,21 @@ function initHeader() {
 }
 
 /* ---------- Mode calme ---------- */
+/* « Réduire les animations » : lien discret du pied de page et du menu. La page se recharge et revient à la section où l'on était. */
 function initCalm() {
-  $$('[data-calm]').forEach((b) => {
-    b.setAttribute('aria-pressed', CALM ? 'true' : 'false');
-    b.addEventListener('click', () => { store.set('ahp-calm', CALM ? '0' : '1'); location.reload(); });
+  const OS = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const label = () => (OS ? L('Animations réduites par votre appareil', 'Motion reduced by your device') : CALM ? L('Rétablir les animations', 'Restore motion') : L('Réduire les animations', 'Reduce motion'));
+  $$('[data-calm-toggle]').forEach((b) => {
+    b.innerHTML = label(); b.setAttribute('aria-pressed', CALM ? 'true' : 'false'); if (OS) b.disabled = true;
+    b.addEventListener('click', () => {
+      const secs = $$('main section'); const mid = innerHeight / 3;
+      const k = secs.findIndex((el) => { const r = el.getBoundingClientRect(); return r.top <= mid && r.bottom > mid; });
+      store.ses('ahp-calm-at', String(Math.max(0, k)));
+      store.set('ahp-calm', CALM ? '0' : '1'); location.reload();
+    });
   });
+  const at = store.ses('ahp-calm-at');
+  if (at != null) { store.ses('ahp-calm-at', null); const el = $$('main section')[+at]; const go = () => setTimeout(() => el && scrollToEl(el, true), 450); document.readyState === 'complete' ? go() : addEventListener('load', go, { once: true }); }
 }
 
 /* ---------- Son d'ambiance : vent dans les vignes, généré en code ---------- */
@@ -173,8 +204,13 @@ export function pourSound(dur = 1) {
 }
 function initSound() {
   const btns = $$('[data-sound]');
-  const sync = () => btns.forEach((b) => b.setAttribute('aria-pressed', sound.on ? 'true' : 'false'));
+  // pastille : ce qui joue, avec un bouton Arrêter, annoncée aux lecteurs d'écran
+  const pill = document.createElement('div'); pill.className = 'sndpill'; pill.setAttribute('role', 'status'); pill.hidden = true;
+  pill.innerHTML = `<span class="sndpill__wave" aria-hidden="true"><i></i><i></i><i></i></span><span>${L('Son : vent dans les vignes', 'Sound: wind in the vines')}</span><button type="button" data-sound-stop>${L('Arrêter', 'Stop')}</button>`;
+  document.body.appendChild(pill);
+  const sync = () => { btns.forEach((b) => b.setAttribute('aria-pressed', sound.on ? 'true' : 'false')); pill.hidden = !sound.on; };
   btns.forEach((b) => b.addEventListener('click', () => { sound.on ? stopSound() : startSound(); store.set('ahp-sound', sound.on ? '1' : '0'); sync(); }));
+  pill.querySelector('[data-sound-stop]').addEventListener('click', () => { stopSound(); store.set('ahp-sound', '0'); sync(); });
   if (store.get('ahp-sound') === '1') {
     const once = () => { startSound(); sync(); removeEventListener('pointerdown', once); removeEventListener('keydown', once); };
     addEventListener('pointerdown', once); addEventListener('keydown', once);
@@ -209,7 +245,7 @@ function initMagnetic() {
 /* ---------- Voile de lumière : de midi au soir ---------- */
 function initVeil() {
   if (CALM) return;
-  const upd = () => { const p = scrollY / Math.max(1, document.documentElement.scrollHeight - innerHeight); html.style.setProperty('--day', Math.pow(Math.min(1, p), 1.3).toFixed(3)); };
+  const upd = () => { const p = scrollY / doc.max; html.style.setProperty('--day', Math.pow(Math.min(1, p), 1.3).toFixed(3)); };
   upd(); addEventListener('scroll', upd, { passive: true });
 }
 
@@ -291,14 +327,28 @@ export function padMasks(split, kind) {
   const items = split[kind] || [];
   items.forEach((it) => { const m = it.parentElement; if (m && m !== split.elements?.[0]) { m.style.padding = '0.14em 0.2em 0.28em'; m.style.margin = '-0.14em -0.2em -0.28em'; } });
 }
+// Découpe un titre en mots ou en lettres pour l'animer, sans faire sauter la page : le découpage change de quelques pixels
+// la hauteur des lignes, donc la hauteur du titre est figée jusqu'à ce que le texte soit recollé (s.done)
+export function splitHold(el, type = 'words') {
+  if (!window.SplitText || !el) return null;
+  const h0 = el.getBoundingClientRect().height;
+  const s = SplitText.create(el, { type, mask: type });
+  padMasks(s, type);
+  if (Math.abs(el.getBoundingClientRect().height - h0) > 0.5) el.style.height = h0 + 'px';
+  s.done = () => { s.revert(); el.style.height = ''; };
+  return s;
+}
 export function splitTitle(el, opts = {}) {
   if (CALM || !window.SplitText) return null;
+  // la hauteur du titre est figée le temps de l'animation : le découpage en mots change de quelques pixels la hauteur des lignes, et le texte voisin sautait
+  const h0 = el.getBoundingClientRect().height;
   const s = SplitText.create(el, { type: 'words', mask: 'words' });
   padMasks(s, 'words');
+  if (Math.abs(el.getBoundingClientRect().height - h0) > 0.5) el.style.height = h0 + 'px';
   gsap.set(s.words, { yPercent: 115 });
   const anim = () => {
-    gsap.to(s.words, { yPercent: 0, duration: 1.05, ease: 'expo.out', stagger: 0.06, delay: opts.delay || 0, onComplete: () => s.revert() });
-    gsap.fromTo(el, { fontVariationSettings: '"SOFT" 0, "WONK" 0' }, { fontVariationSettings: '"SOFT" 100, "WONK" 0', duration: 1.8, ease: 'power2.out', delay: (opts.delay || 0) + 0.2, clearProps: 'fontVariationSettings' });
+    gsap.to(s.words, { yPercent: 0, duration: 1.05, ease: 'expo.out', stagger: 0.06, delay: opts.delay || 0, onComplete: () => { s.revert(); el.style.height = ''; } });
+    // (l'axe « SOFT » de la police n'est plus animé : il changeait la largeur des lettres, donc les retours à la ligne, et faisait sauter le texte voisin)
   };
   if (opts.now) anim(); else ScrollTrigger.create({ trigger: el, start: 'top 88%', once: true, onEnter: anim });
   return s;
@@ -385,7 +435,7 @@ function initProgress() {
   ring.style.strokeDasharray = C.toFixed(1);
   let raf = 0;
   const upd = () => {
-    raf = 0; const max = document.documentElement.scrollHeight - innerHeight; const pr = max > 0 ? Math.min(1, scrollY / max) : 0;
+    raf = 0; const pr = Math.min(1, scrollY / doc.max);
     bar.style.transform = `scaleX(${pr.toFixed(4)})`;
     ring.style.strokeDashoffset = (C * (1 - pr)).toFixed(1); ast.style.transform = `rotate(${(pr * 360).toFixed(1)}deg)`;
     top.classList.toggle('is-on', scrollY > innerHeight * 1.2);

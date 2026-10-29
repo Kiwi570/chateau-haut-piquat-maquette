@@ -807,5 +807,42 @@
    840,
    1300
   ]
+ },
+ "archive-abbaye-faize-papier": {
+  "dir": "photos",
+  "w": 508,
+  "h": 317,
+  "sizes": [
+   480,
+   508
+  ]
+ },
+ "archive-megalithe-picampeau-1861-papier": {
+  "dir": "photos",
+  "w": 508,
+  "h": 326,
+  "sizes": [
+   480,
+   508
+  ]
+ },
+ "archive-chateau-blason-lussac-papier": {
+  "dir": "photos",
+  "w": 644,
+  "h": 640,
+  "sizes": [
+   480,
+   644
+  ]
+ },
+ "archive-vendanges-1966-papier": {
+  "dir": "photos",
+  "w": 3352,
+  "h": 1486,
+  "sizes": [
+   480,
+   960,
+   1600
+  ]
  }
 }

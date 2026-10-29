@@ -748,7 +748,7 @@ export const WINES = [
   "blend": "50 % cabernet franc, 35 % merlot, 15 % cabernet sauvignon",
   "blendSrc": "fiche",
   "pairs": [
-   "Aiguillette de canard",
+   "Aiguillettes de canard",
    "Suprême de pintade au miel",
    "Entrecôte à la bordelaise",
    "Brie de Meaux"
@@ -1085,8 +1085,8 @@ export const CHATEAUX = {
   },
   "bottle": "bouteille-haut-piquat",
   "note": {
-   "fr": "Vin du château, au cœur de l'appellation. Fiche technique : surface de 20 ha (30 ha selon l'infographie du site, à confirmer).",
-   "en": "The château wine, in the heart of the appellation. Tech sheet: 20 ha (30 ha according to the website infographic, to be confirmed)."
+   "fr": "Vin du château, au cœur de l'appellation. Fiche technique : surface de 20 ha <span class=\"todo\">surface à confirmer, 20 ou 30 ha</span>",
+   "en": "The château wine, in the heart of the appellation. Tech sheet: 20 ha <span class=\"todo\">area to confirm, 20 or 30 ha</span>"
   }
  },
  "lf": {
@@ -1094,8 +1094,8 @@ export const CHATEAUX = {
   "app": "Lussac Saint-Émilion",
   "area": "4 ha",
   "soil": {
-   "fr": "Plateaux calcaires et côtes d'argiles rouges",
-   "en": "Limestone plateaus and red clay slopes"
+   "fr": "<span class=\"todo\">à compléter</span>",
+   "en": "<span class=\"todo\">to complete</span>"
   },
   "aging": {
    "fr": "12 mois en fûts de chêne, 80 % de barriques neuves",
@@ -1238,8 +1238,8 @@ export const ACTIVITIES = [
    "en": "A day in the Libournais"
   },
   "dur": {
-   "fr": "9 h 30 à 16 h",
-   "en": "9.30 am to 4 pm"
+   "fr": "9 h 30 – 16 h",
+   "en": "9.30 am – 4 pm"
   },
   "min": 4,
   "max": 30,
@@ -1254,14 +1254,15 @@ export const ACTIVITIES = [
    "en": "The day + winegrower's meal"
   },
   "dur": {
-   "fr": "9 h 30 à 16 h",
-   "en": "9.30 am to 4 pm"
+   "fr": "9 h 30 – 16 h",
+   "en": "9.30 am – 4 pm"
   },
   "min": 4,
   "max": 30,
   "price": 160,
   "meal": true,
-  "online": false
+  "online": false,
+  "sizeTodo": true
  }
 ];
 export const BOTTLES = {"bouteille-haut-piquat": "assets/img/vins/bouteille-haut-piquat-675.webp", "bouteille-la-fleur": "assets/img/vins/bouteille-la-fleur-720.webp", "bouteille-beaulieu": "assets/img/vins/bouteille-beaulieu-676.webp"};

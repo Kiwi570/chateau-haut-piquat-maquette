@@ -23,11 +23,12 @@
 <meta name="twitter:image" content="https://chateau-haut-piquat-maquette.vercel.app/assets/img/og/og-vin.jpg">
 <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
 <link rel="preload" href="assets/fonts/fraunces-latin-full-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/fraunces-latin-full-italic.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="assets/fonts/manrope-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
 
-<link rel="stylesheet" href="assets/css/style.css?v=15">
-<link rel="modulepreload" href="assets/js/main.js?v=15">
-<script>(function(d){var h=d.documentElement;h.className=h.className.replace('no-js','js');try{var s=localStorage;var l=s.getItem('ahp-lang');if(l==='en'){h.lang='en';}if(matchMedia('(prefers-reduced-motion: reduce)').matches){h.classList.add('calm');}if(s.getItem('ahp-age')==='ok'){h.classList.add('age-ok');}if(sessionStorage.getItem('ahp-trans')==='1'){h.classList.add('trans-in');}}catch(e){}setTimeout(function(){if(!window.__ahpReady){h.classList.add('calm');h.classList.remove('trans-in');}},4500);})(document);</script>
+<link rel="stylesheet" href="assets/css/style.css?v=16">
+<link rel="modulepreload" href="assets/js/main.js?v=16">
+<script>(function(d){var h=d.documentElement;h.className=h.className.replace('no-js','js');try{var s=localStorage;var l=s.getItem('ahp-lang');if(l==='en'){h.lang='en';}if(matchMedia('(prefers-reduced-motion: reduce)').matches||s.getItem('ahp-calm')==='1'){h.classList.add('calm');}if(s.getItem('ahp-age')==='ok'){h.classList.add('age-ok');}if(sessionStorage.getItem('ahp-trans')==='1'){h.classList.add('trans-in');}}catch(e){}setTimeout(function(){if(!window.__ahpReady){h.classList.add('calm');h.classList.remove('trans-in');}},4500);})(document);</script>
 </head>
 <body data-page="vin">
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
@@ -56,7 +57,6 @@
   <nav class="hdr__nav" aria-label="Navigation principale" data-aria-en="Main navigation"><a href="domaine.html"><span lang="fr">Le domaine</span><span lang="en">The estate</span></a><a href="vins.html"><span lang="fr">Les vins</span><span lang="en">The wines</span></a><a href="boutique.html" aria-current="page"><span lang="fr">Boutique</span><span lang="en">Shop</span></a><a href="oenotourisme.html"><span lang="fr">Visites & événements</span><span lang="en">Visits & events</span></a><a href="oenotourisme.html#acces"><span lang="fr">Venir</span><span lang="en">Visit us</span></a></nav>
   <div class="hdr__tools">
     <button class="tool tool--lang" type="button" data-lang-toggle aria-label="English version" data-aria-en="Version française"><span class="l-fr" aria-hidden="true">FR</span><span class="l-sep" aria-hidden="true">/</span><span class="l-en" aria-hidden="true">EN</span></button>
-    <button class="tool hide-sm" type="button" data-sound aria-pressed="false" aria-label="Ambiance sonore" data-aria-en="Ambient sound" data-tip="Ambiance sonore" data-tip-en="Ambient sound"><svg><use href="#i-sound"/></svg></button>
     <a class="hdr__cta magnetic" href="oenotourisme.html#reserver"><span lang="fr">Réserver</span><span lang="en">Book</span></a>
     <button class="tool tool--cart" type="button" data-cart-open aria-label="Ouvrir le panier" data-aria-en="Open cart" data-tip="Panier" data-tip-en="Cart"><svg><use href="#i-cart"/></svg><span class="cart-count" data-cart-count></span></button>
     <button class="tool tool--menu" type="button" data-menu aria-expanded="false" aria-controls="mmenu" aria-label="Menu"><svg><use href="#i-menu"/></svg></button>
@@ -67,7 +67,8 @@
   <div>
     <div class="mmenu__ctas"><a class="btn btn--light" href="oenotourisme.html#reserver"><span lang="fr">Réserver une visite</span><span lang="en">Book a visit</span></a><a class="btn btn--ghost" href="boutique.html"><span lang="fr">Boutique en ligne</span><span lang="en">Online shop</span></a></div>
     <div class="mmenu__tools">
-      <button class="tool" type="button" data-sound aria-pressed="false"><span lang="fr">Son</span><span lang="en">Sound</span></button>
+      <button class="tool" type="button" data-sound aria-pressed="false"><span lang="fr">Son d'ambiance</span><span lang="en">Ambient sound</span></button>
+      <button class="tool" type="button" data-calm-toggle><span lang="fr">Réduire les animations</span><span lang="en">Reduce motion</span></button>
     </div>
     <p class="mmenu__foot">Château Haut-Piquat · 33570 Lussac · <a href="tel:+33685304242">+33 6 85 30 42 42</a></p>
   </div>
@@ -79,7 +80,7 @@
     <div class="whero__visual"><div class="whero__pack" data-wine-pack></div></div>
     <div data-wine-info>
       <p class="crumbs"><a href="boutique.html"><span lang="fr">Boutique</span><span lang="en">Shop</span></a> / <span data-wine-crumb></span></p>
-      <noscript><p><span lang="fr">Activez JavaScript pour afficher la fiche du vin.</span><span lang="en">Enable JavaScript to view the wine details.</span></p></noscript>
+      <noscript><h1 class="h1"><span lang="fr">Fiche du vin</span><span lang="en">Wine sheet</span></h1><p class="lead"><span lang="fr">Cette fiche s'affiche avec JavaScript.</span><span lang="en">This sheet needs JavaScript.</span> <a class="link" href="vins.html"><span lang="fr">Découvrir les vins du domaine</span><span lang="en">Discover the estate's wines</span></a> <span lang="fr">ou commander au</span><span lang="en">or order on</span> <a class="link" href="tel:+33685304242">+33 6 85 30 42 42</a>.</p></noscript>
     </div>
   </div>
 </section>
@@ -87,7 +88,8 @@
   <div class="wrap wcuvee__grid">
     <div class="wcuvee__stage" data-wcuvee-stage>
       <img class="socle" src="assets/img/grok/socle-detoure-800.webp" srcset="assets/img/grok/socle-detoure-400.webp 400w, assets/img/grok/socle-detoure-800.webp 800w" sizes="(min-width:1000px) 30vw, 70vw" width="573" height="447" alt="" loading="lazy" decoding="async">
-      <img class="cuvee__bottle" data-wcuvee-bottle src="assets/img/vins/bouteille-haut-piquat-675.webp" width="720" height="2400" alt="" loading="lazy">
+      <img class="cuvee__bottle" data-wcuvee-bottle src="assets/img/vins/bouteille-haut-piquat-360.webp" srcset="assets/img/vins/bouteille-haut-piquat-360.webp 360w, assets/img/vins/bouteille-haut-piquat-675.webp 675w" sizes="(min-width: 900px) 10vw, 28vw" width="360" height="1427" alt="" loading="lazy">
+      <span class="gen-tag"><span lang="fr">Illustration générée</span><span lang="en">AI-generated illustration</span></span>
     </div>
     <div data-wcuvee-text><p class="kicker"><span lang="fr">La cuvée</span><span lang="en">The cuvée</span></p><h2 class="h2" id="cuvee-title" data-wcuvee-title>Château Haut-Piquat</h2><dl class="specs" data-wcuvee-specs style="margin-top:24px"></dl><p class="small muted" style="margin-top:20px" data-wcuvee-note></p></div>
   </div>
@@ -160,6 +162,7 @@
       <span>© 2026 Château Haut-Piquat · SARL Vignoble Rivière Jean Pierre</span>
       <span><span lang="fr">Maquette de démonstration&nbsp;: paiement, réservation et formulaires simulés, rien n'est envoyé.</span><span lang="en">Demonstration mock-up: payment, booking and forms are simulated, nothing is sent.</span></span>
       <span><span lang="fr">La vente d'alcool est interdite aux mineurs.</span><span lang="en">The sale of alcohol to minors is prohibited.</span></span>
+      <span class="ftr__tools"><button class="ftr__tool" type="button" data-sound aria-pressed="false"><span lang="fr">Son d'ambiance</span><span lang="en">Ambient sound</span></button><button class="ftr__tool" type="button" data-calm-toggle><span lang="fr">Réduire les animations</span><span lang="en">Reduce motion</span></button></span>
     </div>
     <div class="ftr__big" aria-hidden="true">Haut-Piquat</div>
   </div>
@@ -199,6 +202,6 @@
 <script src="assets/vendor/gsap/DrawSVGPlugin.min.js" defer></script>
 <script src="assets/vendor/gsap/CustomEase.min.js" defer></script>
 <script src="assets/vendor/gsap/Flip.min.js" defer></script>
-<script type="module" src="assets/js/main.js?v=15"></script>
+<script type="module" src="assets/js/main.js?v=16"></script>
 </body>
 </html>
