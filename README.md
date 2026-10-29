@@ -1,4 +1,4 @@
-# Château Haut-Piquat · maquette v5
+# Château Haut-Piquat · maquette v6
 
 Maquette de démonstration du futur site du Château Haut-Piquat (Lussac Saint-Émilion), direction artistique « Calcaire à astéries ». Site statique en HTML, CSS et JavaScript, sans étape de construction, prêt pour Vercel.
 
@@ -30,7 +30,17 @@ Maquette de démonstration du futur site du Château Haut-Piquat (Lussac Saint-�
 1. Remplacer une image : déposer le nouveau fichier sous le même nom ; aucune règle de cache n'est à modifier.
 2. Changer un prix : modifier `assets/js/data.js`.
 3. À chaque version livrée, changer le numéro `?v=N` partout et à l'identique, dans les pages et dans les `import` JavaScript :
-   `grep -rl "?v=5" --include=*.html --include=*.js . | xargs sed -i "" "s/?v=5/?v=6/g"`
+   `grep -rl "?v=6" --include=*.html --include=*.js . | xargs sed -i "" "s/?v=6/?v=7/g"`
+
+## Version 6 (finale)
+
+- En-tête : bouton « Réserver » sur grand écran ; libellés du menu toujours sur une ligne.
+- Menu mobile : deux actions directes, « Réserver une visite » et « Boutique en ligne ».
+- Retour en haut : une astérie qui tourne avec la lecture, cerclée de sa progression.
+- Boutique : 12 vins d'abord, puis « Voir les 12 autres vins » ; les filtres montrent toujours tous les résultats.
+- Fiche vin sur mobile : barre d'achat collante dès que le bouton principal sort de l'écran.
+- Visites & événements : fin de page « Avant de venir » vers Le domaine et la boutique.
+- Savoir-faire au rythme resserré ; panier : « Retirer » détaché de l'option caisse bois.
 
 ## Version 5
 

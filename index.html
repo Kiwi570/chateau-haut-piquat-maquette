@@ -25,8 +25,8 @@
 <link rel="preload" href="assets/fonts/fraunces-latin-full-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="assets/fonts/manrope-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" as="image" href="assets/img/photos/vigne-chateau-matin-1920.webp" imagesrcset="assets/img/photos/vigne-chateau-matin-640.webp 640w, assets/img/photos/vigne-chateau-matin-1024.webp 1024w, assets/img/photos/vigne-chateau-matin-1440.webp 1440w, assets/img/photos/vigne-chateau-matin-1920.webp 1920w, assets/img/photos/vigne-chateau-matin-2560.webp 2560w" imagesizes="100vw" fetchpriority="high">
-<link rel="stylesheet" href="assets/css/style.css?v=5">
-<link rel="modulepreload" href="assets/js/main.js?v=5">
+<link rel="stylesheet" href="assets/css/style.css?v=6">
+<link rel="modulepreload" href="assets/js/main.js?v=6">
 <script>(function(d){var h=d.documentElement;h.className=h.className.replace('no-js','js');try{var s=localStorage;var l=s.getItem('ahp-lang');if(l==='en'){h.lang='en';}var c=s.getItem('ahp-calm');if(c==='1'||(c===null&&matchMedia('(prefers-reduced-motion: reduce)').matches)){h.classList.add('calm');}if(s.getItem('ahp-age')==='ok'){h.classList.add('age-ok');}if(sessionStorage.getItem('ahp-trans')==='1'){h.classList.add('trans-in');}}catch(e){}setTimeout(function(){if(!window.__ahpReady){h.classList.add('calm');h.classList.remove('trans-in');}},4500);})(document);</script>
 </head>
 <body data-page="index">
@@ -58,6 +58,7 @@
     <button class="tool tool--lang" type="button" data-lang-toggle aria-label="English version" data-aria-en="Version française"><span class="l-fr" aria-hidden="true">FR</span><span class="l-sep" aria-hidden="true">/</span><span class="l-en" aria-hidden="true">EN</span></button>
     <button class="tool hide-sm" type="button" data-sound aria-pressed="false" aria-label="Ambiance sonore" data-aria-en="Ambient sound" data-tip="Ambiance sonore" data-tip-en="Ambient sound"><svg><use href="#i-sound"/></svg></button>
     <button class="tool hide-sm" type="button" data-calm aria-pressed="false" aria-label="Mode calme : réduire les animations" data-aria-en="Calm mode: reduce motion" data-tip="Mode calme : moins d'animations" data-tip-en="Calm mode: less motion"><svg><use href="#i-calm"/></svg></button>
+    <a class="hdr__cta magnetic" href="oenotourisme.html#reserver"><span lang="fr">Réserver</span><span lang="en">Book</span></a>
     <button class="tool tool--cart" type="button" data-cart-open aria-label="Ouvrir le panier" data-aria-en="Open cart" data-tip="Panier" data-tip-en="Cart"><svg><use href="#i-cart"/></svg><span class="cart-count" data-cart-count></span></button>
     <button class="tool tool--menu" type="button" data-menu aria-expanded="false" aria-controls="mmenu" aria-label="Menu"><svg><use href="#i-menu"/></svg></button>
   </div>
@@ -65,6 +66,7 @@
 <div class="mmenu" id="mmenu" data-mmenu aria-hidden="true">
   <nav aria-label="Navigation mobile" data-aria-en="Mobile navigation"><a href="domaine.html"><span class="n">01</span><span lang="fr">Le domaine</span><span lang="en">The estate</span></a><a href="index.html#vins"><span class="n">02</span><span lang="fr">Les vins</span><span lang="en">The wines</span></a><a href="boutique.html"><span class="n">03</span><span lang="fr">Boutique</span><span lang="en">Shop</span></a><a href="oenotourisme.html"><span class="n">04</span><span lang="fr">Visites & événements</span><span lang="en">Visits & events</span></a><a href="oenotourisme.html#acces"><span class="n">05</span><span lang="fr">Venir</span><span lang="en">Visit us</span></a></nav>
   <div>
+    <div class="mmenu__ctas"><a class="btn btn--light" href="oenotourisme.html#reserver"><span lang="fr">Réserver une visite</span><span lang="en">Book a visit</span></a><a class="btn btn--ghost" href="boutique.html"><span lang="fr">Boutique en ligne</span><span lang="en">Online shop</span></a></div>
     <div class="mmenu__tools">
       <button class="tool" type="button" data-sound aria-pressed="false"><span lang="fr">Son</span><span lang="en">Sound</span></button>
       <button class="tool" type="button" data-calm aria-pressed="false"><span lang="fr">Mode calme</span><span lang="en">Calm mode</span></button>
@@ -376,6 +378,6 @@
 <script src="assets/vendor/gsap/DrawSVGPlugin.min.js" defer></script>
 <script src="assets/vendor/gsap/CustomEase.min.js" defer></script>
 <script src="assets/vendor/gsap/Flip.min.js" defer></script>
-<script type="module" src="assets/js/main.js?v=5"></script>
+<script type="module" src="assets/js/main.js?v=6"></script>
 </body>
 </html>

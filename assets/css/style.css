@@ -1164,3 +1164,51 @@ body.menu-open .hdr__progress { opacity: 0; }
 .dnext { text-align: center; }
 .dnext .kicker { justify-content: center; }
 .dnext__ctas { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 30px; }
+
+/* ============ v6 · version finale ============ */
+/* En-tête : réservation toujours à portée */
+.hdr__cta { display: none; }
+@media (min-width: 1320px) {
+  .hdr__cta { display: inline-flex; align-items: center; min-height: 40px; padding: 0 18px; margin: 0 8px 0 6px; border: 1px solid currentColor; border-radius: 99px; text-decoration: none; font-size: 12.5px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; transition: background-color .3s, color .3s, border-color .3s; }
+  .hdr__cta:hover { background: var(--encre); border-color: var(--encre); color: var(--calcaire); }
+  .hdr.is-over-dark:not(.is-solid) .hdr__cta:hover { background: var(--calcaire); border-color: var(--calcaire); color: var(--encre); }
+}
+/* Menu mobile : deux actions directes */
+.mmenu__ctas { display: grid; gap: 10px; margin-top: 28px; }
+.mmenu__ctas .btn--ghost { color: var(--calcaire); border-color: rgba(238, 231, 217, .5); }
+.mmenu nav a { font-size: clamp(2rem, 8.6vw, 3.6rem); }
+/* Savoir-faire : rythme resserré */
+@media (min-width: 1000px) { .step { min-height: 48vh; } }
+.craft__steps { gap: clamp(24px, 5vh, 64px); }
+/* Panier : « Retirer » détaché de l'option caisse bois */
+.cline label + .rm, .cline .rm { display: block; margin-top: 2px; }
+/* Boutique : voir la suite du catalogue */
+.pgrid__more { display: flex; align-items: center; gap: 18px; margin-top: clamp(28px, 4vw, 48px); }
+.pgrid__more:empty { display: none; }
+.pgrid__more-line { flex: 1; height: 1px; background: var(--line); }
+/* Fiche vin : barre d'achat collante sur mobile */
+.buybar { position: fixed; left: 10px; right: 10px; bottom: calc(var(--legal-h) + 10px); z-index: 57; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 12px; padding: 8px 8px 8px 10px; background: rgba(246, 241, 231, .96); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 14px 40px -12px rgba(31, 27, 22, .35); transform: translateY(140%); transition: transform .5s var(--ease); }
+.buybar.is-on { transform: none; }
+.buybar img { width: 34px; height: 46px; object-fit: contain; }
+.buybar > span { display: grid; min-width: 0; }
+.buybar b { font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.buybar small { font-size: 12.5px; color: var(--encre-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+@media (min-width: 900px) { .buybar { display: none; } }
+/* Retour en haut : astérie et anneau de lecture */
+.totop { position: fixed; right: clamp(12px, 2vw, 28px); bottom: calc(var(--legal-h) + 14px); z-index: 56; width: 52px; height: 52px; display: grid; place-items: center; border: 0; padding: 0; border-radius: 50%; background: rgba(246, 241, 231, .92); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); box-shadow: 0 10px 30px -10px rgba(31, 27, 22, .4); color: var(--ocre-ink); cursor: pointer; opacity: 0; visibility: hidden; transform: translateY(12px) scale(.9); transition: opacity .4s, transform .4s var(--ease), visibility 0s .4s; }
+.totop.is-on { opacity: 1; visibility: visible; transform: none; transition: opacity .4s, transform .4s var(--ease); }
+.totop > svg { grid-area: 1 / 1; }
+.totop__ring { width: 52px; height: 52px; transform: rotate(-90deg); }
+.totop__ring circle { fill: none; stroke: rgba(31, 27, 22, .1); stroke-width: 2; }
+.totop__ring .p { stroke: var(--ocre); }
+.totop__ast { width: 26px; height: 26px; overflow: visible; fill: rgba(194, 155, 87, .25); stroke: currentColor; stroke-width: 4; }
+.totop:hover .totop__ast { fill: rgba(194, 155, 87, .6); }
+body.has-buybar .totop { bottom: calc(var(--legal-h) + 86px); }
+body.menu-open .totop, body.cart-open .totop { opacity: 0; visibility: hidden; }
+/* Visites & événements : fin de page */
+.onext .h2 { margin: 12px 0 clamp(26px, 4vw, 44px); }
+
+/* En-tête : libellés sur une ligne entre 1100 et 1320 px */
+.hdr__nav a { white-space: nowrap; }
+.hdr__name, .hdr__name small { white-space: nowrap; }
+@media (min-width: 1100px) and (max-width: 1319px) { .hdr__nav { gap: 18px; } .hdr__nav a { font-size: 13.5px; letter-spacing: .02em; } }

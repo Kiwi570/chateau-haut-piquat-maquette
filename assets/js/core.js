@@ -112,7 +112,7 @@ function initHeader() {
   btn?.addEventListener('click', () => {
     const open = !m.classList.contains('is-open');
     if (!open) return close();
-    m.classList.add('is-open'); m.setAttribute('aria-hidden', 'false'); btn.setAttribute('aria-expanded', 'true'); document.body.classList.add('menu-open'); smooth.lock(true); $$('main, footer').forEach((el) => { el.inert = true; }); setTimeout(() => $('nav a', m).focus({ preventScroll: true }), 120);
+    hideToast(); m.classList.add('is-open'); m.setAttribute('aria-hidden', 'false'); btn.setAttribute('aria-expanded', 'true'); document.body.classList.add('menu-open'); smooth.lock(true); $$('main, footer').forEach((el) => { el.inert = true; }); setTimeout(() => $('nav a', m).focus({ preventScroll: true }), 120);
     if (!CALM && gsap) gsap.from($$('nav a', m), { y: 40, autoAlpha: 0, stagger: 0.05, duration: 0.7, ease: 'power3.out', delay: 0.15 });
   });
   $$('a', m).forEach((a) => a.addEventListener('click', close));
@@ -280,7 +280,7 @@ export function splitTitle(el, opts = {}) {
 export function spark(x, y) {
   if (CALM || !gsap) return;
   const d = document.createElement('div'); d.className = 'spark'; d.setAttribute('aria-hidden', 'true');
-  d.innerHTML = '<svg viewBox="-55 -55 110 110"><use href="#ast"/></svg>';
+  d.innerHTML = '<svg aria-hidden="true"><use href="#ast"/></svg>';
   d.style.left = x + 'px'; d.style.top = y + 'px'; document.body.appendChild(d);
   gsap.fromTo(d, { scale: 0.2, rotate: -40, autoAlpha: 0 }, { scale: 1.3, rotate: 36, autoAlpha: 1, duration: 0.45, ease: 'back.out(2)' });
   gsap.to(d, { scale: 1.8, autoAlpha: 0, duration: 0.5, delay: 0.45, ease: 'power2.in', onComplete: () => d.remove() });
@@ -348,8 +348,21 @@ function initForms() {
 function initProgress() {
   const hdr = $('.hdr'); if (!hdr) return;
   const bar = document.createElement('span'); bar.className = 'hdr__progress'; bar.setAttribute('aria-hidden', 'true'); hdr.appendChild(bar);
+  // retour en haut : une astérie qui tourne avec la lecture, cerclée de sa progression
+  const top = document.createElement('button'); top.type = 'button'; top.className = 'totop';
+  top.dataset.ariaFr = 'Revenir en haut de la page'; top.dataset.ariaEn = 'Back to top'; top.setAttribute('aria-label', document.documentElement.lang === 'en' ? 'Back to top' : 'Revenir en haut de la page');
+  top.innerHTML = '<svg class="totop__ring" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="21"/><circle class="p" cx="24" cy="24" r="21"/></svg><svg class="totop__ast" aria-hidden="true"><use href="#ast"/></svg>';
+  document.body.appendChild(top);
+  top.addEventListener('click', () => { window.scrollTo({ top: 0, behavior: CALM ? 'auto' : 'smooth' }); if (!CALM) gsap.fromTo($('.totop__ast', top), { rotation: 0 }, { rotation: -360, duration: 1, ease: 'power3.out' }); });
+  const ring = $('.p', top); const ast = $('.totop__ast', top); const C = 2 * Math.PI * 21;
+  ring.style.strokeDasharray = C.toFixed(1);
   let raf = 0;
-  const upd = () => { raf = 0; const max = document.documentElement.scrollHeight - innerHeight; bar.style.transform = `scaleX(${max > 0 ? Math.min(1, scrollY / max).toFixed(4) : 0})`; };
+  const upd = () => {
+    raf = 0; const max = document.documentElement.scrollHeight - innerHeight; const pr = max > 0 ? Math.min(1, scrollY / max) : 0;
+    bar.style.transform = `scaleX(${pr.toFixed(4)})`;
+    ring.style.strokeDashoffset = (C * (1 - pr)).toFixed(1); ast.style.transform = `rotate(${(pr * 360).toFixed(1)}deg)`;
+    top.classList.toggle('is-on', scrollY > innerHeight * 1.2);
+  };
   addEventListener('scroll', () => { if (!raf) raf = requestAnimationFrame(upd); }, { passive: true });
   addEventListener('resize', upd); upd();
 }

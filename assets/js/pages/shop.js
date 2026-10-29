@@ -1,10 +1,11 @@
 // Boutique : filtres, cartes inclinables, ajout au panier, règle des formats.
-import { $, $$, L, eur, CALM, TOUCH, scrollToEl, sparkAt } from '../core.js?v=5';
-import { WINES, CHATEAUX, FORMATS } from '../data.js?v=5';
-import { addToCart } from '../cart.js?v=5';
+import { $, $$, L, eur, CALM, TOUCH, scrollToEl, sparkAt } from '../core.js?v=6';
+import { WINES, CHATEAUX, FORMATS } from '../data.js?v=6';
+import { addToCart } from '../cart.js?v=6';
 
 const gsap = window.gsap; const Flip = window.Flip;
 const ORDER = WINES.map((w) => w.id);
+const LIMIT = 12; let expanded = false;
 const state = { ch: new Set(), vin: new Set(), fmt: new Set(), coeur: false, promo: false, sort: 'default' };
 const FMT_ORDER = ['d37', 'b75', 'm150', 'dm300', 'i600'];
 
@@ -82,7 +83,11 @@ function syncUrl() {
 function renderGrid(animate) {
   syncUrl();
   const grid = $('[data-pgrid]');
-  const list = visible();
+  const all = visible();
+  // sans filtre : 12 vins d'abord, le reste sur demande
+  const noFilter = !state.ch.size && !state.vin.size && !state.fmt.size && !state.coeur && !state.promo;
+  const limited = noFilter && !expanded && all.length > LIMIT;
+  const list = limited ? all.slice(0, LIMIT) : all;
   const stateF = animate && !CALM && Flip ? Flip.getState($$('.pcard', grid)) : null;
   const existing = new Map($$('.pcard', grid).map((c) => [c.dataset.id, c]));
   const frag = document.createDocumentFragment();
@@ -100,7 +105,11 @@ function renderGrid(animate) {
   if (state.promo) drops.push(['promo', 1, L('promotions', 'offers')]);
   const empty = list.length ? '' : `<div class="pgrid__empty"><p>${L('Aucun vin ne correspond à ces filtres.', 'No wine matches these filters.')}</p><div class="actions">${drops.slice(0, 3).map(([k, v, t]) => `<button class="chip" type="button" data-drop="${k}" data-v="${v}">${L('Retirer', 'Remove')} ${t}</button>`).join('')}<button class="btn btn--sm" type="button" data-drop-all>${L('Tout afficher', 'Show all')}</button></div></div>`;
   grid.insertAdjacentHTML('beforeend', empty);
-  $('[data-result-count]').innerHTML = L(`${list.length} vin${list.length > 1 ? 's' : ''}`, `${list.length} wine${list.length > 1 ? 's' : ''}`);
+  $('[data-result-count]').innerHTML = L(`${all.length} vin${all.length > 1 ? 's' : ''}`, `${all.length} wine${all.length > 1 ? 's' : ''}`);
+  let more = $('[data-pmore]');
+  if (!more) { more = document.createElement('div'); more.className = 'pgrid__more'; more.setAttribute('data-pmore', ''); grid.after(more); }
+  const rest = all.length - list.length;
+  more.innerHTML = limited ? `<span class="pgrid__more-line" aria-hidden="true"></span><button class="btn btn--ghost magnetic" type="button" data-more>${L(`Voir les ${rest} autres vins`, `See the other ${rest} wines`)}</button><span class="pgrid__more-line" aria-hidden="true"></span>` : '';
   if (stateF) Flip.from(stateF, { duration: 0.7, ease: 'power3.inOut', absolute: true, stagger: 0.02, onEnter: (els) => gsap.fromTo(els, { autoAlpha: 0, scale: 0.9 }, { autoAlpha: 1, scale: 1, duration: 0.6 }), onLeave: (els) => gsap.to(els, { autoAlpha: 0, scale: 0.9, duration: 0.4 }) });
 }
 
@@ -135,6 +144,7 @@ function initFilters() {
     renderFilters(); renderGrid(true); syncRuler();
   });
   $('[data-sort]').addEventListener('change', (e) => { state.sort = e.target.value; renderGrid(true); });
+  document.addEventListener('click', (e) => { if (!e.target.closest('[data-more]')) return; expanded = true; renderGrid(true); window.ScrollTrigger && ScrollTrigger.refresh(); });
   $('[data-pgrid]').addEventListener('click', (e) => {
     if (e.target.closest('[data-drop-all]')) { state.ch.clear(); state.vin.clear(); state.fmt.clear(); state.coeur = state.promo = false; renderFilters(); renderGrid(true); syncRuler(); return; }
     const d = e.target.closest('[data-drop]');

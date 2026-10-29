@@ -1,5 +1,5 @@
 // Le domaine : frise gravée, savoir-faire ouvert par une fissure, chai de 480 barriques.
-import { $, $$, L, CALM, hdrH, padMasks } from '../core.js?v=5';
+import { $, $$, L, CALM, hdrH, padMasks } from '../core.js?v=6';
 
 const gsap = window.gsap; const ST = window.ScrollTrigger;
 

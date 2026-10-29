@@ -1,7 +1,7 @@
 // Fiche vin : rendu depuis les données du site, bouteille qui pivote sur son socle.
-import { $, $$, L, eur, CALM, TOUCH, toast } from '../core.js?v=5';
-import { WINES, CHATEAUX, FORMATS, BOTTLES, TEXTURES } from '../data.js?v=5';
-import { addToCart } from '../cart.js?v=5';
+import { $, $$, L, eur, CALM, TOUCH, toast } from '../core.js?v=6';
+import { WINES, CHATEAUX, FORMATS, BOTTLES, TEXTURES } from '../data.js?v=6';
+import { addToCart } from '../cart.js?v=6';
 
 const gsap = window.gsap;
 let wine = null;
@@ -73,7 +73,22 @@ function bind() {
   });
 }
 
-export function setup() { render(); bind(); }
+/* Barre d'achat collante sur mobile, quand le bouton principal a défilé hors de l'écran */
+function buyBar() {
+  const btn = $('[data-add-wine]'); if (!btn) return;
+  const w = wine; const ch = CHATEAUX[w.ch]; const f = FORMATS[w.fmt];
+  const bar = document.createElement('div'); bar.className = 'buybar'; bar.setAttribute('data-buybar', '');
+  bar.innerHTML = `<img src="${w.img.small}" alt="" width="${w.img.w}" height="${w.img.h}"><span><b>${ch.name} ${w.vintage}</b><small>${eur(w.price)} · ${L(f.label.fr, f.label.en)}</small></span><button class="btn btn--sm" type="button" data-buybar-add>${L('Ajouter', 'Add')}</button>`;
+  bar.inert = true; document.body.appendChild(bar);
+  let raf = 0; let was = null;
+  const check = () => {
+    raf = 0; const on = btn.getBoundingClientRect().bottom < 60; if (on === was) return; was = on;
+    bar.classList.toggle('is-on', on); bar.inert = !on; document.body.classList.toggle('has-buybar', on);
+  };
+  addEventListener('scroll', () => { if (!raf) raf = requestAnimationFrame(check); }, { passive: true }); check();
+  bar.addEventListener('click', (e) => { if (e.target.closest('[data-buybar-add]')) addToCart(wine.id, Math.max(1, +$('[data-qv]').textContent || 1), $('img', bar)); });
+}
+export function setup() { render(); bind(); buyBar(); }
 export function enter() {
   if (CALM) return;
   const pack = $('[data-wine-pack]');
