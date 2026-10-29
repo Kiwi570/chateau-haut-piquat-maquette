@@ -1,7 +1,7 @@
 // Accueil : ouverture, coupe géologique, vins, millésimes, puis deux bandeaux vers Le domaine et Visites & événements.
-import { $, $$, L, eur, CALM, TOUCH, DESKTOP, hdrH, splitTitle, padMasks } from '../core.js?v=8';
-import { heroLight, fossils } from '../gl.js?v=8';
-import { WINES, CHATEAUX, FORMATS } from '../data.js?v=8';
+import { $, $$, L, eur, CALM, TOUCH, DESKTOP, hdrH, splitTitle, padMasks } from '../core.js?v=9';
+import { heroLight, fossils } from '../gl.js?v=9';
+import { WINES, CHATEAUX, FORMATS } from '../data.js?v=9';
 
 const gsap = window.gsap; const ST = window.ScrollTrigger;
 let hero = null;
@@ -9,7 +9,7 @@ let hero = null;
 export function setup() {
   buildVintages();
   if (CALM) return;
-  gsap.set('[data-hero-img]', { scale: 1.16 });
+  gsap.set(['[data-hero-img]', '[data-hero-video]'], { scale: 1.16 });
   gsap.set(['[data-hero-kicker]', '[data-hero-sub]', '[data-hero-ctas] > *', '[data-hero-meta]', '[data-hero-scroll]'], { autoAlpha: 0, y: 24 });
   gsap.set('[data-hdr]', { autoAlpha: 0, y: -20 });
 }
@@ -37,17 +37,35 @@ function heroIn() {
   if (split) padMasks(split, 'chars');
   const tl = gsap.timeline();
   tl.to('[data-hero-strata] span', { scaleY: 0, duration: 0.85, ease: 'expo.inOut', stagger: 0.09 }, 0)
-    .to('[data-hero-img]', { scale: 1.03, duration: 2.0, ease: 'expo.out' }, 0);
+    .to(['[data-hero-img]', '[data-hero-video]'], { scale: 1.03, duration: 2.0, ease: 'expo.out' }, 0);
   if (split) tl.from(split.chars, { yPercent: 115, rotate: 4, duration: 0.75, ease: 'expo.out', stagger: 0.02, onComplete: () => split.revert() }, 0.1);
   tl.to('[data-hdr]', { autoAlpha: 1, y: 0, duration: 0.6, ease: 'power3.out' }, 0.35)
     .to(['[data-hero-kicker]', '[data-hero-sub]', '[data-hero-ctas] > *', '[data-hero-meta]', '[data-hero-scroll]'], { autoAlpha: 1, y: 0, duration: 0.65, ease: 'power3.out', stagger: 0.04 }, 0.45)
-    .add(() => startHeroGL(), 1.7);
+    .add(() => startHeroVideo(), 0.2);
   // la photo descend doucement au défilement
   gsap.to('.hero__media', { yPercent: 14, ease: 'none', scrollTrigger: { trigger: '[data-hero]', start: 'top top', end: 'bottom top', scrub: true } });
   gsap.to('.hero__content', { yPercent: -18, autoAlpha: 0.2, ease: 'none', scrollTrigger: { trigger: '[data-hero]', start: 'center center', end: 'bottom top', scrub: true } });
   // halo CSS de secours (sans WebGL) qui suit le pointeur
   const glow = $('.hero__glow');
   addEventListener('pointermove', (e) => { glow.style.setProperty('--mx', (e.clientX / innerWidth * 100) + '%'); glow.style.setProperty('--my', (e.clientY / innerHeight * 100) + '%'); }, { passive: true });
+}
+/* Vidéo de l'ouverture : boucle muette, photo en attente, repli sur la lumière WebGL */
+function startHeroVideo() {
+  const v = $('[data-hero-video]');
+  const net = navigator.connection || {};
+  const slow = net.saveData || /(^|-)2g$/.test(net.effectiveType || '');
+  if (!v || slow || !v.canPlayType('video/mp4')) { setTimeout(startHeroGL, 1500); return; }
+  const portrait = matchMedia('(max-aspect-ratio: 1/1)').matches;
+  v.src = portrait ? 'assets/video/ouverture-720.mp4' : 'assets/video/ouverture-1920.mp4';
+  let fell = false; const fallback = () => { if (fell) return; fell = true; v.removeAttribute('src'); v.load(); startHeroGL(); };
+  const timer = setTimeout(() => { if (!v.classList.contains('is-on')) fallback(); }, 9000);
+  v.addEventListener('playing', () => { clearTimeout(timer); v.classList.add('is-on'); }, { once: true });
+  v.addEventListener('error', fallback, { once: true });
+  const p = v.play(); if (p && p.catch) p.catch(fallback);
+  // pause hors de l'écran et quand l'onglet est masqué
+  const io = new IntersectionObserver(([e]) => { if (fell) return; if (e.isIntersecting && !document.hidden) v.play().catch(() => {}); else v.pause(); }, { threshold: 0.05 });
+  io.observe($('[data-hero]'));
+  document.addEventListener('visibilitychange', () => { if (fell) return; if (document.hidden) v.pause(); else if ($('[data-hero]').getBoundingClientRect().bottom > 0) v.play().catch(() => {}); });
 }
 async function startHeroGL() {
   const img = $('[data-hero-img]'); const canvas = $('[data-hero-gl]');

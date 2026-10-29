@@ -1,4 +1,4 @@
-# Château Haut-Piquat · maquette v8
+# Château Haut-Piquat · maquette v9
 
 Maquette de démonstration du futur site du Château Haut-Piquat (Lussac Saint-Émilion), direction artistique « Calcaire à astéries ». Site statique en HTML, CSS et JavaScript, sans étape de construction, prêt pour Vercel.
 
@@ -23,6 +23,7 @@ Maquette de démonstration du futur site du Château Haut-Piquat (Lussac Saint-�
 - `assets/img/photos`, `assets/img/vins`, `assets/img/logos` : photos du site actuel, étalonnées, en WebP
 - `assets/img/grok` : textures et détails générés avec Grok (strates, pierre, socle, chêne, lumière)
 - `assets/img/og` : images de partage 1200 × 630
+- `assets/video` : vidéo de l'ouverture de l'accueil, `ouverture-1920.mp4` (ordinateur, 1920 × 1080) et `ouverture-720.mp4` (téléphone, 720 × 1280)
 - `assets/vendor` : GSAP 3.15 (ScrollTrigger, SplitText, DrawSVG, Flip, CustomEase) et OGL, hébergés avec le site
 - `assets/fonts` : Fraunces et Manrope en WOFF2
 
@@ -31,7 +32,13 @@ Maquette de démonstration du futur site du Château Haut-Piquat (Lussac Saint-�
 1. Remplacer une image : déposer le nouveau fichier sous le même nom ; aucune règle de cache n'est à modifier.
 2. Changer un prix : modifier `assets/js/data.js`.
 3. À chaque version livrée, changer le numéro `?v=N` partout et à l'identique, dans les pages et dans les `import` JavaScript :
-   `grep -rl "?v=8" --include=*.html --include=*.js . | xargs sed -i "" "s/?v=8/?v=9/g"`
+   `grep -rl "?v=9" --include=*.html --include=*.js . | xargs sed -i "" "s/?v=9/?v=10/g"`
+
+## Version 9
+
+- Accueil : vidéo en boucle dans l'ouverture (16,8 s, muette), montée à partir de cinq photos du domaine : vignes au matin, grappes, vignoble d'automne, chai à barriques, château au soleil couchant.
+- La photo actuelle reste affichée pendant le chargement. La vidéo ne se charge pas en mode calme, avec « réduire les animations », ni sur connexion lente ; elle se met en pause hors de l'écran. En cas d'échec, la lumière WebGL d'origine reprend.
+- Remplacer la vidéo : déposer les nouveaux fichiers sous les mêmes noms dans `assets/video` (MP4 H.264, muet, 3 à 5 Mo, 1920 × 1080 pour l'ordinateur et 720 × 1280 pour le téléphone), puis changer le numéro de version.
 
 ## Version 8
 
