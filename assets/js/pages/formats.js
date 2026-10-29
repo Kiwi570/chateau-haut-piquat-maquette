@@ -1,7 +1,7 @@
 // Château Haut-Piquat — grands formats : la bouteille choisie s'éclaire sur la photo de la gamme,
 // un trait de niveau monte jusqu'à son épaule et l'équivalence en bouteilles de 75 cl se remplit.
 // Utilisé sur Les vins (liens vers la boutique) et dans la Boutique (réglette qui filtre le catalogue).
-import { $, $$, L, CALM } from '../core.js?v=17';
+import { $, $$, L, CALM } from '../core.js?v=18';
 
 // repères mesurés sur la photo gamme-formats (720 × 687, affichée recadrée à 720 × 646 depuis le haut) :
 // centre horizontal, haut et bas de chaque bouteille, demi-largeur, en % du cadre

@@ -1,5 +1,44 @@
 # Journal des modifications
 
+## v18 (par rapport à l'archive v17)
+
+Mise à jour sans suppression : `unzip -o` suffit, aucun fichier à retirer du dépôt.
+
+Tiroir du panier plus large et réorganisé, caisse bois redessinée.
+
+### Fichiers modifiés (22)
+
+- `404.html`
+- `CHANGELOG.md`
+- `README.md`
+- `_audit/rapport.md`
+- `assets/css/style.css`
+- `assets/js/cart.js`
+- `assets/js/main.js`
+- `assets/js/pages/cellar.js`
+- `assets/js/pages/domain.js`
+- `assets/js/pages/formats.js`
+- `assets/js/pages/home.js`
+- `assets/js/pages/places.js`
+- `assets/js/pages/shop.js`
+- `assets/js/pages/tourism.js`
+- `assets/js/pages/wine.js`
+- `boutique.html`
+- `domaine.html`
+- `index.html`
+- `informations.html`
+- `oenotourisme.html`
+- `vin.html`
+- `vins.html`
+
+### Fichiers ajoutés (0)
+
+- aucun
+
+### Fichiers supprimés
+
+- aucun
+
 ## v17 (par rapport à l'archive v16)
 
 Mise à jour sans suppression : `unzip -o` suffit, aucun fichier à retirer du dépôt.

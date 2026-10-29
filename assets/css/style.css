@@ -1621,3 +1621,83 @@ section[aria-labelledby="pro-title"] { padding-top: clamp(40px, 5vw, 80px); }
 .ftr__big { position: relative; overflow-x: clip; overflow-y: visible; color: #15120E; text-shadow: -2px -2px 1px rgba(0, 0, 0, .55), 2px 2px 0 rgba(238, 231, 217, .16), 0 0 1px rgba(238, 231, 217, .05); }
 .ftr__big .ch { display: inline-block; }
 .carve-dust { position: absolute; left: 0; top: 0; width: 4px; height: 4px; border-radius: 50%; background: #E4D3B0; pointer-events: none; }
+
+/* ============ v18 · tiroir du panier plus large et mieux organisé ============ */
+.cart { width: min(600px, 100vw); }
+.cart__head { padding: 16px 24px; }
+.cart__head h2 { font-size: 1.6rem; line-height: 1.1; }
+.cart__sum { margin: 4px 0 0; font-size: 13px; color: var(--encre-3); min-height: 1em; }
+/* caisse et port offert : un bandeau compact sous le titre */
+.cart__ship:empty { display: none; }
+.cart__ship { padding: 14px 24px; background: var(--calcaire); border-bottom: 1px solid var(--line); }
+.crate--drawer { grid-template-columns: 132px minmax(0, 1fr); grid-template-rows: auto auto; column-gap: 20px; row-gap: 8px; align-items: center; }
+.crate--drawer .crate__box { grid-row: 1 / 3; max-width: none; width: 132px; margin: 0; }
+.crate--drawer .crate__box svg { filter: drop-shadow(0 8px 10px rgba(60, 35, 15, .25)); }
+.crate--drawer .crate__stamp { font-size: 10px; padding: 4px 8px; letter-spacing: .14em; outline-offset: 2px; }
+.crate--drawer .crate__msg { grid-column: 2; grid-row: 1; align-self: end; text-align: left; font-size: 14px; }
+.crate--drawer .crate__gauge { grid-column: 2; grid-row: 2; align-self: start; }
+/* lignes compactes : vignette, nom et format, quantité, prix */
+.cart__body { padding: 4px 24px; }
+.cline { grid-template-columns: 56px minmax(0, 1fr) auto auto; grid-template-areas: "img info qty end"; gap: 6px 16px; padding: 14px 0; align-items: center; }
+.cline__img { grid-area: img; display: block; }
+.cline img { width: 56px; height: 74px; border-radius: 3px; }
+.cline__info { grid-area: info; min-width: 0; display: grid; gap: 2px; }
+.cline h3 { font: 600 14.5px/1.3 var(--sans); }
+.cline h3 a { text-decoration: none; }
+.cline h3 a:hover { text-decoration: underline; }
+.cline .sub { margin: 0; font-size: 12.5px; }
+.cline .qty { grid-area: qty; margin: 0; }
+.cline .qty button { width: 36px; height: 36px; font-size: 17px; }
+.cline__end { grid-area: end; display: grid; justify-items: end; gap: 0; min-width: 84px; }
+.cline .price { margin: 0; }
+.cline .rm, .cline label + .rm { display: inline-flex; align-items: center; margin: 0; padding: 0; min-height: 32px; font-size: 12.5px; }
+.cline label.cline__wood { display: inline-flex; margin: 2px 0 0; min-height: 30px; font-size: 12.5px; gap: 6px; color: var(--encre-2); }
+@media (pointer: coarse) { .cline .qty button { width: 44px; height: 44px; } .cline .rm, .cline label.cline__wood { min-height: 44px; } }
+@media (max-width: 520px) {
+  .cart__head, .cart__ship { padding-inline: 18px; }
+  .cart__body { padding-inline: 18px; }
+  .cline { grid-template-columns: 56px minmax(0, 1fr) auto; grid-template-areas: "img info end" "img qty end"; row-gap: 4px; }
+  .cline .qty { justify-self: start; }
+  .crate--drawer { grid-template-columns: 104px minmax(0, 1fr); column-gap: 14px; }
+  .crate--drawer .crate__box { width: 104px; }
+  .crate--drawer .crate__msg { font-size: 13.5px; }
+}
+/* pied du tiroir : totaux serrés, l'étape de paiement défile si besoin */
+.cart__foot { padding: 14px 24px 18px; gap: 8px; max-height: 62svh; overflow-y: auto; overscroll-behavior: contain; }
+.cart__rows { font-size: 14px; }
+.cart__rows .total { font-size: 16.5px; }
+.cart__msg:empty { display: none; }
+/* Caisse bois redessinée : trous creusés dans le carton, anneau doré de progression, astérie sur la capsule */
+.crate__hole { fill: rgba(0, 0, 0, .34); stroke: rgba(255, 238, 205, .16); stroke-width: 1.2; stroke-dasharray: none; }
+.crate__hole-in { fill: none; stroke: rgba(255, 238, 205, .14); stroke-width: 1; stroke-dasharray: 3 4; }
+.crate__arc { fill: none; stroke: #E6C27C; stroke-width: 3; stroke-linecap: round; filter: drop-shadow(0 0 3px rgba(230, 194, 124, .6)); }
+.crate__ast { fill: rgba(217, 178, 106, .9); stroke: none; }
+.crate__box svg { filter: drop-shadow(0 16px 20px rgba(60, 35, 15, .32)); }
+/* lignes sur deux rangées : nom, format et prix ; puis quantité, caisse bois et « Retirer » */
+.cline { grid-template-columns: 56px minmax(0, 1fr) auto; grid-template-areas: "img info price" "img opts opts"; gap: 6px 16px; align-items: center; }
+.cline .price { grid-area: price; align-self: start; padding-top: 2px; }
+.cline__opts { grid-area: opts; display: flex; flex-wrap: wrap; align-items: center; gap: 4px 18px; }
+.cline__opts .qty { margin: 0; }
+.cline__opts .rm { margin-left: auto; }
+.cline label.cline__wood { margin: 0; }
+@media (max-width: 520px) {
+  .cline { grid-template-columns: 56px minmax(0, 1fr) auto; grid-template-areas: "img info price" "img opts opts"; gap: 4px 12px; }
+  .cline__opts { gap: 0 12px; }
+}
+/* « Retirer » : texte sur ordinateur, croix sur téléphone (la ligne garde deux rangées) */
+.cline .rm { gap: 6px; }
+.rm__i { display: none; width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.8; }
+@media (max-width: 520px) {
+  .cline .rm { justify-content: center; width: 44px; min-height: 44px; text-decoration: none; }
+  .rm__t { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .rm__i { display: block; }
+}
+/* le bandeau sanitaire reste visible au-dessus du tiroir ouvert */
+body.cart-open .legal { z-index: 96; }
+/* à une caisse, le « − » devient une corbeille : sur téléphone il remplace le lien « Retirer » */
+.qty__bin { display: block; width: 17px; height: 17px; margin: auto; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+@media (max-width: 520px) { .cline .rm { display: none; } }
+@media (max-width: 520px) { .cline .cline__opts .rm { display: none; } }
+/* moyens de paiement : un seul cadre par moyen (les textes bilingues n'ont plus leur propre bordure) */
+.paychips span { padding: 0; border: 0; border-radius: 0; background: none; font-size: inherit; font-weight: inherit; }
+.paychips { grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); }

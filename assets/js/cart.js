@@ -1,6 +1,6 @@
 // Panier simulé : tiroir toujours accessible, frais de port et minimum de commande du domaine.
-import { $, $$, L, eur, store, toast, smooth, CALM, TOUCH, hideToast, sparkAt } from './core.js?v=17';
-import { WINES, CHATEAUX, FORMATS } from './data.js?v=17';
+import { $, $$, L, eur, store, toast, smooth, CALM, TOUCH, hideToast, sparkAt, lang } from './core.js?v=18';
+import { WINES, CHATEAUX, FORMATS } from './data.js?v=18';
 
 const KEY = 'ahp-cart';
 const FREE = 350, SHIP = 35, MIN = 105;
@@ -23,28 +23,33 @@ function renderCount() {
 }
 
 function render() {
-  const body = $('[data-cart-body]'); const foot = $('[data-cart-foot]'); if (!body) return;
+  const body = $('[data-cart-body]'); const foot = $('[data-cart-foot]'); const ship = $('[data-cart-ship]'); if (!body) return;
   renderCount();
+  const t = totals();
+  const sum = $('[data-cart-sum]');
+  const bottles = lines.reduce((a, l) => a + l.qty * FORMATS[wineById(l.id).fmt].units, 0);
+  if (sum) sum.innerHTML = lines.length ? L(`${t.count} caisse${t.count > 1 ? 's' : ''} · ${bottles} bouteille${bottles > 1 ? 's' : ''}`, `${t.count} case${t.count > 1 ? 's' : ''} · ${bottles} bottle${bottles > 1 ? 's' : ''}`) : '';
   if (!lines.length) {
+    if (ship) ship.innerHTML = '';
     body.innerHTML = `<div class="cart__empty"><svg class="ast" aria-hidden="true"><use href="#ast"/></svg><p>${L('Votre panier est vide.', 'Your cart is empty.')}</p><a class="btn btn--sm" href="boutique.html">${L('Voir la boutique', 'Visit the shop')}</a></div>`;
     foot.innerHTML = `<p class="form-note">${L('Port offert dès 350&nbsp;€ en France métropolitaine.', 'Free delivery from €350 in mainland France.')}</p>`;
     return;
   }
+  // une ligne compacte par vin : vignette, nom et format, quantité, prix ; la caisse bois en option dessous
   body.innerHTML = lines.map((l, i) => {
     const w = wineById(l.id); const f = FORMATS[w.fmt];
     const unit = w.price + (l.wood && f.wood ? f.wood : 0);
-    const wood = f.wood ? `<label><input type="checkbox" data-wood="${i}" ${l.wood ? 'checked' : ''}><span>${L('En caisse bois', 'In a wooden case')} <span style="white-space:nowrap">+${eur(f.wood)}</span></span></label>` : '';
-    return `<div class="cline"><img src="${w.img.small}" alt="" width="64" height="84" loading="lazy">
-      <div><h3>${wineName(w)}</h3><p class="sub">${L(f.label.fr, f.label.en)}</p>
-      <div class="qty" role="group" aria-label="Quantité"><button type="button" data-dec="${i}" aria-label="Retirer une caisse">−</button><span>${l.qty}</span><button type="button" data-inc="${i}" aria-label="Ajouter une caisse">+</button></div>
-      ${wood}<button class="rm" type="button" data-rm="${i}">${L('Retirer', 'Remove')}</button></div>
-      <p class="price">${eur(unit * l.qty)}</p></div>`;
+    const wood = f.wood ? `<label class="cline__wood"><input type="checkbox" data-wood="${i}" ${l.wood ? 'checked' : ''}><span>${L('En caisse bois', 'In a wooden case')} <span class="nw">+${eur(f.wood)}</span></span></label>` : '';
+    const name = wineName(w).replace('Haut-Piquat', '<span class="nw">Haut-Piquat</span>');
+    return `<div class="cline"><a class="cline__img" href="vin.html?id=${w.id}" tabindex="-1" aria-hidden="true"><img src="${w.img.small}" alt="" width="56" height="74" loading="lazy"></a>
+      <div class="cline__info"><h3><a href="vin.html?id=${w.id}">${name}</a></h3><p class="sub">${L(f.label.fr, f.label.en)}${l.qty > 1 ? ` · ${eur(unit)} ${L('la caisse', 'per case')}` : ''}</p></div>
+      <p class="price">${eur(unit * l.qty)}</p>
+      <div class="cline__opts"><div class="qty" role="group" aria-label="${lang() === 'en' ? 'Quantity' : 'Quantité'}"><button type="button" data-dec="${i}" aria-label="${l.qty > 1 ? 'Retirer une caisse' : `Retirer ${wineName(w)} du panier`}">${l.qty > 1 ? '−' : '<svg class="qty__bin" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4.5h6V7M6.5 7l1 13h9l1-13M10 11v6M14 11v6"/></svg>'}</button><span>${l.qty}</span><button type="button" data-inc="${i}" aria-label="Ajouter une caisse">+</button></div>${wood}<button class="rm" type="button" data-rm="${i}" aria-label="${lang() === 'en' ? 'Remove' : 'Retirer'} ${wineName(w)}"><span class="rm__t">${L('Retirer', 'Remove')}</span><svg class="rm__i" aria-hidden="true"><use href="#i-close"/></svg></button></div></div>`;
   }).join('');
-  const t = totals();
-  const left = Math.max(0, FREE - t.sub);
+  // en haut du tiroir : la caisse bois et ce qui manque pour le port offert
+  if (ship) ship.innerHTML = crateHTML('drawer');
   const minOk = t.sub >= MIN;
   foot.innerHTML = `
-    ${crateHTML('drawer')}
     <div class="cart__rows"><div><span>${L('Sous-total', 'Subtotal')}</span><span>${eur(t.sub)}</span></div><div><span>${L('Livraison (France métropolitaine)', 'Delivery (mainland France)')}</span><span>${t.ship ? eur(t.ship) : L('Offerte', 'Free')}</span></div><div class="total"><span>${L('Total TTC', 'Total incl. VAT')}</span><span>${eur(t.total)}</span></div></div>
     <p class="cart__msg" role="status">${minOk ? '' : L(`Commande minimum de ${eur(MIN)} hors port.`, `Minimum order ${eur(MIN)} excluding delivery.`)}</p>
     <button class="btn" type="button" data-checkout ${minOk ? '' : 'disabled'}>${L('Commander', 'Checkout')}</button>
@@ -62,8 +67,8 @@ function render() {
 /* ---------- Caisse bois vue de dessus : six cases qui se remplissent jusqu'au port offert (350 €) ----------
    Une case pleine = un sixième du port offert (environ 58 €). La case en cours se remplit en transparence.
    La même caisse sert dans le tiroir du panier et dans la petite fenêtre qui s'ouvre sous l'icône du panier. */
-const CAP = { hp: '#8E1D2D', lf: '#6A1426', bl: '#A3283A' };
-const SLOTS = [[48, 48], [120, 48], [192, 48], [48, 120], [120, 120], [192, 120]];
+const CAP = { hp: 'url(#crate-cap-hp)', lf: 'url(#crate-cap-lf)', bl: 'url(#crate-cap-bl)' };
+const SLOTS = [[50.7, 50], [120, 50], [189.3, 50], [50.7, 118], [120, 118], [189.3, 118]];
 let shown = { full: 0, part: 0, sub: 0 };
 function crateState() {
   const { sub } = totals();
@@ -76,18 +81,53 @@ function crateState() {
 }
 function crateDefs() {
   if ($('#crate-defs')) return;
+  const cap = (id, a, b, c) => `<radialGradient id="crate-cap-${id}" cx=".36" cy=".32" r=".78"><stop offset="0" stop-color="${a}"/><stop offset=".55" stop-color="${b}"/><stop offset="1" stop-color="${c}"/></radialGradient>`;
   document.body.insertAdjacentHTML('beforeend', `<svg id="crate-defs" width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
-    <linearGradient id="crate-wood" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#D6AC70"/><stop offset=".55" stop-color="#C39257"/><stop offset="1" stop-color="#A97842"/></linearGradient>
-    <radialGradient id="crate-glass" cx=".38" cy=".34" r=".72"><stop offset="0" stop-color="#46584A"/><stop offset=".62" stop-color="#1D271F"/><stop offset="1" stop-color="#0D130E"/></radialGradient>
+    <linearGradient id="crate-wood" x1="0" y1="0" x2="1" y2=".7"><stop offset="0" stop-color="#E0B97F"/><stop offset=".45" stop-color="#CB9C5E"/><stop offset="1" stop-color="#A87743"/></linearGradient>
+    <linearGradient id="crate-wood-v" x1="0" y1="0" x2=".7" y2="1"><stop offset="0" stop-color="#D9AF73"/><stop offset="1" stop-color="#B28149"/></linearGradient>
+    <radialGradient id="crate-floor" cx=".5" cy=".5" r=".75"><stop offset="0" stop-color="#7A5130"/><stop offset=".7" stop-color="#5A3A20"/><stop offset="1" stop-color="#3E2714"/></radialGradient>
+    <radialGradient id="crate-glass" cx=".36" cy=".3" r=".75"><stop offset="0" stop-color="#5D7563"/><stop offset=".35" stop-color="#2C3B30"/><stop offset=".8" stop-color="#121A14"/><stop offset="1" stop-color="#0A0F0B"/></radialGradient>
+    ${cap('hp', '#C9505C', '#8E1D2D', '#4E0C17')}${cap('lf', '#A84459', '#6A1426', '#3A0812')}${cap('bl', '#D25A62', '#A3283A', '#5C1320')}
   </defs></svg>`);
 }
+// veinage du bois : quelques fibres légèrement ondulées, toujours les mêmes (pas de hasard)
+function grain(x0, y0, len, horiz, n) {
+  let d = '';
+  for (let k = 0; k < n; k++) {
+    const o = 2.4 + k * (11 / n) + Math.sin(k * 2.3) * 0.8; const w = 0.6 + (k % 3) * 0.35; const ph = k * 1.7;
+    const pts = [0, 0.25, 0.5, 0.75, 1].map((t) => { const a = t * len; const b = o + Math.sin(t * 6.3 + ph) * w; return horiz ? `${(x0 + a).toFixed(1)} ${(y0 + b).toFixed(1)}` : `${(x0 + b).toFixed(1)} ${(y0 + a).toFixed(1)}`; });
+    d += `M${pts[0]} Q${pts[1]} ${pts[2]} T${pts[4]}`;
+  }
+  return d;
+}
 function crateHTML(kind) {
-  const slots = SLOTS.map(([x, y], i) => `<g class="crate__slot" transform="translate(${x} ${y})"><circle class="crate__hole" r="25"/><g class="crate__cap" data-cap="${i}"><circle r="28" fill="url(#crate-glass)"/><circle class="crate__capsule" r="15.5"/><circle r="15.5" fill="none" stroke="#D9B26A" stroke-width="1.6"/><circle r="9" fill="none" stroke="rgba(0,0,0,.22)" stroke-width="1"/><ellipse cx="-5" cy="-6" rx="6" ry="3.6" fill="rgba(255,255,255,.22)"/></g></g>`).join('');
+  const slots = SLOTS.map(([x, y], i) => `<g class="crate__slot" transform="translate(${x} ${y})">
+      <circle class="crate__hole" r="26"/><circle class="crate__hole-in" r="20"/>
+      <circle class="crate__arc" r="28.5" pathLength="100" stroke-dasharray="0 100" transform="rotate(-90)" data-arc="${i}"/>
+      <g class="crate__cap" data-cap="${i}">
+        <circle r="29" cx="2" cy="3" fill="rgba(0,0,0,.4)"/>
+        <circle r="29" fill="url(#crate-glass)"/><path d="M-21 -14a26 26 0 0 1 22-12" fill="none" stroke="rgba(255,255,255,.28)" stroke-width="2.4" stroke-linecap="round"/>
+        <circle r="16" fill="rgba(0,0,0,.35)"/><circle class="crate__capsule" r="15" fill="url(#crate-cap-hp)"/>
+        <circle r="11.2" fill="none" stroke="#D9B26A" stroke-width="1.3"/><circle r="15" fill="none" stroke="rgba(0,0,0,.3)" stroke-width="1"/>
+        <use href="#ast" x="-6.5" y="-6.5" width="13" height="13" class="crate__ast"/>
+        <ellipse cx="-6" cy="-7" rx="6.5" ry="3.2" fill="rgba(255,255,255,.22)" transform="rotate(-28 -6 -7)"/>
+      </g></g>`).join('');
+  const nail = (x, y) => `<circle cx="${x}" cy="${y}" r="2.1" fill="#3A2614"/><circle cx="${x - 0.6}" cy="${y - 0.6}" r=".7" fill="rgba(255,240,210,.5)"/>`;
   return `<div class="crate crate--${kind}" data-crate>
-    <div class="crate__box" aria-hidden="true"><svg viewBox="0 0 240 168"><rect x="1" y="1" width="238" height="166" rx="8" fill="url(#crate-wood)" stroke="#7A522D" stroke-width="2"/>
-      <path d="M10 5.5H230M10 162.5H230M5.5 12V156M234.5 12V156" stroke="rgba(110,70,35,.28)" stroke-width="1"/>
-      <rect x="12" y="12" width="216" height="144" rx="3" fill="#6E4826"/><rect x="12" y="12" width="216" height="144" rx="3" fill="none" stroke="rgba(0,0,0,.28)" stroke-width="5"/>
-      <path d="M84 12V156M156 12V156M12 84H228" stroke="#C79A61" stroke-width="5"/><path d="M86.5 12V156M158.5 12V156M12 86.5H228" stroke="rgba(60,35,15,.35)" stroke-width="1.2"/>
+    <div class="crate__box" aria-hidden="true"><svg viewBox="0 0 240 168">
+      <rect x=".5" y=".5" width="239" height="167" rx="6" fill="url(#crate-wood)" stroke="#6B4524" stroke-width="1.4"/>
+      <path d="M0 16H240M0 152H240" stroke="rgba(80,48,20,.0)"/>
+      <path d="M16 16V152M224 16V152" stroke="none"/>
+      <rect x=".5" y="16" width="15.5" height="136" fill="url(#crate-wood-v)"/><rect x="224" y="16" width="15.5" height="136" fill="url(#crate-wood-v)"/>
+      <path d="${grain(6, 0, 228, true, 4)}${grain(6, 152, 228, true, 4)}${grain(0, 20, 128, false, 4)}${grain(224, 20, 128, false, 4)}" fill="none" stroke="rgba(92,56,24,.32)" stroke-width=".8"/>
+      <path d="M1 1L16 16M239 1L224 16M1 167L16 152M239 167L224 152" stroke="rgba(70,40,15,.45)" stroke-width="1"/>
+      <path d="M2 1.5H238" stroke="rgba(255,245,220,.45)" stroke-width="1"/>
+      ${nail(8, 8)}${nail(232, 8)}${nail(8, 160)}${nail(232, 160)}${nail(120, 8)}${nail(120, 160)}
+      <rect x="16" y="16" width="208" height="136" fill="url(#crate-floor)"/>
+      <rect x="16" y="16" width="208" height="136" fill="none" stroke="rgba(0,0,0,.4)" stroke-width="5"/>
+      <g class="crate__div"><rect x="84" y="16" width="4" height="136" fill="rgba(0,0,0,.28)" transform="translate(1.5 1.5)"/><rect x="152" y="16" width="4" height="136" fill="rgba(0,0,0,.28)" transform="translate(1.5 1.5)"/><rect x="16" y="82" width="208" height="4" fill="rgba(0,0,0,.28)" transform="translate(1.5 1.5)"/>
+        <rect x="84" y="16" width="4" height="136" fill="#D2B488"/><rect x="152" y="16" width="4" height="136" fill="#D2B488"/><rect x="16" y="82" width="208" height="4" fill="#D9BD92"/>
+        <path d="M84 16V152M152 16V152M16 82H224" stroke="rgba(255,250,235,.55)" stroke-width=".8"/></g>
       ${slots}</svg><span class="crate__stamp">${L('Port offert', 'Free delivery')}</span></div>
     <div class="crate__gauge" aria-hidden="true"><i data-crate-gauge></i></div>
     <p class="crate__msg" data-crate-msg></p>
@@ -104,8 +144,12 @@ function paintCrates(anim = false) {
   $$('[data-crate]').forEach((box) => {
     $$('[data-cap]', box).forEach((g) => {
       const i = +g.dataset.cap; const cap = $('.crate__capsule', g); cap.setAttribute('fill', st.colors[i]);
-      const target = i < st.full ? 1 : (i === st.full ? Math.min(0.55, st.part * 0.7) : 0);
-      const was = g.dataset.o != null ? +g.dataset.o : (i < shown.full ? 1 : (i === shown.full ? Math.min(0.55, shown.part * 0.7) : 0));
+      const target = i < st.full ? 1 : 0;
+      const was = g.dataset.o != null ? +g.dataset.o : (i < shown.full ? 1 : 0);
+      const arc = $(`[data-arc="${i}"]`, box); const arcTo = i === st.full ? Math.round(st.part * 100) : 0;
+      if (arc) { const a0 = +(arc.dataset.v != null ? arc.dataset.v : (i === shown.full ? Math.round(shown.part * 100) : 0)); arc.dataset.v = arcTo;
+        if (anim && !CALM && window.gsap && a0 !== arcTo) { const o = { v: a0 }; gsap.to(o, { v: arcTo, duration: 0.7, delay: 0.35, ease: 'power2.out', onUpdate: () => arc.setAttribute('stroke-dasharray', `${o.v.toFixed(1)} 100`) }); }
+        else arc.setAttribute('stroke-dasharray', `${arcTo} 100`); }
       g.dataset.o = target;
       const moving = anim && !CALM && window.gsap && Math.abs(target - was) > 0.01;
       if (moving && target === 1) {
@@ -156,6 +200,7 @@ function showFlyout(w, fromImg) {
   // état d'avant l'ajout, puis la nouvelle bouteille tombe dans sa case
   shown = before;
   $$('[data-cap]', box).forEach((g) => { const i = +g.dataset.cap; const o = i < before.full ? 1 : 0; g.dataset.o = o; g.style.opacity = o; });
+  $$('[data-arc]', box).forEach((c) => { const i = +c.dataset.arc; const v = i === before.full ? Math.round(before.part * 100) : 0; c.dataset.v = v; c.setAttribute('stroke-dasharray', `${v} 100`); });
   const gauge = $('[data-crate-gauge]', box); if (gauge) gauge.style.transform = `scaleX(${Math.min(1, before.sub / FREE)})`;
   $('[data-crate-msg]', box).innerHTML = crateMsg(crateState());
   f.classList.add('is-on'); hideToast();
@@ -173,13 +218,13 @@ function bump() {
 let lastFocus = null;
 export function openCart() {
   const c = $('[data-cart]'); const ov = $('[data-cart-ov]');
-  hideToast(); c.inert = false; c.classList.add('is-open'); render(); ov.classList.add('is-open'); c.setAttribute('aria-hidden', 'false'); smooth.lock(true);
+  hideToast(); c.inert = false; c.classList.add('is-open'); document.body.classList.add('cart-open'); render(); ov.classList.add('is-open'); c.setAttribute('aria-hidden', 'false'); smooth.lock(true);
   lastFocus = document.activeElement;
   setTimeout(() => $('[data-cart-close]').focus({ preventScroll: true }), 50);
 }
 export function closeCart() {
   const c = $('[data-cart]'); const ov = $('[data-cart-ov]');
-  c.classList.remove('is-open'); ov.classList.remove('is-open'); c.setAttribute('aria-hidden', 'true'); c.inert = true; smooth.lock(false);
+  c.classList.remove('is-open'); document.body.classList.remove('cart-open'); ov.classList.remove('is-open'); c.setAttribute('aria-hidden', 'true'); c.inert = true; smooth.lock(false);
   if (lastFocus && lastFocus.focus) lastFocus.focus({ preventScroll: true });
 }
 

@@ -1,4 +1,4 @@
-# Château Haut-Piquat · maquette v17
+# Château Haut-Piquat · maquette v18
 
 Maquette de démonstration du futur site du Château Haut-Piquat (Lussac Saint-Émilion), direction artistique « Calcaire à astéries ». Site statique en HTML, CSS et JavaScript, sans étape de construction, prêt pour Vercel.
 
@@ -36,7 +36,15 @@ Le dossier `_audit/` contient le script d'audit (Playwright) relancé à chaque 
 1. Remplacer une image : déposer le nouveau fichier sous le même nom ; aucune règle de cache n'est à modifier.
 2. Changer un prix : modifier `assets/js/data.js`.
 3. À chaque version livrée, changer le numéro `?v=N` partout et à l'identique, dans les pages et dans les `import` JavaScript :
-   `grep -rl "?v=17" --include=*.html --include=*.js . | xargs sed -i "" "s/?v=17/?v=18/g"`
+   `grep -rl "?v=18" --include=*.html --include=*.js . | xargs sed -i "" "s/?v=18/?v=19/g"`
+
+## Version 18 : panier plus large et caisse redessinée
+
+- Tiroir du panier plus large (600 px sur ordinateur) et réorganisé : la caisse et ce qui manque pour le port offert en bandeau sous le titre, le nombre de caisses et de bouteilles sous « Votre panier », une ligne compacte par vin (vignette, nom, format, prix ; puis quantité, caisse bois et « Retirer »). Sur ordinateur, quatre vins sont visibles sans défiler, trois et demi sur téléphone.
+- À une caisse, le bouton « − » devient une corbeille ; sur téléphone il remplace le lien « Retirer ».
+- Le bandeau sanitaire reste visible au-dessus du tiroir ouvert.
+- Caisse bois redessinée : planches veinées, coins assemblés et clous, séparateurs en carton, bouteilles vues de dessus en verre avec capsule bordeaux et astérie dorée ; la case suivante se remplit par un anneau doré qui se referme.
+- Moyens de paiement : un seul cadre par moyen.
 
 ## Version 17 : trois animations
 

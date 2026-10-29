@@ -1,7 +1,7 @@
 // Les vins : ouverture, tour de la cave, l'accord parfait, servir votre vin.
-import { $, $$, L, eur, CALM, TOUCH, hdrH, padMasks, splitHold, sparkAt, smooth, thudSound, anticipate, pinType } from '../core.js?v=17';
-import { WINES, CHATEAUX, FORMATS } from '../data.js?v=17';
-import { formatsMeter } from './formats.js?v=17';
+import { $, $$, L, eur, CALM, TOUCH, hdrH, padMasks, splitHold, sparkAt, smooth, thudSound, anticipate, pinType } from '../core.js?v=18';
+import { WINES, CHATEAUX, FORMATS } from '../data.js?v=18';
+import { formatsMeter } from './formats.js?v=18';
 
 const gsap = window.gsap; const ST = window.ScrollTrigger;
 const ORDER = ['hp', 'lf', 'bl'];

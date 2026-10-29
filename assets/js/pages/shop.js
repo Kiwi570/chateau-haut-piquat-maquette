@@ -1,8 +1,8 @@
 // Boutique : filtres, cartes inclinables, ajout au panier, règle des formats.
-import { $, $$, L, eur, CALM, TOUCH, scrollToEl, sparkAt, splitHold, fmtShort } from '../core.js?v=17';
-import { WINES, CHATEAUX, FORMATS } from '../data.js?v=17';
-import { addToCart } from '../cart.js?v=17';
-import { formatsMeter } from './formats.js?v=17';
+import { $, $$, L, eur, CALM, TOUCH, scrollToEl, sparkAt, splitHold, fmtShort } from '../core.js?v=18';
+import { WINES, CHATEAUX, FORMATS } from '../data.js?v=18';
+import { addToCart } from '../cart.js?v=18';
+import { formatsMeter } from './formats.js?v=18';
 
 const gsap = window.gsap; const Flip = window.Flip;
 const pw = (u) => +((u.match(/-(\d+)\.webp$/) || [0, 840])[1]); // largeur du fichier, lue dans son nom

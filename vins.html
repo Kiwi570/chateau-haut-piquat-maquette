@@ -26,8 +26,8 @@
 <link rel="preload" href="assets/fonts/fraunces-latin-full-italic.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="assets/fonts/manrope-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" as="image" href="assets/img/grok/socle-detoure-800.webp" imagesrcset="assets/img/grok/socle-detoure-400.webp 400w, assets/img/grok/socle-detoure-800.webp 800w" imagesizes="100vw" fetchpriority="high">
-<link rel="stylesheet" href="assets/css/style.css?v=17">
-<link rel="modulepreload" href="assets/js/main.js?v=17">
+<link rel="stylesheet" href="assets/css/style.css?v=18">
+<link rel="modulepreload" href="assets/js/main.js?v=18">
 <script>(function(d){var h=d.documentElement;h.className=h.className.replace('no-js','js');try{var s=localStorage;var l=s.getItem('ahp-lang');if(l==='en'){h.lang='en';}if(matchMedia('(prefers-reduced-motion: reduce)').matches||s.getItem('ahp-calm')==='1'){h.classList.add('calm');}if(s.getItem('ahp-age')==='ok'){h.classList.add('age-ok');}if(sessionStorage.getItem('ahp-trans')==='1'){h.classList.add('trans-in');}}catch(e){}setTimeout(function(){if(!window.__ahpReady){h.classList.add('calm');h.classList.remove('trans-in');}},4500);})(document);</script>
 </head>
 <body data-page="vins">
@@ -280,7 +280,8 @@
 <div class="legal" data-legal role="note"><b><span lang="fr">L'abus d'alcool est dangereux pour la santé, à consommer avec modération.</span><span lang="en">Alcohol abuse is dangerous for your health; drink in moderation.</span></b><span class="sep" aria-hidden="true">·</span><span><span lang="fr">Vente interdite aux mineurs</span><span lang="en">No sale to minors</span></span></div>
 <div class="cart-ov" data-cart-ov></div>
 <aside class="cart" data-cart aria-label="Panier" data-aria-en="Cart" aria-hidden="true" inert>
-  <div class="cart__head"><h2><span lang="fr">Votre panier</span><span lang="en">Your cart</span></h2><button class="tool" type="button" data-cart-close aria-label="Fermer le panier" data-aria-en="Close cart"><svg><use href="#i-close"/></svg></button></div>
+  <div class="cart__head"><div><h2><span lang="fr">Votre panier</span><span lang="en">Your cart</span></h2><p class="cart__sum" data-cart-sum></p></div><button class="tool" type="button" data-cart-close aria-label="Fermer le panier" data-aria-en="Close cart"><svg><use href="#i-close"/></svg></button></div>
+  <div class="cart__ship" data-cart-ship></div>
   <div class="cart__body" data-cart-body data-native-scroll></div>
   <div class="cart__foot" data-cart-foot></div>
 </aside>
@@ -312,6 +313,6 @@
 <script src="assets/vendor/gsap/DrawSVGPlugin.min.js" defer></script>
 <script src="assets/vendor/gsap/CustomEase.min.js" defer></script>
 <script src="assets/vendor/gsap/Flip.min.js" defer></script>
-<script type="module" src="assets/js/main.js?v=17"></script>
+<script type="module" src="assets/js/main.js?v=18"></script>
 </body>
 </html>
