@@ -144,6 +144,21 @@ function startSound() {
   sound.ctx.resume(); sound.gain.gain.setTargetAtTime(0.5, sound.ctx.currentTime, 1.2); sound.on = true;
 }
 function stopSound() { if (sound.ctx) sound.gain.gain.setTargetAtTime(0, sound.ctx.currentTime, 0.4); sound.on = false; }
+/* Bruit du vin versé, seulement si le son d'ambiance est activé : un glouglou dont la note monte à mesure que la jauge se remplit */
+export function pourSound(dur = 1) {
+  if (!sound.on || !sound.ctx || sound.ctx.state !== 'running') return null;
+  const ctx = sound.ctx; const now = ctx.currentTime;
+  if (!sound.noise) { const n = ctx.createBuffer(1, ctx.sampleRate * 2, ctx.sampleRate); const d = n.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1; sound.noise = n; }
+  const src = ctx.createBufferSource(); src.buffer = sound.noise; src.loop = true;
+  const bp = ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.Q.value = 5;
+  bp.frequency.setValueAtTime(380, now); bp.frequency.exponentialRampToValueAtTime(1150, now + Math.max(0.3, dur));
+  const am = ctx.createGain(); am.gain.value = 0.55;
+  const lfo = ctx.createOscillator(); lfo.frequency.value = 8; const lg = ctx.createGain(); lg.gain.value = 0.4; lfo.connect(lg); lg.connect(am.gain);
+  const g = ctx.createGain(); g.gain.setValueAtTime(0, now); g.gain.linearRampToValueAtTime(1, now + 0.06);
+  src.connect(bp); bp.connect(am); am.connect(g); g.connect(ctx.destination); src.start(now); lfo.start(now);
+  let done = false;
+  return { stop() { if (done) return; done = true; const t = ctx.currentTime; g.gain.cancelScheduledValues(t); g.gain.setValueAtTime(g.gain.value, t); g.gain.setTargetAtTime(0, t, 0.05); src.stop(t + 0.35); lfo.stop(t + 0.35); } };
+}
 function initSound() {
   const btns = $$('[data-sound]');
   const sync = () => btns.forEach((b) => b.setAttribute('aria-pressed', sound.on ? 'true' : 'false'));

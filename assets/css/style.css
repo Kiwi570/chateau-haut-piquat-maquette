@@ -1329,21 +1329,26 @@ html.calm .hero__video { display: none; }
 .asm-seg.is-m { --liq: #8E2742; --liq2: #7A1F38; color: #9A2C49; }
 .asm-seg.is-cs { --liq: #64204E; --liq2: #561A44; color: #6C2456; }
 .asm-seg.is-mb { --liq: #4A2768; --liq2: #3E2058; color: #55307A; }
-.asm-liquid { position: absolute; left: 0; right: 0; bottom: 0; height: 100%; background: linear-gradient(180deg, rgba(255, 255, 255, .2) 0, rgba(255, 255, 255, .05) 22%, transparent 45%, rgba(0, 0, 0, .3) 100%), linear-gradient(90deg, var(--liq), var(--liq2)); }
+.asm-liquid { position: absolute; left: 0; right: 0; bottom: 0; height: 100%; will-change: transform; background: linear-gradient(180deg, rgba(255, 255, 255, .2) 0, rgba(255, 255, 255, .05) 22%, transparent 45%, rgba(0, 0, 0, .3) 100%), linear-gradient(90deg, var(--liq), var(--liq2)); }
 .asm-liquid::after { content: ""; position: absolute; inset: 0; background: linear-gradient(100deg, transparent 30%, rgba(255, 240, 240, .12) 45%, transparent 60%); pointer-events: none; }
 .asm-wave { position: absolute; left: 0; bottom: calc(100% - 1px); width: 200%; height: 12px; fill: currentColor; animation: asmwave 1.1s linear infinite; transition: opacity .5s; }
 .asm-wave { opacity: 0; }
 .asm-seg.is-filling .asm-wave { opacity: 1; transition: opacity .15s; }
 .asm-seg.is-full .asm-wave { opacity: 0; }
+.asm-seg.is-full.is-filling .asm-wave { opacity: 1; }
 @keyframes asmwave { to { transform: translateX(-50%); } }
-.asm-pour { position: absolute; left: 0; top: 0; z-index: 0; width: 0; height: 0; pointer-events: none; opacity: 0; visibility: hidden; }
-.asm-pour__bottle { position: absolute; left: calc(var(--bw, 30px) / -2); top: 0; width: var(--bw, 30px); max-width: none; height: auto; transform-origin: 50% 0; filter: drop-shadow(0 16px 18px rgba(0, 0, 0, .55)) drop-shadow(0 0 22px rgba(194, 155, 87, .18)); }
+.asm-pour { position: absolute; left: 0; top: 0; z-index: 0; width: 0; height: 0; pointer-events: none; opacity: 0; visibility: hidden; will-change: transform, opacity; }
+.asm-pour__bottle { position: absolute; left: calc(var(--bw, 30px) / -2); top: 0; width: var(--bw, 30px); max-width: none; height: auto; transform-origin: 50% 0; filter: drop-shadow(0 14px 16px rgba(0, 0, 0, .55)); will-change: transform; }
 .asm-pour { --bw: clamp(24px, min(3vw, 4.4vh), 44px); }
 .asm-pour__stream { position: absolute; left: -2.5px; top: 0; width: 5px; border-radius: 3px; background-color: #9A2C49; background-image: linear-gradient(90deg, rgba(255, 255, 255, .28), transparent 45%); transform: scaleY(0); transform-origin: 50% 0; }
-.asm-drops { position: absolute; left: 0; top: 0; z-index: 2; width: 0; height: 0; pointer-events: none; opacity: 0; }
+.asm-drops { position: absolute; left: 0; top: 0; z-index: 2; width: 0; height: 0; pointer-events: none; opacity: 0; will-change: transform; }
 .asm-drops i { position: absolute; left: -3px; top: -3px; width: 6px; height: 6px; border-radius: 50%; background: #9A2C49; }
 html.calm .asm-pour, html.calm .asm-drops, html.calm .asm-wave { display: none; }
 html.calm .asm-chart { margin-top: clamp(48px, 7vh, 72px); }
 @media (max-height: 640px) and (min-width: 761px) { .asm-chart { margin-top: 96px; } .asm-pour { --bw: 22px; } }
 @media (max-width: 760px) { .asm-chart { margin-top: 110px; } .asm-pour { --bw: 26px; } .asm-bar { height: 60px; } }
 @media (prefers-reduced-motion: reduce) { .asm-wave { animation: none; } }
+
+/* ============ v12 · versement piloté par le temps et le défilement ============ */
+.asm-seg { cursor: default; }
+html.calm .asm-liquid { will-change: auto; }

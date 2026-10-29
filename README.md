@@ -1,4 +1,4 @@
-# Château Haut-Piquat · maquette v11
+# Château Haut-Piquat · maquette v12
 
 Maquette de démonstration du futur site du Château Haut-Piquat (Lussac Saint-Émilion), direction artistique « Calcaire à astéries ». Site statique en HTML, CSS et JavaScript, sans étape de construction, prêt pour Vercel.
 
@@ -32,7 +32,18 @@ Maquette de démonstration du futur site du Château Haut-Piquat (Lussac Saint-�
 1. Remplacer une image : déposer le nouveau fichier sous le même nom ; aucune règle de cache n'est à modifier.
 2. Changer un prix : modifier `assets/js/data.js`.
 3. À chaque version livrée, changer le numéro `?v=N` partout et à l'identique, dans les pages et dans les `import` JavaScript :
-   `grep -rl "?v=11" --include=*.html --include=*.js . | xargs sed -i "" "s/?v=11/?v=12/g"`
+   `grep -rl "?v=12" --include=*.html --include=*.js . | xargs sed -i "" "s/?v=12/?v=13/g"`
+
+## Version 12 : réglages de la bouteille qui verse
+
+- Le versement avance seul, mais un défilement rapide le fait avancer plus vite : il est toujours terminé quand la section se libère (avant, un visiteur pressé ne voyait qu'une jauge vide).
+- Versement raccourci : environ 4 secondes au lieu de 5.
+- Le titre de l'assemblage apparaît d'un seul geste au lieu de suivre le défilement : il n'est plus jamais à moitié transparent sous la bouteille.
+- En remontant un peu, la jauge reste pleine ; elle se vide seulement quand l'assemblage a disparu, puis le versement se rejoue.
+- Si la largeur de la fenêtre change pendant le versement, la jauge se termine directement (la bouteille ne reste plus au mauvais endroit).
+- Une fois pleine, chaque part de la jauge ondule quand on la survole ou qu'on la touche.
+- Avec le son d'ambiance activé, un léger glouglou accompagne chaque cépage, avec une note qui monte à mesure que la jauge se remplit.
+- Plus léger : la bouteille a sa propre image de 12 Ko au lieu de 64 Ko, et le vin monte par une transformation plutôt qu'en changeant la hauteur.
 
 ## Version 11
 
