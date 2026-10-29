@@ -1,4 +1,4 @@
-# Château Haut-Piquat · maquette v13
+# Château Haut-Piquat · maquette v14
 
 Maquette de démonstration du futur site du Château Haut-Piquat (Lussac Saint-Émilion), direction artistique « Calcaire à astéries ». Site statique en HTML, CSS et JavaScript, sans étape de construction, prêt pour Vercel.
 
@@ -32,7 +32,17 @@ Maquette de démonstration du futur site du Château Haut-Piquat (Lussac Saint-�
 1. Remplacer une image : déposer le nouveau fichier sous le même nom ; aucune règle de cache n'est à modifier.
 2. Changer un prix : modifier `assets/js/data.js`.
 3. À chaque version livrée, changer le numéro `?v=N` partout et à l'identique, dans les pages et dans les `import` JavaScript :
-   `grep -rl "?v=13" --include=*.html --include=*.js . | xargs sed -i "" "s/?v=13/?v=14/g"`
+   `grep -rl "?v=14" --include=*.html --include=*.js . | xargs sed -i "" "s/?v=14/?v=15/g"`
+
+## Version 14 : les bouteilles se posent sur le socle
+
+- Page Les vins, tour de la cave : le cube de calcaire reste en place pendant les trois vins. La bouteille qui part est soulevée hors du cadre, le décor du vin suivant s'ouvre en cercle depuis le socle (il se referme vers le texte quand on remonte), puis la nouvelle bouteille descend et se pose : son ombre se forme, le cube encaisse un léger choc et un nuage de poussière de calcaire s'échappe au contact.
+- Le nom du vin monte mot par mot, les informations suivent en cascade, le numéro 01, 02, 03 défile.
+- Les transitions se jouent d'un seul geste (et non plus au rythme du défilement) : plus de bouteilles à moitié transparentes. Un léger retour en arrière près d'un seuil ne relance pas l'animation.
+- Les noms Haut-Piquat, La Fleur et Beaulieu en bas de la section sont cliquables et mènent directement au vin.
+- Sur mobile, chaque bouteille se pose aussi sur son cube quand son chapitre arrive à l'écran.
+- Avec le son d'ambiance activé, un « toc » sourd accompagne la pose sur la pierre.
+- Jauges d'assemblage (page Les vins et fiches vin) : le pourcentage s'affiche aussi dans les petites parts (par exemple 5 % de malbec) dès qu'il y a la place ; sur un écran très étroit, la légende en dessous le donne.
 
 ## Version 13 : versement moins rapide au défilement
 

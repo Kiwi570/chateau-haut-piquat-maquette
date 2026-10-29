@@ -1,7 +1,7 @@
 // Fiche vin : rendu depuis les données du site, bouteille qui pivote sur son socle.
-import { $, $$, L, eur, CALM, TOUCH, toast } from '../core.js?v=13';
-import { WINES, CHATEAUX, FORMATS, BOTTLES, TEXTURES } from '../data.js?v=13';
-import { addToCart } from '../cart.js?v=13';
+import { $, $$, L, eur, CALM, TOUCH, toast } from '../core.js?v=14';
+import { WINES, CHATEAUX, FORMATS, BOTTLES, TEXTURES } from '../data.js?v=14';
+import { addToCart } from '../cart.js?v=14';
 
 const gsap = window.gsap;
 let wine = null;
@@ -50,7 +50,7 @@ function render() {
     </dl>
     ${w.dist.length ? `<div class="panel"><h2>${L('Distinctions', 'Awards')}</h2><div class="medals">${w.dist.map(medal).join('')}</div></div>` : ''}
     ${w.note ? `<div class="panel"><h2>${L('Notes de dégustation', 'Tasting notes')}</h2><blockquote>«&nbsp;${w.note}&nbsp;»</blockquote>${w.noteSrc ? `<cite>${w.noteSrc}</cite>` : `<cite>${L('Château Haut-Piquat', 'Château Haut-Piquat')}</cite>`}<p class="form-note" lang="en" style="margin-top:10px">Original note in French; English translation to be supplied.</p></div>` : ''}
-    ${blend.length ? `<div class="panel"><h2>${L('Assemblage', 'Blend')}</h2><div class="blend is-wine" data-blend>${blend.map((b) => `<span style="flex:${b.pct} 1 0;--c:${grape(b.name)}" data-blend-bar>${b.pct >= 12 ? `<i>${b.pct}&nbsp;%</i>` : ''}</span>`).join('')}</div><div class="blend-legend">${blend.map((b) => `<span style="--c:${grape(b.name)}"><b>${b.pct}&nbsp;%</b> ${b.name}</span>`).join('')}</div>${w.blendSrc === 'fiche' ? `<p class="form-note" style="margin-top:8px">${L('Assemblage tiré de la fiche technique, absent de la fiche boutique.', 'Blend taken from the tech sheet; missing from the shop page.')}</p>` : ''}</div>` : ''}
+    ${blend.length ? `<div class="panel"><h2>${L('Assemblage', 'Blend')}</h2><div class="blend is-wine" data-blend>${blend.map((b) => `<span style="flex:${b.pct} 1 0;--c:${grape(b.name)}" ${b.pct < 12 ? ' class="is-sm"' : ''} data-blend-bar><i>${b.pct}&nbsp;%</i></span>`).join('')}</div><div class="blend-legend">${blend.map((b) => `<span style="--c:${grape(b.name)}"><b>${b.pct}&nbsp;%</b> ${b.name}</span>`).join('')}</div>${w.blendSrc === 'fiche' ? `<p class="form-note" style="margin-top:8px">${L('Assemblage tiré de la fiche technique, absent de la fiche boutique.', 'Blend taken from the tech sheet; missing from the shop page.')}</p>` : ''}</div>` : ''}
     ${w.pairs.length ? `<div class="panel"><h2>${L('Accords gastronomiques', 'Food pairings')}</h2><ul class="pairs">${w.pairs.map((p) => `<li><svg class="ast" aria-hidden="true"><use href="#ast"/></svg>${p}</li>`).join('')}</ul></div>` : ''}
     ${w.flag ? `<div class="flag">${L(w.flag.fr, w.flag.en)}</div>` : ''}`;
   // la cuvée

@@ -1352,3 +1352,22 @@ html.calm .asm-chart { margin-top: clamp(48px, 7vh, 72px); }
 /* ============ v12 · versement piloté par le temps et le défilement ============ */
 .asm-seg { cursor: default; }
 html.calm .asm-liquid { will-change: auto; }
+
+/* ============ v14 · le pourcentage s'affiche aussi dans les petites parts de la jauge ============ */
+.blend span { container-type: inline-size; }
+.blend span.is-sm { justify-content: center; padding-inline: 0; }
+.blend span.is-sm i { font-size: 11.5px; letter-spacing: -.01em; }
+@container (max-width: 21px) { .blend span i { display: none; } }
+
+/* ============ v14 · les bouteilles se posent sur un socle qui reste en place ============ */
+.cave__shadow { position: absolute; left: 50%; bottom: 38%; width: 30%; height: 4.4%; border-radius: 50%; background: radial-gradient(closest-side, rgba(31, 27, 22, .55), rgba(31, 27, 22, .2) 60%, transparent); pointer-events: none; }
+.cave__dust { position: absolute; z-index: 2; left: 50%; bottom: 40%; width: 0; height: 0; pointer-events: none; }
+.cave__dust i { position: absolute; left: -13px; top: -13px; width: 26px; height: 26px; border-radius: 50%; opacity: 0; background: radial-gradient(closest-side, rgba(255, 251, 242, .9), rgba(240, 228, 204, .45) 45%, transparent); }
+.cave__dust i:nth-child(3n) { background: radial-gradient(closest-side, rgba(150, 124, 84, .75), rgba(150, 124, 84, .3) 50%, transparent); }
+.cave__nav button { background: none; border: 0; padding: 6px 0; margin: -6px 0; font: inherit; letter-spacing: inherit; text-transform: inherit; color: inherit; cursor: pointer; }
+.cave__nav li:not(.is-on):hover { color: rgba(31, 27, 22, .7); }
+html.calm .cave__shadow, html.calm .cave__dust { display: none; }
+.cave__stage .socle { z-index: 1; }
+.cave__stage .cave__shadow { z-index: 2; }
+.cave__stage .cave__bottle { z-index: 3; }
+.cave__stage .cave__dust { z-index: 4; }

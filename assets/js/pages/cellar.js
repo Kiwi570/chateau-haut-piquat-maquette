@@ -1,6 +1,6 @@
 // Les vins : ouverture, tour de la cave, l'accord parfait, servir votre vin.
-import { $, $$, L, eur, CALM, TOUCH, hdrH, padMasks, sparkAt } from '../core.js?v=13';
-import { WINES, CHATEAUX, FORMATS } from '../data.js?v=13';
+import { $, $$, L, eur, CALM, TOUCH, hdrH, padMasks, sparkAt, smooth, thudSound } from '../core.js?v=14';
+import { WINES, CHATEAUX, FORMATS } from '../data.js?v=14';
 
 const gsap = window.gsap; const ST = window.ScrollTrigger;
 const ORDER = ['hp', 'lf', 'bl'];
@@ -61,41 +61,114 @@ function intro(ch) {
     .fromTo($('.cave__note', ch), { y: 14, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.7, ease: 'power3.out' }, 0.5);
   return tl;
 }
+/* Mise en scène d'une bouteille : ombre de contact et poussière de calcaire ajoutées au socle */
+function stageFx(c) {
+  const stage = $('[data-cave-stage]', c); const bottle = $('[data-cave-bottle]', c);
+  const shadow = document.createElement('span'); shadow.className = 'cave__shadow'; shadow.setAttribute('aria-hidden', 'true');
+  const dust = document.createElement('span'); dust.className = 'cave__dust'; dust.setAttribute('aria-hidden', 'true');
+  dust.innerHTML = '<i></i>'.repeat(18);
+  stage.insertBefore(shadow, bottle); stage.appendChild(dust);
+  gsap.set(bottle, { xPercent: -50 }); gsap.set([shadow, dust], { xPercent: -50 });
+  const name = $('.cave__name', c);
+  const split = window.SplitText ? SplitText.create(name, { type: 'words', mask: 'words' }) : null;
+  if (split) padMasks(split, 'words');
+  const panel = $('[data-cave-panel]', c);
+  const items = [...panel.children].filter((el) => !el.matches('.cave__note, .cave__name'));
+  return { c, stage, bottle, shadow, dust, socle: $('.socle', c), num: $('.cave__num', c), words: split ? split.words : [name], items, note: $('.cave__note', c) };
+}
+// hauteur à laquelle la bouteille sort du cadre par le haut
+const liftY = (P) => { const b = P.bottle.getBoundingClientRect(); const r = P.c.getBoundingClientRect(); return -(b.bottom - r.top + 40); };
+function puff(P) {
+  $$('i', P.dust).forEach((d, k) => {
+    const side = k % 2 ? 1 : -1; const far = 36 + Math.random() * 110;
+    gsap.fromTo(d, { x: side * (6 + Math.random() * 14), y: 2, scale: 0.25 + Math.random() * 0.3, autoAlpha: 0.95 },
+      { x: side * far, y: -(4 + Math.random() * 40), scale: 1.8 + Math.random() * 1.8, autoAlpha: 0, duration: 1 + Math.random() * 0.8, ease: 'power2.out', overwrite: true });
+  });
+}
+// la bouteille descend et se pose sur le socle : ombre qui se forme, petit choc, poussière
+function drop(P) {
+  const tl = gsap.timeline();
+  tl.fromTo(P.bottle, { y: liftY(P), rotation: -4, scaleX: 1, scaleY: 1, autoAlpha: 1 }, { y: -6, rotation: 0, duration: 0.62, ease: 'power2.out' }, 0)
+    .to(P.bottle, { y: 0, duration: 0.16, ease: 'power1.in' }, 0.62)
+    .fromTo(P.shadow, { scale: 0.25, autoAlpha: 0 }, { scale: 1, autoAlpha: 1, duration: 0.78, ease: 'power2.in' }, 0)
+    .add(() => { puff(P); thudSound(); }, 0.76)
+    .to(P.bottle, { scaleY: 0.982, scaleX: 1.014, duration: 0.07, ease: 'power1.out' }, 0.78)
+    .to(P.bottle, { scaleY: 1, scaleX: 1, duration: 0.6, ease: 'elastic.out(1, 0.4)' }, 0.85)
+    .to(P.socle, { y: 3, duration: 0.06, ease: 'power1.out' }, 0.78)
+    .to(P.socle, { y: 0, duration: 0.5, ease: 'elastic.out(1, 0.5)' }, 0.84);
+  return tl;
+}
+function panelIn(P, intro) {
+  const tl = gsap.timeline();
+  tl.fromTo(P.words, { yPercent: 110 }, { yPercent: 0, duration: 0.9, ease: 'expo.out', stagger: 0.06 }, 0)
+    .fromTo(P.items, { y: 22, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.7, ease: 'power3.out', stagger: 0.05 }, 0.1)
+    .add(() => intro.restart(), 0.15);
+  return tl;
+}
 function cave() {
   const frame = $('[data-cave-frame]'); const chs = $$('[data-cave-chapter]'); const dots = $$('[data-cave-dot]');
   const intros = chs.map(intro);
+  const P = chs.map(stageFx);
   ST.matchMedia({
     '(min-width: 900px) and (min-height: 700px)': () => {
       frame.classList.add('is-pinned');
-      gsap.set(chs.slice(1), { autoAlpha: 0 });
-      let active = -1;
-      const setActive = (i) => {
-        if (i === active) return; active = i;
-        dots.forEach((d, j) => d.classList.toggle('is-on', j === i));
-        intros[i].restart();
+      let cur = -1; let xtl = null;
+      P.forEach((p) => { gsap.set(p.bottle, { y: liftY(p) }); gsap.set(p.shadow, { autoAlpha: 0 }); gsap.set([...p.items, p.note], { autoAlpha: 0 }); gsap.set(p.words, { yPercent: 110 }); });
+      // chaque chapitre forme sa propre couche : le décor qui s'ouvre passe bien au-dessus du précédent
+      chs.forEach((c, k) => gsap.set(c, { zIndex: k + 1, isolation: 'isolate' }));
+      gsap.set(chs.slice(1), { visibility: 'hidden' });
+      const mark = (j) => dots.forEach((d, k) => { d.classList.toggle('is-on', k === j); const b = $('button', d); if (b) b.setAttribute('aria-current', k === j ? 'true' : 'false'); });
+      // le socle reste en place ; la bouteille qui part est soulevée, le décor suivant s'ouvre en cercle, la nouvelle bouteille est posée
+      const go = (j) => {
+        if (j === cur) return; const i = cur; cur = j; mark(j);
+        if (xtl) { xtl.progress(1); xtl.kill(); xtl = null; }
+        if (i < 0) {
+          chs.forEach((c, k) => gsap.set(c, { visibility: k === j ? 'visible' : 'hidden', clipPath: 'none' }));
+          xtl = gsap.timeline().add(drop(P[j]), 0.1).add(panelIn(P[j], intros[j]), 0.35);
+          return;
+        }
+        const A = P[i]; const B = P[j]; const fwd = j > i;
+        chs.forEach((c, k) => { if (k !== i && k !== j) gsap.set(c, { visibility: 'hidden', clipPath: 'none' }); });
+        gsap.set([A.c, B.c], { visibility: 'visible' });
+        gsap.set(B.bottle, { y: liftY(B) }); gsap.set(B.shadow, { autoAlpha: 0 }); gsap.set(B.items, { autoAlpha: 0 }); gsap.set(B.words, { yPercent: 110 });
+        const top = fwd ? B : A; const r = top.c.getBoundingClientRect(); const sr = top.socle.getBoundingClientRect();
+        // en avançant, le décor s'ouvre depuis le socle ; en reculant, il se referme vers le texte pour dégager le socle d'abord
+        const cx = fwd ? sr.left + sr.width / 2 - r.left : r.width; const cy = fwd ? sr.top + sr.height * 0.1 - r.top : r.height / 2;
+        const R = Math.hypot(Math.max(cx, r.width - cx), Math.max(cy, r.height - cy)) + 30;
+        const circ = (rad) => `circle(${rad}px at ${cx}px ${cy}px)`;
+        xtl = gsap.timeline({ onComplete: () => { gsap.set(A.c, { visibility: 'hidden', clipPath: 'none' }); gsap.set(B.c, { clipPath: 'none' }); gsap.set(A.num, { clearProps: 'opacity,visibility,transform' }); } });
+        xtl.to(A.words, { yPercent: -110, duration: 0.45, ease: 'power3.in', stagger: 0.03 }, 0)
+          .to([...A.items, A.note], { y: -16, autoAlpha: 0, duration: 0.32, ease: 'power2.in', stagger: 0.02 }, 0)
+          .to(A.bottle, { y: liftY(A), rotation: 3, duration: 0.62, ease: 'power3.in' }, 0)
+          .to(A.shadow, { scale: 0.3, autoAlpha: 0, duration: 0.45, ease: 'power2.in' }, 0)
+          .to(A.num, { yPercent: -25, autoAlpha: 0, duration: 0.4, ease: 'power2.in' }, 0)
+          .fromTo(fwd ? B.c : A.c, { clipPath: circ(fwd ? 0 : R) }, { clipPath: circ(fwd ? R : 0), duration: 0.95, ease: 'power2.inOut' }, 0.32)
+          .fromTo(B.num, { yPercent: 25, autoAlpha: 0 }, { yPercent: 0, autoAlpha: 1, duration: 0.8, ease: 'power3.out' }, 0.7)
+          .add(drop(B), 0.86)
+          .add(panelIn(B, intros[j]), 0.95);
       };
-      const tl = gsap.timeline({ defaults: { ease: 'power2.inOut' }, scrollTrigger: {
-        trigger: frame, start: () => `top top+=${hdrH()}`, end: () => `+=${innerHeight * 2.4}`, pin: true, scrub: 0.6, anticipatePin: 1, invalidateOnRefresh: true,
-        onEnter: () => setActive(0), onEnterBack: () => {},
-        onUpdate: (s) => setActive(s.progress < 0.36 ? 0 : s.progress < 0.7 ? 1 : 2),
-      } });
-      [0.28, 0.62].forEach((at, i) => {
-        const a = chs[i]; const b = chs[i + 1];
-        tl.to($('[data-cave-bottle]', a), { rotationY: -70, xPercent: -110, autoAlpha: 0, duration: 0.1 }, at)
-          .to($('[data-cave-panel]', a), { y: -40, autoAlpha: 0, duration: 0.08 }, at)
-          .to(a, { autoAlpha: 0, duration: 0.1 }, at + 0.02)
-          .fromTo(b, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.1 }, at + 0.02)
-          .fromTo($('[data-cave-bottle]', b), { rotationY: 70, xPercent: 10, autoAlpha: 0 }, { rotationY: 0, xPercent: -50, autoAlpha: 1, duration: 0.12, ease: 'power3.out' }, at + 0.05)
-          .fromTo($('[data-cave-panel]', b), { y: 40, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.1 }, at + 0.07);
-      });
-      tl.to({}, { duration: 0.01 }, 0.99);
-      return () => { frame.classList.remove('is-pinned'); gsap.set(chs, { clearProps: 'all' }); chs.forEach((c) => gsap.set([$('[data-cave-bottle]', c), $('[data-cave-panel]', c)], { clearProps: 'opacity,visibility,transform' })); };
+      // un peu d'hystérésis : un léger retour en arrière près d'un seuil ne relance pas la transition
+      const B1 = [0.34, 0.68];
+      const pick = (p) => { const cand = p < B1[0] ? 0 : p < B1[1] ? 1 : 2; if (cur < 0) return cand; if (cand > cur && p < B1[cand - 1] + 0.015) return cur; if (cand < cur && p > B1[cand] - 0.015) return cur; return cand; };
+      const st = ST.create({ trigger: frame, start: () => `top top+=${hdrH()}`, end: () => `+=${innerHeight * 2.4}`, pin: true, anticipatePin: 1, invalidateOnRefresh: true, onUpdate: (s) => go(pick(s.progress)) });
+      // première bouteille posée dès que la section entre dans l'écran
+      const first = ST.create({ trigger: frame, start: 'top 70%', once: true, onEnter: () => { if (cur < 0) go(0); } });
+      const onGo = (e) => { const b = e.target.closest('[data-cave-go]'); if (!b) return; const k = +b.dataset.caveGo; smooth.to(st.start + (st.end - st.start) * [0.12, 0.51, 0.86][k]); };
+      frame.addEventListener('click', onGo);
+      return () => {
+        frame.removeEventListener('click', onGo); first.kill(); if (xtl) xtl.kill();
+        frame.classList.remove('is-pinned');
+        gsap.set(chs, { clearProps: 'all' });
+        P.forEach((p) => gsap.set([p.bottle, p.shadow, p.socle, p.num, ...p.items, p.note, ...p.words], { clearProps: 'opacity,visibility,transform' }));
+        P.forEach((p) => { gsap.set([p.bottle, p.shadow, p.dust], { xPercent: -50 }); });
+      };
     },
     '(max-width: 899px), (max-height: 699px)': () => {
-      chs.forEach((c, i) => {
-        ST.create({ trigger: c, start: 'top 75%', once: true, onEnter: () => intros[i].restart() });
-        gsap.from($('[data-cave-bottle]', c), { yPercent: 25, autoAlpha: 0, duration: 1.1, ease: 'expo.out', scrollTrigger: { trigger: c, start: 'top 80%', once: true } });
+      P.forEach((p, i) => {
+        gsap.set(p.bottle, { y: liftY(p) }); gsap.set(p.shadow, { autoAlpha: 0 });
+        ST.create({ trigger: p.c, start: 'top 72%', once: true, onEnter: () => { drop(p); intros[i].restart(); } });
       });
+      return () => P.forEach((p) => gsap.set([p.bottle, p.shadow, p.socle], { clearProps: 'opacity,visibility,transform' }));
     },
   });
 }

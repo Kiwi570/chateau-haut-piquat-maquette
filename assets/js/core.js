@@ -144,6 +144,18 @@ function startSound() {
   sound.ctx.resume(); sound.gain.gain.setTargetAtTime(0.5, sound.ctx.currentTime, 1.2); sound.on = true;
 }
 function stopSound() { if (sound.ctx) sound.gain.gain.setTargetAtTime(0, sound.ctx.currentTime, 0.4); sound.on = false; }
+/* Bouteille posée sur la pierre, seulement si le son d'ambiance est activé : un « toc » sourd et court */
+export function thudSound() {
+  if (!sound.on || !sound.ctx || sound.ctx.state !== 'running') return;
+  const ctx = sound.ctx; const now = ctx.currentTime;
+  const o = ctx.createOscillator(); o.type = 'sine'; o.frequency.setValueAtTime(150, now); o.frequency.exponentialRampToValueAtTime(58, now + 0.16);
+  const g = ctx.createGain(); g.gain.setValueAtTime(0.0001, now); g.gain.exponentialRampToValueAtTime(0.5, now + 0.006); g.gain.exponentialRampToValueAtTime(0.0001, now + 0.32);
+  o.connect(g); g.connect(ctx.destination); o.start(now); o.stop(now + 0.35);
+  if (!sound.noise) { const n = ctx.createBuffer(1, ctx.sampleRate * 2, ctx.sampleRate); const d = n.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1; sound.noise = n; }
+  const src = ctx.createBufferSource(); src.buffer = sound.noise; const bp = ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 1800; bp.Q.value = 1.2;
+  const gn = ctx.createGain(); gn.gain.setValueAtTime(0.0001, now); gn.gain.exponentialRampToValueAtTime(0.18, now + 0.004); gn.gain.exponentialRampToValueAtTime(0.0001, now + 0.07);
+  src.connect(bp); bp.connect(gn); gn.connect(ctx.destination); src.start(now); src.stop(now + 0.1);
+}
 /* Bruit du vin versé, seulement si le son d'ambiance est activé : un glouglou dont la note monte à mesure que la jauge se remplit */
 export function pourSound(dur = 1) {
   if (!sound.on || !sound.ctx || sound.ctx.state !== 'running') return null;
