@@ -1,4 +1,4 @@
-# Château Haut-Piquat · maquette v16
+# Château Haut-Piquat · maquette v17
 
 Maquette de démonstration du futur site du Château Haut-Piquat (Lussac Saint-Émilion), direction artistique « Calcaire à astéries ». Site statique en HTML, CSS et JavaScript, sans étape de construction, prêt pour Vercel.
 
@@ -36,7 +36,14 @@ Le dossier `_audit/` contient le script d'audit (Playwright) relancé à chaque 
 1. Remplacer une image : déposer le nouveau fichier sous le même nom ; aucune règle de cache n'est à modifier.
 2. Changer un prix : modifier `assets/js/data.js`.
 3. À chaque version livrée, changer le numéro `?v=N` partout et à l'identique, dans les pages et dans les `import` JavaScript :
-   `grep -rl "?v=16" --include=*.html --include=*.js . | xargs sed -i "" "s/?v=16/?v=17/g"`
+   `grep -rl "?v=17" --include=*.html --include=*.js . | xargs sed -i "" "s/?v=17/?v=18/g"`
+
+## Version 17 : trois animations
+
+- Caisse bois du panier : à chaque ajout, une petite fenêtre s'ouvre sous l'icône du panier, la bouteille vole jusqu'à sa case et tombe dans une caisse bois vue de dessus. Chaque case pleine vaut un sixième du port offert (350 € en France métropolitaine) ; la case en cours se remplit en transparence, une jauge et une phrase disent ce qui manque. Caisse pleine : le cachet « Port offert » se pose. La même caisse remplace l'ancien compteur dans le tiroir du panier.
+- Grands formats (Les vins et Boutique) : au survol ou au clavier d'un format, la bouteille s'éclaire sur la photo de la gamme, un trait de niveau remonte jusqu'à son épaule avec le volume, et huit bouteilles de 75 cl se remplissent pour l'équivalence (½, 1, 2, 4 ou 8). À l'arrivée à l'écran, la gamme est parcourue une fois et s'arrête sur l'impériale. Dans la Boutique, la phrase « références à partir de… » suit le format montré.
+- Pied de page : le grand « Haut-Piquat » se grave lettre par lettre dans la pierre sombre, avec un peu de poussière de calcaire. Il est désormais lisible (creux foncé, arête claire).
+- Mode calme : caisse et équivalence s'affichent sans mouvement, le nom est déjà gravé.
 
 ## Version 16 : audit complet et fluidité
 

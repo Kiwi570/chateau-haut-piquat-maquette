@@ -1,11 +1,17 @@
 // Les vins : ouverture, tour de la cave, l'accord parfait, servir votre vin.
-import { $, $$, L, eur, CALM, TOUCH, hdrH, padMasks, splitHold, sparkAt, smooth, thudSound, anticipate, pinType } from '../core.js?v=16';
-import { WINES, CHATEAUX, FORMATS } from '../data.js?v=16';
+import { $, $$, L, eur, CALM, TOUCH, hdrH, padMasks, splitHold, sparkAt, smooth, thudSound, anticipate, pinType } from '../core.js?v=17';
+import { WINES, CHATEAUX, FORMATS } from '../data.js?v=17';
+import { formatsMeter } from './formats.js?v=17';
 
 const gsap = window.gsap; const ST = window.ScrollTrigger;
 const ORDER = ['hp', 'lf', 'bl'];
 
-export function setup() { fillChapters(); buildAccords(); initServe(); }
+export function setup() {
+  fillChapters(); buildAccords(); initServe();
+  // grands formats : la bouteille survolée s'éclaire, le niveau monte, l'équivalence se remplit
+  const links = $$('.vformats__links a');
+  formatsMeter($('.vformats .formats__img'), { items: links, keyOf: (a) => new URL(a.href, location.href).searchParams.get('format'), rest: 'i600' });
+}
 export function enter() {
   if (CALM) return;
   heroIn();

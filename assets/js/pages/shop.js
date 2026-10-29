@@ -1,7 +1,8 @@
 // Boutique : filtres, cartes inclinables, ajout au panier, règle des formats.
-import { $, $$, L, eur, CALM, TOUCH, scrollToEl, sparkAt, splitHold, fmtShort } from '../core.js?v=16';
-import { WINES, CHATEAUX, FORMATS } from '../data.js?v=16';
-import { addToCart } from '../cart.js?v=16';
+import { $, $$, L, eur, CALM, TOUCH, scrollToEl, sparkAt, splitHold, fmtShort } from '../core.js?v=17';
+import { WINES, CHATEAUX, FORMATS } from '../data.js?v=17';
+import { addToCart } from '../cart.js?v=17';
+import { formatsMeter } from './formats.js?v=17';
 
 const gsap = window.gsap; const Flip = window.Flip;
 const pw = (u) => +((u.match(/-(\d+)\.webp$/) || [0, 840])[1]); // largeur du fichier, lue dans son nom
@@ -157,6 +158,7 @@ function initFilters() {
 
 /* Règle des formats */
 function syncRuler() { $$('[data-ruler] button').forEach((b) => b.setAttribute('aria-pressed', state.fmt.size === 1 && state.fmt.has(b.dataset.fmt) ? 'true' : 'false')); }
+let meter = null;
 function initRuler() {
   const r = $('[data-ruler]'); const info = $('[data-formats-info]'); if (!r) return;
   const names = { d37: L('Demi-bouteille<br>37,5 cl', 'Half bottle<br>37.5 cl'), b75: L('Bouteille<br>75 cl', 'Bottle<br>75 cl'), m150: L('Magnum<br>1,5 L', 'Magnum<br>1.5 L'), dm300: L('Double magnum<br>3 L', 'Double magnum<br>3 L'), i600: L('Impériale<br>6 L', 'Impériale<br>6 L') };
@@ -165,13 +167,13 @@ function initRuler() {
     const list = WINES.filter((w) => w.fmt === k); const min = Math.min(...list.map((w) => w.price));
     info.innerHTML = L(`${list.length} référence${list.length > 1 ? 's' : ''} en ${FORMATS[k].filter}, à partir de ${eur(min)}. <a class="link" href="#cat-title" data-goto-grid>Voir dans le catalogue</a>`, `${list.length} item${list.length > 1 ? 's' : ''} in ${FORMATS[k].filter}, from ${eur(min)}. <a class="link" href="#cat-title" data-goto-grid>See in the catalogue</a>`);
   };
-  const current = () => (state.fmt.size === 1 ? [...state.fmt][0] : 'b75');
-  describe(current());
-  r.addEventListener('pointerover', (e) => { const b = e.target.closest('button'); if (b) describe(b.dataset.fmt); });
-  r.addEventListener('pointerleave', () => describe(current()));
+  const current = () => (state.fmt.size === 1 ? [...state.fmt][0] : 'i600');
+  // la réglette pilote la photo : bouteille éclairée, niveau qui monte, équivalence en bouteilles de 75 cl
+  meter = formatsMeter($('[data-formats]'), { items: $$('button', r), keyOf: (b) => b.dataset.fmt, rest: current, onShow: describe });
+  if (!meter) describe(current());
   r.addEventListener('click', (e) => {
     const b = e.target.closest('button'); if (!b) return;
-    describe(b.dataset.fmt); state.fmt.clear(); state.fmt.add(b.dataset.fmt); renderFilters(); renderGrid(false); syncRuler();
+    state.fmt.clear(); state.fmt.add(b.dataset.fmt); renderFilters(); renderGrid(false); syncRuler(); if (meter) meter.show(b.dataset.fmt); else describe(b.dataset.fmt);
   });
   info.addEventListener('click', (e) => { if (e.target.closest('[data-goto-grid]')) { e.preventDefault(); scrollToEl($('[data-pgrid]').closest('section')); } });
   if (!CALM) gsap.from('.formats__img img', { y: 60, autoAlpha: 0, duration: 1.4, ease: 'expo.out', scrollTrigger: { trigger: '[data-formats]', start: 'top 80%', once: true } });

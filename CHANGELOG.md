@@ -1,5 +1,44 @@
 # Journal des modifications
 
+## v17 (par rapport à l'archive v16)
+
+Mise à jour sans suppression : `unzip -o` suffit, aucun fichier à retirer du dépôt.
+
+Trois animations : caisse bois du panier (fenêtre sous l'icône du panier et tiroir), grands formats (bouteille éclairée, niveau, équivalence en bouteilles de 75 cl), nom gravé dans le pied de page.
+
+### Fichiers modifiés (22)
+
+- `404.html`
+- `CHANGELOG.md`
+- `README.md`
+- `_audit/rapport.md`
+- `assets/css/style.css`
+- `assets/js/cart.js`
+- `assets/js/core.js`
+- `assets/js/main.js`
+- `assets/js/pages/cellar.js`
+- `assets/js/pages/domain.js`
+- `assets/js/pages/home.js`
+- `assets/js/pages/places.js`
+- `assets/js/pages/shop.js`
+- `assets/js/pages/tourism.js`
+- `assets/js/pages/wine.js`
+- `boutique.html`
+- `domaine.html`
+- `index.html`
+- `informations.html`
+- `oenotourisme.html`
+- `vin.html`
+- `vins.html`
+
+### Fichiers ajoutés (1)
+
+- `assets/js/pages/formats.js`
+
+### Fichiers supprimés
+
+- aucun
+
 ## v16 (par rapport à l'archive v15)
 
 Mise à jour sans suppression : `unzip -o` suffit, aucun fichier à retirer du dépôt.

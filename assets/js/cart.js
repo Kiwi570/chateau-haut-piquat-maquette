@@ -1,6 +1,6 @@
 // Panier simulé : tiroir toujours accessible, frais de port et minimum de commande du domaine.
-import { $, $$, L, eur, store, toast, smooth, CALM, TOUCH, hideToast, sparkAt } from './core.js?v=16';
-import { WINES, CHATEAUX, FORMATS } from './data.js?v=16';
+import { $, $$, L, eur, store, toast, smooth, CALM, TOUCH, hideToast, sparkAt } from './core.js?v=17';
+import { WINES, CHATEAUX, FORMATS } from './data.js?v=17';
 
 const KEY = 'ahp-cart';
 const FREE = 350, SHIP = 35, MIN = 105;
@@ -28,7 +28,6 @@ function render() {
   if (!lines.length) {
     body.innerHTML = `<div class="cart__empty"><svg class="ast" aria-hidden="true"><use href="#ast"/></svg><p>${L('Votre panier est vide.', 'Your cart is empty.')}</p><a class="btn btn--sm" href="boutique.html">${L('Voir la boutique', 'Visit the shop')}</a></div>`;
     foot.innerHTML = `<p class="form-note">${L('Port offert dès 350&nbsp;€ en France métropolitaine.', 'Free delivery from €350 in mainland France.')}</p>`;
-    lastRatio = 0;
     return;
   }
   body.innerHTML = lines.map((l, i) => {
@@ -45,8 +44,7 @@ function render() {
   const left = Math.max(0, FREE - t.sub);
   const minOk = t.sub >= MIN;
   foot.innerHTML = `
-    ${caseMeter(lastRatio)}
-    <p class="small" style="margin:0">${left > 0 ? L(`Plus que <b>${eur(left)}</b> pour le port offert.`, `Only <b>${eur(left)}</b> more for free delivery.`) : L('<b>Port offert</b> en France métropolitaine.', '<b>Free delivery</b> in mainland France.')}</p>
+    ${crateHTML('drawer')}
     <div class="cart__rows"><div><span>${L('Sous-total', 'Subtotal')}</span><span>${eur(t.sub)}</span></div><div><span>${L('Livraison (France métropolitaine)', 'Delivery (mainland France)')}</span><span>${t.ship ? eur(t.ship) : L('Offerte', 'Free')}</span></div><div class="total"><span>${L('Total TTC', 'Total incl. VAT')}</span><span>${eur(t.total)}</span></div></div>
     <p class="cart__msg" role="status">${minOk ? '' : L(`Commande minimum de ${eur(MIN)} hors port.`, `Minimum order ${eur(MIN)} excluding delivery.`)}</p>
     <button class="btn" type="button" data-checkout ${minOk ? '' : 'disabled'}>${L('Commander', 'Checkout')}</button>
@@ -58,31 +56,113 @@ function render() {
       <button class="btn" type="button" data-pay disabled>${L('Payer (simulation)', 'Pay (simulation)')}</button>
       <p class="form-note">${L('Maquette&nbsp;: aucun paiement ni aucune commande n\'est enregistré.', 'Mock-up: no payment or order is recorded.')} ${L('L\'abus d\'alcool est dangereux pour la santé, à consommer avec modération.', 'Alcohol abuse is dangerous for your health; drink in moderation.')}</p>
     </div>`;
-  animateCase(Math.min(1, t.sub / FREE));
+  crateDefs(); paintCrates(!!$('[data-cart]')?.classList.contains('is-open'));
 }
 
-/* Caisse en bois : six bouteilles se remplissent jusqu'au port offert */
-let lastRatio = 0; let caseTween = null;
-const BOTTLE = 'M8 0h6v14c0 4 8 6 8 14v40a3 3 0 0 1-3 3H3a3 3 0 0 1-3-3V28c0-8 8-10 8-14z';
-const lvl = (r, i) => Math.max(0, Math.min(1, r * 6 - i));
-function caseMeter(r) {
-  const b = [0, 1, 2, 3, 4, 5].map((i) => { const h = 71 * lvl(r, i); return `<g transform="translate(${27 + i * 33} 8)"><path class="b-out" d="${BOTTLE}"/><rect class="b-fill" clip-path="url(#ship-b)" x="0" y="${71 - h}" width="22" height="${h}" data-b="${i}"/><rect class="b-cap" x="7.5" y="0" width="7" height="${lvl(r, i) >= 1 ? 9 : 0}" rx="1" data-cap="${i}"/></g>`; }).join('');
-  return `<div class="ship-case${r >= 1 ? ' is-full' : ''}" data-ship-case aria-hidden="true"><svg viewBox="0 0 250 96"><defs><clipPath id="ship-b"><path d="${BOTTLE}"/></clipPath></defs>${b}
-    <g class="crate"><rect x="8" y="62" width="234" height="30" rx="2"/><path d="M8 72h234M8 82h234" /><text x="125" y="80.5" text-anchor="middle"><tspan lang="fr">PORT OFFERT</tspan><tspan lang="en">FREE DELIVERY</tspan></text></g></svg></div>`;
+/* ---------- Caisse bois vue de dessus : six cases qui se remplissent jusqu'au port offert (350 €) ----------
+   Une case pleine = un sixième du port offert (environ 58 €). La case en cours se remplit en transparence.
+   La même caisse sert dans le tiroir du panier et dans la petite fenêtre qui s'ouvre sous l'icône du panier. */
+const CAP = { hp: '#8E1D2D', lf: '#6A1426', bl: '#A3283A' };
+const SLOTS = [[48, 48], [120, 48], [192, 48], [48, 120], [120, 120], [192, 120]];
+let shown = { full: 0, part: 0, sub: 0 };
+function crateState() {
+  const { sub } = totals();
+  const r = Math.min(1, sub / FREE); const x = r * 6; const full = r >= 1 ? 6 : Math.floor(x + 1e-6); const part = r >= 1 ? 0 : x - full;
+  // couleur de capsule de chaque case : le vin qui « occupe » cette part de la commande
+  const colors = []; let acc = 0; const seg = FREE / 6;
+  const parts = lines.map((l) => { const w = wineById(l.id); const f = FORMATS[w.fmt]; return { ch: w.ch, v: l.qty * (w.price + (l.wood && f.wood ? f.wood : 0)) }; });
+  for (let k = 0; k < 6; k++) { const mid = (k + 0.5) * seg; let a = 0; let c = parts[0] ? parts[0].ch : 'hp'; for (const p of parts) { a += p.v; c = p.ch; if (a >= mid) break; } colors.push(CAP[c] || CAP.hp); }
+  return { sub, r, full, part, colors, left: Math.max(0, FREE - sub) };
 }
-function animateCase(r) {
-  if (!$('[data-ship-case]') || !$('[data-cart]')?.classList.contains('is-open')) return;
-  const set = (rr) => {
-    lastRatio = rr; const box = $('[data-ship-case]'); if (!box) return;
-    $$('[data-b]', box).forEach((el) => { const h = 71 * lvl(rr, +el.dataset.b); el.setAttribute('y', 71 - h); el.setAttribute('height', h); });
-    $$('[data-cap]', box).forEach((el) => el.setAttribute('height', lvl(rr, +el.dataset.cap) >= 1 ? 9 : 0));
-  };
-  const was = lastRatio;
-  if (caseTween) caseTween.kill();
-  const done = () => { const box = $('[data-ship-case]'); if (!box) return; box.classList.toggle('is-full', r >= 1); if (r >= 1 && was < 1 && !CALM && window.gsap) { gsap.fromTo($('.crate', box), { y: -6 }, { y: 0, duration: 0.7, ease: 'bounce.out' }); sparkAt(box); } };
-  if (CALM || !window.gsap || was === r) { set(r); done(); return; }
-  const o = { r: was };
-  caseTween = gsap.to(o, { r, duration: 0.8 + Math.abs(r - was) * 0.8, delay: 0.25, ease: 'power2.inOut', onUpdate: () => set(o.r), onComplete: done });
+function crateDefs() {
+  if ($('#crate-defs')) return;
+  document.body.insertAdjacentHTML('beforeend', `<svg id="crate-defs" width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+    <linearGradient id="crate-wood" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#D6AC70"/><stop offset=".55" stop-color="#C39257"/><stop offset="1" stop-color="#A97842"/></linearGradient>
+    <radialGradient id="crate-glass" cx=".38" cy=".34" r=".72"><stop offset="0" stop-color="#46584A"/><stop offset=".62" stop-color="#1D271F"/><stop offset="1" stop-color="#0D130E"/></radialGradient>
+  </defs></svg>`);
+}
+function crateHTML(kind) {
+  const slots = SLOTS.map(([x, y], i) => `<g class="crate__slot" transform="translate(${x} ${y})"><circle class="crate__hole" r="25"/><g class="crate__cap" data-cap="${i}"><circle r="28" fill="url(#crate-glass)"/><circle class="crate__capsule" r="15.5"/><circle r="15.5" fill="none" stroke="#D9B26A" stroke-width="1.6"/><circle r="9" fill="none" stroke="rgba(0,0,0,.22)" stroke-width="1"/><ellipse cx="-5" cy="-6" rx="6" ry="3.6" fill="rgba(255,255,255,.22)"/></g></g>`).join('');
+  return `<div class="crate crate--${kind}" data-crate>
+    <div class="crate__box" aria-hidden="true"><svg viewBox="0 0 240 168"><rect x="1" y="1" width="238" height="166" rx="8" fill="url(#crate-wood)" stroke="#7A522D" stroke-width="2"/>
+      <path d="M10 5.5H230M10 162.5H230M5.5 12V156M234.5 12V156" stroke="rgba(110,70,35,.28)" stroke-width="1"/>
+      <rect x="12" y="12" width="216" height="144" rx="3" fill="#6E4826"/><rect x="12" y="12" width="216" height="144" rx="3" fill="none" stroke="rgba(0,0,0,.28)" stroke-width="5"/>
+      <path d="M84 12V156M156 12V156M12 84H228" stroke="#C79A61" stroke-width="5"/><path d="M86.5 12V156M158.5 12V156M12 86.5H228" stroke="rgba(60,35,15,.35)" stroke-width="1.2"/>
+      ${slots}</svg><span class="crate__stamp">${L('Port offert', 'Free delivery')}</span></div>
+    <div class="crate__gauge" aria-hidden="true"><i data-crate-gauge></i></div>
+    <p class="crate__msg" data-crate-msg></p>
+  </div>`;
+}
+function crateMsg(st) {
+  if (!st.sub) return L('Port offert dès 350&nbsp;€ en France métropolitaine.', 'Free delivery from €350 in mainland France.');
+  if (st.left > 0) return L(`Plus que <b>${eur(st.left)}</b> pour le port offert.`, `Only <b>${eur(st.left)}</b> more for free delivery.`);
+  return L('<b>Port offert</b> en France métropolitaine.', '<b>Free delivery</b> in mainland France.');
+}
+// met à jour toutes les caisses visibles ; anim = la case qui vient d'être remplie tombe dans la caisse
+function paintCrates(anim = false) {
+  const st = crateState();
+  $$('[data-crate]').forEach((box) => {
+    $$('[data-cap]', box).forEach((g) => {
+      const i = +g.dataset.cap; const cap = $('.crate__capsule', g); cap.setAttribute('fill', st.colors[i]);
+      const target = i < st.full ? 1 : (i === st.full ? Math.min(0.55, st.part * 0.7) : 0);
+      const was = g.dataset.o != null ? +g.dataset.o : (i < shown.full ? 1 : (i === shown.full ? Math.min(0.55, shown.part * 0.7) : 0));
+      g.dataset.o = target;
+      const moving = anim && !CALM && window.gsap && Math.abs(target - was) > 0.01;
+      if (moving && target === 1) {
+        gsap.fromTo(g, { opacity: 0, scale: 1.75, y: -30, transformOrigin: '50% 50%' }, { opacity: 1, scale: 1, y: 0, duration: 0.6, ease: 'back.out(1.9)', delay: Math.max(0, 0.08 * (i - shown.full)), overwrite: true });
+      } else if (moving) {
+        gsap.fromTo(g, { opacity: was }, { opacity: target, scale: 1, y: 0, duration: 0.45, overwrite: true });
+      } else { if (window.gsap) gsap.killTweensOf(g); g.style.opacity = target; g.removeAttribute('transform'); g.style.transform = ''; }
+    });
+    const gauge = $('[data-crate-gauge]', box); if (gauge) gauge.style.transform = `scaleX(${st.r})`;
+    const msg = $('[data-crate-msg]', box); if (msg) msg.innerHTML = crateMsg(st);
+    const full = st.r >= 1; const wasFull = box.classList.contains('is-full'); box.classList.toggle('is-full', full);
+    if (full && !wasFull && anim && !CALM && window.gsap) {
+      gsap.fromTo($('.crate__stamp', box), { scale: 2.2, rotation: -24, autoAlpha: 0 }, { scale: 1, rotation: -8, autoAlpha: 1, duration: 0.55, ease: 'back.out(2.2)', delay: 0.45 });
+      gsap.fromTo($('.crate__box svg', box), { y: 0 }, { y: -5, duration: 0.12, yoyo: true, repeat: 3, ease: 'power1.inOut', delay: 0.5 });
+    }
+  });
+  shown = { full: st.full, part: st.part, sub: st.sub };
+  return st;
+}
+// position (à l'écran) de la case où va tomber le vin qu'on vient d'ajouter
+function nextSlotRect(box, st) {
+  const i = Math.min(5, st.full >= 6 ? 5 : (st.full > shown.full ? st.full - 1 : st.full));
+  const g = $(`[data-cap="${i}"]`, box); if (!g) return null;
+  const svg = $('svg', box).getBoundingClientRect(); const [x, y] = SLOTS[i]; const k = svg.width / 240;
+  return { left: svg.left + (x - 28) * k, top: svg.top + (y - 28) * k, width: 56 * k, height: 56 * k };
+}
+
+/* Petite fenêtre sous l'icône du panier : la caisse, la jauge du port offert et le lien vers le panier */
+let flyTimer = 0;
+function flyout() {
+  let f = $('[data-cfly]');
+  if (!f) {
+    crateDefs();
+    f = document.createElement('div'); f.className = 'cfly'; f.setAttribute('data-cfly', ''); f.setAttribute('role', 'status'); f.setAttribute('aria-live', 'polite');
+    document.body.appendChild(f);
+    f.addEventListener('pointerenter', () => clearTimeout(flyTimer));
+    f.addEventListener('pointerleave', () => hideFlyout(1600));
+    f.addEventListener('focusin', () => clearTimeout(flyTimer));
+  }
+  return f;
+}
+function hideFlyout(ms = 0) { clearTimeout(flyTimer); flyTimer = setTimeout(() => { const f = $('[data-cfly]'); if (f) f.classList.remove('is-on'); }, ms); }
+function showFlyout(w, fromImg) {
+  const f = flyout();
+  const before = { ...shown };
+  f.innerHTML = `<p class="cfly__title"><b>${wineName(w)}</b> ${L('ajouté au panier', 'added to your cart')}</p>${crateHTML('fly')}<div class="cfly__actions"><button class="btn btn--sm" type="button" data-cart-open>${L('Voir le panier', 'View cart')}</button><button class="cfly__close" type="button" data-cfly-close aria-label="${'Fermer'}" data-aria-en="Close">×</button></div>`;
+  const box = $('[data-crate]', f);
+  // état d'avant l'ajout, puis la nouvelle bouteille tombe dans sa case
+  shown = before;
+  $$('[data-cap]', box).forEach((g) => { const i = +g.dataset.cap; const o = i < before.full ? 1 : 0; g.dataset.o = o; g.style.opacity = o; });
+  const gauge = $('[data-crate-gauge]', box); if (gauge) gauge.style.transform = `scaleX(${Math.min(1, before.sub / FREE)})`;
+  $('[data-crate-msg]', box).innerHTML = crateMsg(crateState());
+  f.classList.add('is-on'); hideToast();
+  const st = crateState();
+  const go = () => { paintCrates(true); renderCount(); bump(); hideFlyout(TOUCH ? 3400 : 3800); };
+  if (CALM || !fromImg || !window.gsap) { go(); return; }
+  requestAnimationFrame(() => fly(fromImg, nextSlotRect(box, st), go));
 }
 
 function bump() {
@@ -103,10 +183,10 @@ export function closeCart() {
   if (lastFocus && lastFocus.focus) lastFocus.focus({ preventScroll: true });
 }
 
-function fly(fromImg, done) {
-  const target = $('[data-cart-open]');
-  if (CALM || !fromImg || !target || !window.gsap) return done();
-  const r = fromImg.getBoundingClientRect(); const t = target.getBoundingClientRect();
+function fly(fromImg, rect, done) {
+  const target = $('.hdr [data-cart-open]');
+  if (CALM || !fromImg || (!rect && !target) || !window.gsap) return done();
+  const r = fromImg.getBoundingClientRect(); const t = rect || target.getBoundingClientRect();
   const clone = fromImg.cloneNode(); clone.removeAttribute('srcset'); clone.className = 'fly';
   Object.assign(clone.style, { left: r.left + 'px', top: r.top + 'px', width: r.width + 'px', height: r.height + 'px' });
   document.body.appendChild(clone);
@@ -115,7 +195,7 @@ function fly(fromImg, done) {
   tl.to(clone, { x: dx, duration: 0.85, ease: 'power2.inOut' }, 0)
     .to(clone, { y: dy * 0.2 - 120, duration: 0.38, ease: 'power2.out' }, 0)
     .to(clone, { y: dy, duration: 0.47, ease: 'power2.in' }, 0.38)
-    .to(clone, { scale: 0.12, rotation: 24, duration: 0.85, ease: 'power2.in' }, 0)
+    .to(clone, { scale: rect ? Math.max(0.08, Math.min(t.width / r.width, t.height / r.height)) : 0.12, rotation: rect ? 0 : 24, duration: 0.85, ease: 'power2.in' }, 0)
     .to(clone, { autoAlpha: 0, duration: 0.15 }, 0.75);
 }
 
@@ -124,14 +204,17 @@ export function addToCart(id, qty = 1, fromImg = null) {
   const l = lines.find((x) => x.id === id);
   if (l) l.qty = Math.min(24, l.qty + qty); else lines.push({ id, qty, wood: false });
   save();
-  fly(fromImg, () => { renderCount(); bump(); sparkAt($('.hdr [data-cart-open]')); });
-  toast(L(`<b>${wineName(w)}</b> ajouté au panier.`, `<b>${wineName(w)}</b> added to your cart.`) + ` <button class="link" style="border:0;background:none;color:inherit;padding:0" type="button" data-cart-open>${L('Voir le panier', 'View cart')}</button>`);
+  // la caisse s'ouvre sous l'icône du panier et la bouteille tombe dans sa case
+  if ($('[data-cart]')?.classList.contains('is-open')) { render(); renderCount(); return; }
+  showFlyout(w, fromImg);
 }
 
 export function initCart() {
   renderCount();
+  { const st = crateState(); shown = { full: st.full, part: st.part, sub: st.sub }; }
   document.addEventListener('click', (e) => {
-    if (e.target.closest('[data-cart-open]')) { e.preventDefault(); openCart(); return; }
+    if (e.target.closest('[data-cfly-close]')) { hideFlyout(0); return; }
+    if (e.target.closest('[data-cart-open]')) { e.preventDefault(); hideFlyout(0); openCart(); return; }
     if (e.target.closest('[data-cart-close], [data-cart-ov]')) { closeCart(); return; }
     const t = e.target.closest('[data-inc],[data-dec],[data-rm],[data-checkout],[data-pay]'); if (!t) return;
     if (t.dataset.inc != null) { lines[+t.dataset.inc].qty = Math.min(24, lines[+t.dataset.inc].qty + 1); }
@@ -146,6 +229,7 @@ export function initCart() {
     if (e.target.matches('[data-c-age],[data-c-cgv],[data-c-pay]')) { const ok = $('[data-c-age]').checked && $('[data-c-cgv]').checked && !!$('[data-c-pay]:checked'); $('[data-pay]').disabled = !ok; $('[data-c-help]').style.visibility = ok ? 'hidden' : 'visible'; }
   });
   addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && $('[data-cfly].is-on')) hideFlyout(0);
     const cart = $('[data-cart]'); if (!cart.classList.contains('is-open')) return;
     if (e.key === 'Escape') { closeCart(); return; }
     if (e.key === 'Tab') {

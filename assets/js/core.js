@@ -353,6 +353,30 @@ export function splitTitle(el, opts = {}) {
   if (opts.now) anim(); else ScrollTrigger.create({ trigger: el, start: 'top 88%', once: true, onEnter: anim });
   return s;
 }
+// Pied de page : « Haut-Piquat » se grave lettre par lettre dans la pierre, avec un peu de poussière de calcaire
+function initCarve() {
+  const box = $('[data-carve]'); if (!box || !window.gsap || !window.ScrollTrigger) return;
+  const chars = $$('.ch', box); if (!chars.length) return;
+  gsap.set(chars, { clipPath: 'inset(0 100% 0 0)' });
+  const dust = (el) => {
+    const r = el.getBoundingClientRect(); const b = box.getBoundingClientRect();
+    const n = innerWidth < 700 ? 3 : 5;
+    for (let i = 0; i < n; i++) {
+      const d = document.createElement('i'); d.className = 'carve-dust'; box.appendChild(d);
+      const x = r.right - b.left - r.width * 0.15; const y = r.top - b.top + r.height * (0.3 + Math.random() * 0.5);
+      gsap.set(d, { x, y, scale: 0.6 + Math.random() * 0.8 });
+      gsap.to(d, { x: x + (Math.random() * 46 - 10), y: y + 30 + Math.random() * 50, autoAlpha: 0, duration: 0.9 + Math.random() * 0.5, ease: 'power2.in', onComplete: () => d.remove() });
+    }
+  };
+  const tl = gsap.timeline({ paused: true });
+  chars.forEach((c, i) => {
+    tl.to(c, { clipPath: 'inset(0 0% 0 0)', duration: 0.26, ease: 'power1.inOut' }, i * 0.11)
+      .call(() => dust(c), null, i * 0.11 + 0.16)
+      .fromTo(c, { y: 1.5 }, { y: 0, duration: 0.18, ease: 'power2.out' }, i * 0.11 + 0.2);
+  });
+  tl.call(() => gsap.set(chars, { clearProps: 'clipPath' }));
+  ScrollTrigger.create({ trigger: box, start: 'top 94%', once: true, onEnter: () => tl.play() });
+}
 // Petite astérie qui s'allume à chaque validation (ajout au panier, réservation…)
 export function spark(x, y) {
   if (CALM || !gsap) return;
@@ -450,7 +474,7 @@ export function initCore() {
   ScrollTrigger.config({ ignoreMobileResize: true });
   initBars(); initLang(); initHeader(); initCalm(); initSound(); initForms();
   smooth.init();
-  if (!CALM) { initCursor(); initMagnetic(); initVeil(); }
+  if (!CALM) { initCursor(); initMagnetic(); initVeil(); initCarve(); }
   initTransitions(); initProgress();
   return { gsap, ScrollTrigger };
 }
