@@ -25,8 +25,8 @@
 <link rel="preload" href="assets/fonts/fraunces-latin-full-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="assets/fonts/manrope-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" as="image" href="assets/img/photos/chateau-facade-1920.webp" imagesrcset="assets/img/photos/chateau-facade-640.webp 640w, assets/img/photos/chateau-facade-1024.webp 1024w, assets/img/photos/chateau-facade-1440.webp 1440w, assets/img/photos/chateau-facade-1920.webp 1920w, assets/img/photos/chateau-facade-2560.webp 2560w" imagesizes="100vw" fetchpriority="high">
-<link rel="stylesheet" href="assets/css/style.css?v=7">
-<link rel="modulepreload" href="assets/js/main.js?v=7">
+<link rel="stylesheet" href="assets/css/style.css?v=8">
+<link rel="modulepreload" href="assets/js/main.js?v=8">
 <script>(function(d){var h=d.documentElement;h.className=h.className.replace('no-js','js');try{var s=localStorage;var l=s.getItem('ahp-lang');if(l==='en'){h.lang='en';}var c=s.getItem('ahp-calm');if(c==='1'||(c===null&&matchMedia('(prefers-reduced-motion: reduce)').matches)){h.classList.add('calm');}if(s.getItem('ahp-age')==='ok'){h.classList.add('age-ok');}if(sessionStorage.getItem('ahp-trans')==='1'){h.classList.add('trans-in');}}catch(e){}setTimeout(function(){if(!window.__ahpReady){h.classList.add('calm');h.classList.remove('trans-in');}},4500);})(document);</script>
 </head>
 <body data-page="domaine">
@@ -53,7 +53,7 @@
     <img src="assets/img/logos/logo-chateau-encre-240.webp" width="240" height="175" alt="">
     <span class="hdr__name">Haut-Piquat<small>Lussac Saint-Émilion</small></span>
   </a>
-  <nav class="hdr__nav" aria-label="Navigation principale" data-aria-en="Main navigation"><a href="domaine.html" aria-current="page"><span lang="fr">Le domaine</span><span lang="en">The estate</span></a><a href="index.html#vins"><span lang="fr">Les vins</span><span lang="en">The wines</span></a><a href="boutique.html"><span lang="fr">Boutique</span><span lang="en">Shop</span></a><a href="oenotourisme.html"><span lang="fr">Visites & événements</span><span lang="en">Visits & events</span></a><a href="oenotourisme.html#acces"><span lang="fr">Venir</span><span lang="en">Visit us</span></a></nav>
+  <nav class="hdr__nav" aria-label="Navigation principale" data-aria-en="Main navigation"><a href="domaine.html" aria-current="page"><span lang="fr">Le domaine</span><span lang="en">The estate</span></a><a href="vins.html"><span lang="fr">Les vins</span><span lang="en">The wines</span></a><a href="boutique.html"><span lang="fr">Boutique</span><span lang="en">Shop</span></a><a href="oenotourisme.html"><span lang="fr">Visites & événements</span><span lang="en">Visits & events</span></a><a href="oenotourisme.html#acces"><span lang="fr">Venir</span><span lang="en">Visit us</span></a></nav>
   <div class="hdr__tools">
     <button class="tool tool--lang" type="button" data-lang-toggle aria-label="English version" data-aria-en="Version française"><span class="l-fr" aria-hidden="true">FR</span><span class="l-sep" aria-hidden="true">/</span><span class="l-en" aria-hidden="true">EN</span></button>
     <button class="tool hide-sm" type="button" data-sound aria-pressed="false" aria-label="Ambiance sonore" data-aria-en="Ambient sound" data-tip="Ambiance sonore" data-tip-en="Ambient sound"><svg><use href="#i-sound"/></svg></button>
@@ -64,7 +64,7 @@
   </div>
 </header>
 <div class="mmenu" id="mmenu" data-mmenu aria-hidden="true">
-  <nav aria-label="Navigation mobile" data-aria-en="Mobile navigation"><a href="domaine.html"><span class="n">01</span><span lang="fr">Le domaine</span><span lang="en">The estate</span></a><a href="index.html#vins"><span class="n">02</span><span lang="fr">Les vins</span><span lang="en">The wines</span></a><a href="boutique.html"><span class="n">03</span><span lang="fr">Boutique</span><span lang="en">Shop</span></a><a href="oenotourisme.html"><span class="n">04</span><span lang="fr">Visites & événements</span><span lang="en">Visits & events</span></a><a href="oenotourisme.html#acces"><span class="n">05</span><span lang="fr">Venir</span><span lang="en">Visit us</span></a></nav>
+  <nav aria-label="Navigation mobile" data-aria-en="Mobile navigation"><a href="domaine.html"><span class="n">01</span><span lang="fr">Le domaine</span><span lang="en">The estate</span></a><a href="vins.html"><span class="n">02</span><span lang="fr">Les vins</span><span lang="en">The wines</span></a><a href="boutique.html"><span class="n">03</span><span lang="fr">Boutique</span><span lang="en">Shop</span></a><a href="oenotourisme.html"><span class="n">04</span><span lang="fr">Visites & événements</span><span lang="en">Visits & events</span></a><a href="oenotourisme.html#acces"><span class="n">05</span><span lang="fr">Venir</span><span lang="en">Visit us</span></a></nav>
   <div>
     <div class="mmenu__ctas"><a class="btn btn--light" href="oenotourisme.html#reserver"><span lang="fr">Réserver une visite</span><span lang="en">Book a visit</span></a><a class="btn btn--ghost" href="boutique.html"><span lang="fr">Boutique en ligne</span><span lang="en">Online shop</span></a></div>
     <div class="mmenu__tools">
@@ -217,6 +217,7 @@
       <div>
         <h2 class="ftr__h"><span lang="fr">Vins et visites</span><span lang="en">Wines and visits</span></h2>
         <ul>
+          <li><a href="vins.html"><span lang="fr">Les vins</span><span lang="en">The wines</span></a></li>
           <li><a href="boutique.html"><span lang="fr">Boutique en ligne</span><span lang="en">Online shop</span></a></li>
           <li><a href="boutique.html#cadeaux"><span lang="fr">Caisses cadeaux et primeurs</span><span lang="en">Gift cases and en primeur</span></a></li>
           <li><a href="oenotourisme.html"><span lang="fr">Visites & événements</span><span lang="en">Visits & events</span></a></li>
@@ -283,6 +284,6 @@
 <script src="assets/vendor/gsap/DrawSVGPlugin.min.js" defer></script>
 <script src="assets/vendor/gsap/CustomEase.min.js" defer></script>
 <script src="assets/vendor/gsap/Flip.min.js" defer></script>
-<script type="module" src="assets/js/main.js?v=7"></script>
+<script type="module" src="assets/js/main.js?v=8"></script>
 </body>
 </html>

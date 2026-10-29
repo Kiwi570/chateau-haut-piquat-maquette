@@ -1,7 +1,7 @@
 // Accueil : ouverture, coupe géologique, vins, millésimes, puis deux bandeaux vers Le domaine et Visites & événements.
-import { $, $$, L, eur, CALM, TOUCH, DESKTOP, hdrH, splitTitle, padMasks } from '../core.js?v=7';
-import { heroLight, fossils } from '../gl.js?v=7';
-import { WINES, CHATEAUX, FORMATS } from '../data.js?v=7';
+import { $, $$, L, eur, CALM, TOUCH, DESKTOP, hdrH, splitTitle, padMasks } from '../core.js?v=8';
+import { heroLight, fossils } from '../gl.js?v=8';
+import { WINES, CHATEAUX, FORMATS } from '../data.js?v=8';
 
 const gsap = window.gsap; const ST = window.ScrollTrigger;
 let hero = null;

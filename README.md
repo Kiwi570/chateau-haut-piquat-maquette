@@ -1,4 +1,4 @@
-# Château Haut-Piquat · maquette v7
+# Château Haut-Piquat · maquette v8
 
 Maquette de démonstration du futur site du Château Haut-Piquat (Lussac Saint-Émilion), direction artistique « Calcaire à astéries ». Site statique en HTML, CSS et JavaScript, sans étape de construction, prêt pour Vercel.
 
@@ -7,6 +7,7 @@ Maquette de démonstration du futur site du Château Haut-Piquat (Lussac Saint-�
 | Page | Fichier | Contenu |
 |---|---|---|
 | Accueil | `index.html` | Ouverture, chiffres clés, coupe géologique et assemblage, trois vins, millésimes, bandeaux vers Le domaine et Visites & événements |
+| Les vins | `vins.html` | Ouverture des trois bouteilles, tour de la cave épinglé, l'accord parfait, servir votre vin, grands formats, aussi au domaine |
 | Le domaine | `domaine.html` | Frise « 2 000 ans gravés dans la pierre », savoir-faire en cinq étapes, chai de 480 barriques |
 | Boutique | `boutique.html` | 24 références filtrables, panier, règle des formats, caisses cadeaux et primeurs |
 | Fiche vin | `vin.html?id=…` | Une fiche pour chaque référence (ex. `vin.html?id=lf-2016`) |
@@ -17,7 +18,7 @@ Maquette de démonstration du futur site du Château Haut-Piquat (Lussac Saint-�
 ## Structure
 
 - `assets/css/style.css` : styles
-- `assets/js/main.js` : point d'entrée ; `core.js` (défilement, ouverture, langue, mode calme, filtre d'âge, transitions), `cart.js` (panier), `gl.js` (WebGL), `pages/*.js` (`home.js` accueil, `domain.js` Le domaine, `tourism.js` et `places.js` Visites & événements, `shop.js`, `wine.js`)
+- `assets/js/main.js` : point d'entrée ; `core.js` (défilement, ouverture, langue, mode calme, filtre d'âge, transitions), `cart.js` (panier), `gl.js` (WebGL), `pages/*.js` (`home.js` accueil, `domain.js` Le domaine, `cellar.js` Les vins, `tourism.js` et `places.js` Visites & événements, `shop.js`, `wine.js`)
 - `assets/js/data.js` : vins, formats, châteaux et formules, repris des fiches du site actuel (prix d'octobre 2026)
 - `assets/img/photos`, `assets/img/vins`, `assets/img/logos` : photos du site actuel, étalonnées, en WebP
 - `assets/img/grok` : textures et détails générés avec Grok (strates, pierre, socle, chêne, lumière)
@@ -30,7 +31,17 @@ Maquette de démonstration du futur site du Château Haut-Piquat (Lussac Saint-�
 1. Remplacer une image : déposer le nouveau fichier sous le même nom ; aucune règle de cache n'est à modifier.
 2. Changer un prix : modifier `assets/js/data.js`.
 3. À chaque version livrée, changer le numéro `?v=N` partout et à l'identique, dans les pages et dans les `import` JavaScript :
-   `grep -rl "?v=7" --include=*.html --include=*.js . | xargs sed -i "" "s/?v=7/?v=8/g"`
+   `grep -rl "?v=8" --include=*.html --include=*.js . | xargs sed -i "" "s/?v=8/?v=9/g"`
+
+## Version 8
+
+- Nouvelle page « Les vins » (menu « Les vins ») :
+  - ouverture sur les trois bouteilles posées sur leurs socles de calcaire ;
+  - tour de la cave : sur grand écran, la section reste en place et les trois vins se succèdent (bouteille qui pivote, fond aux couleurs du vin, fiche, assemblage, médailles, extrait de note de dégustation, nombre de millésimes et prix de départ tirés de la boutique) ;
+  - l'accord parfait : on choisit une famille de plats, les vins que le domaine y associe sur ses fiches s'allument, avec la liste des millésimes et des plats cités ;
+  - servir votre vin : vin jeune ou vin vieux, thermomètre, carafe et verre animés, textes repris des conseils du domaine ;
+  - grands formats avec liens directs vers la boutique, Château Picampeau et Château Montroc pour les professionnels.
+- Accueil : bouton « Découvrir les vins » dans la section des trois vins. Pied de page : lien « Les vins ».
 
 ## Version 7
 

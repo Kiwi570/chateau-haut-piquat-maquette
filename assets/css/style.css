@@ -1213,3 +1213,103 @@ body.menu-open .totop, body.cart-open .totop { opacity: 0; visibility: hidden; }
 .hdr__nav a { white-space: nowrap; }
 .hdr__name, .hdr__name small { white-space: nowrap; }
 @media (min-width: 1100px) and (max-width: 1319px) { .hdr__nav { gap: 18px; } .hdr__nav a { font-size: 13.5px; letter-spacing: .02em; } }
+
+/* ============ v8 · page Les vins ============ */
+.cuvees__more { margin-top: 22px; }
+/* Ouverture : trois bouteilles sur leurs socles */
+.vhero { position: relative; overflow: hidden; background: radial-gradient(ellipse 80% 70% at 70% 60%, #3A2A1F 0%, #1F1B16 62%); padding: calc(var(--hdr-h) + clamp(40px, 7vh, 90px)) 0 clamp(40px, 6vh, 70px); min-height: min(100svh, 980px); display: flex; align-items: center; }
+.vhero__glow { position: absolute; inset: 0; background: radial-gradient(40% 40% at 72% 42%, rgba(194, 155, 87, .22), transparent 70%); pointer-events: none; }
+.vhero__inner { position: relative; display: grid; gap: clamp(28px, 4vw, 60px); align-items: center; }
+@media (min-width: 1000px) { .vhero__inner { grid-template-columns: .95fr 1.05fr; } }
+.vhero__title { font-size: clamp(3rem, 8.4vw, 8.6rem); margin: 14px 0 22px; }
+.vhero__text .lead { color: rgba(238, 231, 217, .82); max-width: 34em; }
+.vhero__text .hero__ctas { margin-top: 28px; }
+.vhero__trio { display: grid; grid-template-columns: 1fr 1.22fr 1fr; align-items: end; gap: clamp(6px, 1.4vw, 18px); max-width: 720px; margin-inline: auto; width: 100%; }
+.vhero__plinth { position: relative; aspect-ratio: 400 / 520; }
+.vhero__plinth .socle { position: absolute; left: 0; bottom: 0; width: 100%; height: auto; filter: brightness(.86) contrast(1.05) drop-shadow(0 30px 30px rgba(0, 0, 0, .45)); }
+.vhero__plinth.is-lf .socle { filter: sepia(.25) saturate(1.1) brightness(.84) drop-shadow(0 30px 30px rgba(0, 0, 0, .45)); }
+.vhero__plinth.is-bl .socle { filter: sepia(.15) hue-rotate(-8deg) brightness(.9) drop-shadow(0 30px 30px rgba(0, 0, 0, .45)); }
+.vhero__bottle { position: absolute; left: 50%; bottom: 45%; height: 96%; width: auto; transform: translateX(-50%); filter: drop-shadow(0 20px 24px rgba(0, 0, 0, .5)); }
+.vhero__plinth.is-hp .vhero__bottle { height: 100%; }
+.vhero__trio { padding-top: clamp(60px, 12vw, 180px); }
+@media (max-width: 999px) { .vhero { min-height: auto; } .vhero__trio { max-width: 460px; } }
+/* Le tour de la cave */
+.cave__frame { position: relative; }
+.cave__chapter { position: relative; display: grid; align-items: center; gap: clamp(20px, 3vw, 50px); padding: clamp(40px, 7vw, 80px) var(--edge); background: var(--stage, #EDE3D1); overflow: hidden; }
+.cave__chapter::before { content: ""; position: absolute; inset: 0; background-image: var(--stage-tex, none); background-size: cover; background-position: center; opacity: .14; mix-blend-mode: multiply; pointer-events: none; }
+.cave__chapter::after { content: ""; position: absolute; inset: 0; background: radial-gradient(45% 55% at 26% 45%, rgba(255, 248, 235, .55), transparent 70%); pointer-events: none; }
+@media (min-width: 900px) { .cave__chapter { grid-template-columns: .9fr 1.1fr; } }
+.cave__stage { position: relative; z-index: 1; aspect-ratio: 4 / 5; width: min(100%, 520px); margin-inline: auto; perspective: 1100px; }
+.cave__stage .socle { position: absolute; left: 8%; width: 84%; bottom: -6%; height: auto; filter: var(--socle-filter, none) drop-shadow(0 28px 34px rgba(31, 27, 22, .3)); }
+.cave__bottle { position: absolute; left: 50%; bottom: 40%; height: 58%; width: auto; transform: translateX(-50%); transform-origin: 50% 100%; filter: drop-shadow(0 20px 22px rgba(31, 27, 22, .3)); }
+.cave__num { position: absolute; top: 0; left: 0; z-index: 0; font: 300 clamp(6rem, 14vw, 13rem)/.8 var(--serif); font-variation-settings: "SOFT" 100; color: rgba(31, 27, 22, .07); }
+.cave__panel { position: relative; z-index: 1; display: grid; gap: 14px; align-content: center; max-width: 620px; }
+.cave__name { font-size: clamp(2.2rem, 4.4vw, 4.4rem); margin: 0; }
+.cave__offer { margin: -4px 0 0; color: var(--ocre-ink); font-weight: 600; }
+.cave__panel .specs { font-size: 15px; }
+.cave__blend { height: 46px; }
+.cave__note { margin: 4px 0 0; padding-left: 16px; border-left: 2px solid rgba(31, 27, 22, .2); }
+.cave__note blockquote { margin: 0; font: italic 400 clamp(1.02rem, 1.3vw, 1.18rem)/1.45 var(--serif); }
+.cave__note figcaption { margin-top: 6px; font-size: 12.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--encre-3); font-weight: 600; }
+.cave__ctas { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 22px; margin-top: 4px; }
+.cave__ctas .link { min-height: 44px; display: inline-flex; align-items: center; }
+.cave__nav { display: none; }
+/* épinglé sur grand écran : les trois vins se succèdent */
+.cave__frame.is-pinned { height: var(--fh); overflow: hidden; }
+.cave__frame.is-pinned .cave__chapter { position: absolute; inset: 0; padding-block: clamp(20px, 4vh, 50px); }
+.cave__frame.is-pinned .cave__stage { height: calc(var(--fh) - 60px); width: auto; max-width: 100%; aspect-ratio: 4 / 5; }
+.cave__frame.is-pinned .cave__nav { display: flex; position: absolute; z-index: 5; left: var(--edge); bottom: clamp(16px, 3vh, 30px); gap: 20px; list-style: none; margin: 0; padding: 0; }
+.cave__nav li { position: relative; padding-top: 10px; font-size: 12px; letter-spacing: .16em; text-transform: uppercase; font-weight: 700; color: rgba(31, 27, 22, .4); transition: color .4s; }
+.cave__nav li::before { content: ""; position: absolute; left: 0; top: 0; width: 28px; height: 2px; background: currentColor; transform-origin: left; transform: scaleX(.4); transition: transform .5s var(--ease); }
+.cave__nav li.is-on { color: var(--encre); }
+.cave__nav li.is-on::before { transform: scaleX(1); }
+@media (max-height: 820px) { .cave__frame.is-pinned .cave__note { display: none; } .cave__frame.is-pinned .cave__panel { gap: 10px; } }
+/* L'accord parfait */
+.accords__chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.acc-chip[aria-pressed="true"] { background: var(--encre); color: var(--calcaire); border-color: var(--encre); }
+.acc-chip[aria-pressed="true"] .muted { color: rgba(238, 231, 217, .7); }
+.accords__trio { display: flex; justify-content: center; gap: clamp(26px, 6vw, 70px); margin: clamp(30px, 5vw, 50px) 0 clamp(20px, 3vw, 34px); }
+.accords__trio span { display: grid; justify-items: center; gap: 8px; opacity: .28; filter: grayscale(1); transition: opacity .5s, filter .5s; }
+.accords__trio span.is-lit { opacity: 1; filter: none; }
+.accords__trio img { height: clamp(110px, 14vw, 170px); width: auto; filter: drop-shadow(0 14px 16px rgba(31, 27, 22, .25)); }
+.accords__trio span.is-lit img { filter: drop-shadow(0 0 22px rgba(194, 155, 87, .55)) drop-shadow(0 14px 16px rgba(31, 27, 22, .25)); }
+.accords__trio small { font-size: 12px; letter-spacing: .16em; text-transform: uppercase; font-weight: 700; }
+.accords__results { display: grid; gap: 10px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); margin-bottom: 16px; }
+.acc-card { display: grid; grid-template-columns: 54px 1fr; gap: 14px; align-items: center; padding: 10px 14px 10px 10px; background: var(--papier); border: 1px solid var(--line); text-decoration: none; color: var(--encre); transition: border-color .3s, transform .4s var(--ease); }
+.acc-card:hover { border-color: rgba(31, 27, 22, .3); transform: translateY(-2px); }
+.acc-card img { width: 54px; height: 72px; object-fit: cover; object-position: 50% 30%; }
+.acc-card > span { display: grid; gap: 3px; }
+.acc-card b { font-size: 15px; }
+.acc-card i { font-family: var(--serif); font-size: 15px; color: var(--argile); }
+.acc-card small { font-size: 12.5px; color: var(--encre-3); }
+/* Servir votre vin */
+.serve { background: var(--calcaire-2, #E4D9C3); }
+.serve__toggle { display: inline-flex; padding: 4px; border: 1px solid var(--line); border-radius: 99px; background: var(--papier); justify-self: start; }
+.serve__toggle button { min-height: 44px; padding: 0 20px; border: 0; border-radius: 99px; background: none; font: 700 13px/1 var(--sans); letter-spacing: .12em; text-transform: uppercase; color: var(--encre-3); cursor: pointer; transition: background-color .35s, color .35s; }
+.serve__toggle button[aria-checked="true"] { background: var(--encre); color: var(--calcaire); }
+.serve__grid { display: grid; gap: 18px; }
+@media (min-width: 900px) { .serve__grid { grid-template-columns: repeat(3, 1fr); } }
+.serve__card { display: grid; grid-template-columns: 90px 1fr; gap: 20px; align-items: center; padding: clamp(18px, 2.4vw, 30px); background: var(--papier); border: 1px solid var(--line); }
+.serve__card svg { width: 90px; height: auto; max-height: 190px; overflow: visible; }
+.serve__big { margin: 0 0 4px; font: 330 clamp(1.7rem, 2.6vw, 2.4rem)/1.05 var(--serif); font-variation-settings: "SOFT" 100; color: var(--argile); }
+.serve__card .h3 { font-size: 1.15rem; margin: 0 0 6px; }
+.serve__card .muted { font-size: 14px; margin: 0; }
+.thermo__tube { fill: #fff; stroke: rgba(31, 27, 22, .25); stroke-width: 1.5; }
+.thermo__bulb { fill: #8E2742; }
+.thermo__mercury { fill: #8E2742; }
+.thermo__ticks line { stroke: rgba(31, 27, 22, .4); stroke-width: 1; }
+.thermo__ticks text { font: 600 9px var(--sans); fill: var(--encre-3); }
+.carafe__glass { fill: rgba(255, 255, 255, .35); stroke: rgba(31, 27, 22, .45); stroke-width: 2; }
+.carafe__wine { fill: #7A1F38; }
+.carafe__air circle { fill: rgba(255, 240, 240, .85); }
+.carafe__lees { fill: none; stroke: #3B2A1E; stroke-width: 4; stroke-linecap: round; opacity: 0; }
+.glass__bowl { fill: rgba(255, 255, 255, .35); stroke: rgba(31, 27, 22, .45); stroke-width: 2; }
+.glass__wine { fill: #7A1F38; opacity: .9; }
+.glass__stem { fill: none; stroke: rgba(31, 27, 22, .45); stroke-width: 2; stroke-linecap: round; }
+@media (max-width: 520px) { .serve__card { grid-template-columns: 64px 1fr; } .serve__card svg { width: 64px; } }
+/* Grands formats : liens directs vers la boutique */
+.vformats__links a { display: grid; place-items: center; min-height: 52px; padding: 6px; border: 1px solid rgba(238, 231, 217, .3); border-radius: 4px; text-align: center; font-size: 12.5px; font-weight: 650; line-height: 1.25; text-decoration: none; color: var(--calcaire); transition: background-color .3s, color .3s; }
+.vformats__links a:hover { background: var(--ocre); color: var(--encre); border-color: var(--ocre); }
+
+.accords__trio em { font-style: normal; font-size: 12.5px; color: var(--encre-3); min-height: 1.2em; }
+.accords__trio span.is-lit em { color: var(--argile); font-weight: 650; }
