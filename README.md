@@ -1,4 +1,4 @@
-# Château Haut-Piquat · maquette v9
+# Château Haut-Piquat · maquette v10
 
 Maquette de démonstration du futur site du Château Haut-Piquat (Lussac Saint-Émilion), direction artistique « Calcaire à astéries ». Site statique en HTML, CSS et JavaScript, sans étape de construction, prêt pour Vercel.
 
@@ -32,7 +32,11 @@ Maquette de démonstration du futur site du Château Haut-Piquat (Lussac Saint-�
 1. Remplacer une image : déposer le nouveau fichier sous le même nom ; aucune règle de cache n'est à modifier.
 2. Changer un prix : modifier `assets/js/data.js`.
 3. À chaque version livrée, changer le numéro `?v=N` partout et à l'identique, dans les pages et dans les `import` JavaScript :
-   `grep -rl "?v=9" --include=*.html --include=*.js . | xargs sed -i "" "s/?v=9/?v=10/g"`
+   `grep -rl "?v=10" --include=*.html --include=*.js . | xargs sed -i "" "s/?v=10/?v=11/g"`
+
+## Version 10
+
+- Le bouton « mode calme » est retiré de l'en-tête et du menu mobile. Les animations sont réduites automatiquement pour les visiteurs qui ont activé « réduire les animations » sur leur appareil.
 
 ## Version 9
 
