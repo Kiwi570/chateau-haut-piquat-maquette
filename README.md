@@ -1,4 +1,4 @@
-# Château Haut-Piquat · maquette v10
+# Château Haut-Piquat · maquette v11
 
 Maquette de démonstration du futur site du Château Haut-Piquat (Lussac Saint-Émilion), direction artistique « Calcaire à astéries ». Site statique en HTML, CSS et JavaScript, sans étape de construction, prêt pour Vercel.
 
@@ -32,7 +32,14 @@ Maquette de démonstration du futur site du Château Haut-Piquat (Lussac Saint-�
 1. Remplacer une image : déposer le nouveau fichier sous le même nom ; aucune règle de cache n'est à modifier.
 2. Changer un prix : modifier `assets/js/data.js`.
 3. À chaque version livrée, changer le numéro `?v=N` partout et à l'identique, dans les pages et dans les `import` JavaScript :
-   `grep -rl "?v=10" --include=*.html --include=*.js . | xargs sed -i "" "s/?v=10/?v=11/g"`
+   `grep -rl "?v=11" --include=*.html --include=*.js . | xargs sed -i "" "s/?v=11/?v=12/g"`
+
+## Version 11
+
+- Accueil, section « L'assemblage » : une bouteille du Château Haut-Piquat arrive en profondeur, s'incline et verse le vin dans la jauge. Chaque cépage se remplit à son tour (merlot, cabernet sauvignon, malbec) avec une surface qui ondule, quelques gouttes, et le pourcentage qui monte avec le niveau. La couleur du filet change à chaque cépage.
+- La jauge prend un aspect de tube de verre (reflet, fond plus sombre).
+- La section reste épinglée un peu plus longtemps pour laisser le temps de voir le versement. Si le visiteur fait défiler vite, l'animation s'accélère ; s'il revient en arrière, elle se rejoue.
+- Avec « réduire les animations », la jauge s'affiche pleine, sans bouteille.
 
 ## Version 10
 

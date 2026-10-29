@@ -1,7 +1,7 @@
 // Accueil : ouverture, coupe géologique, vins, millésimes, puis deux bandeaux vers Le domaine et Visites & événements.
-import { $, $$, L, eur, CALM, TOUCH, DESKTOP, hdrH, splitTitle, padMasks } from '../core.js?v=10';
-import { heroLight, fossils } from '../gl.js?v=10';
-import { WINES, CHATEAUX, FORMATS } from '../data.js?v=10';
+import { $, $$, L, eur, CALM, TOUCH, DESKTOP, hdrH, splitTitle, padMasks } from '../core.js?v=11';
+import { heroLight, fossils } from '../gl.js?v=11';
+import { WINES, CHATEAUX, FORMATS } from '../data.js?v=11';
 
 const gsap = window.gsap; const ST = window.ScrollTrigger;
 let hero = null;
@@ -81,7 +81,7 @@ async function startHeroGL() {
 function coupe() {
   const frame = $('[data-coupe-frame]'); const stack = $('[data-coupe-stack]');
   const panels = $$('[data-panel]'); const ticks = $$('[data-tick]');
-  const T = 1.08; const blend = blendTimeline(); let played = false;
+  const T = 1.16; const blend = blendTimeline(); let played = false;
   const fos = fossils($('[data-fossils]'));
   gsap.set(panels, { autoAlpha: 0, y: 24 });
   gsap.set('[data-panel-box]', { autoAlpha: 0 });
@@ -90,7 +90,7 @@ function coupe() {
     trigger: frame, start: () => `top top+=${hdrH()}`, end: () => `+=${frame.offsetHeight * (DESKTOP() ? 4.2 : 3.6) * T}`,
     pin: true, scrub: 0.8, anticipatePin: 1, invalidateOnRefresh: true,
     onToggle: (s) => { if (fos) s.isActive ? fos.start() : fos.stop(); },
-    onLeave: () => { if (blend && !played) { played = true; blend.progress(1); } },
+    onLeave: () => { if (!blend) return; if (!played) { played = true; blend.progress(1); } else blend.hurry(); },
     onUpdate: (s) => {
       const t = s.progress * T; const p = t / 0.82;
       ticks.forEach((k, i) => k.classList.toggle('is-on', p >= [0, 0.24, 0.51, 0.77][i]));
@@ -121,25 +121,79 @@ function coupe() {
   tl.to({}, { duration: 0.01 }, T - 0.01);
 }
 
-/* Assemblage : la barre se remplit comme un vin versé, joué en entier une fois la scène atteinte */
+/* Assemblage : une bouteille de Château Haut-Piquat verse le vin, chaque cépage remplit sa part de la jauge */
 function blendTimeline() {
+  const chart = $('[data-asm]'); if (!chart) return null;
   const segs = $$('[data-asm-seg]'); const labs = $$('[data-asm-lab]'); const leads = $$('[data-asm-lead]'); const note = $('[data-asm-note]');
-  if (!segs.length) return null;
-  const closed = 'inset(0% 100% 0% 0%)'; const open = 'inset(0% 0% 0% 0%)';
-  const count = (lab, at, dur) => { const n = $('[data-asm-n]', lab); const v = +n.dataset.asmN; b.fromTo(n, { textContent: 0 }, { textContent: v, duration: dur, ease: 'power2.out', snap: { textContent: 1 } }, at); };
-  const b = gsap.timeline({ paused: true, defaults: { overwrite: 'auto' } });
-  b.fromTo(segs[0], { clipPath: closed }, { clipPath: open, duration: 1.05, ease: 'power2.inOut' }, 0)
-    .fromTo(labs[0], { y: 14, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.6, ease: 'power3.out' }, 0.25)
-    .fromTo(segs[1], { clipPath: closed }, { clipPath: open, duration: 0.4, ease: 'power1.inOut' }, 0.98)
-    .fromTo(leads[0], { scaleY: 0 }, { scaleY: 1, duration: 0.3, ease: 'power2.out' }, 1.1)
-    .fromTo(labs[1], { y: 14, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.55, ease: 'power3.out' }, 1.15)
-    .fromTo(segs[2], { clipPath: closed }, { clipPath: open, duration: 0.3, ease: 'power2.out' }, 1.34)
-    .fromTo(leads[1], { scaleY: 0 }, { scaleY: 1, duration: 0.3, ease: 'power2.out' }, 1.46)
-    .fromTo(labs[2], { y: -12, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.55, ease: 'power3.out' }, 1.5)
-    .fromTo(note, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.6 }, 1.7);
-  count(labs[0], 0.05, 1.0); count(labs[1], 1.0, 0.45); count(labs[2], 1.36, 0.35);
-  b.pause(0);
-  return b;
+  const pour = $('[data-asm-pour]'); const bottle = $('[data-asm-bottle]'); const stream = $('[data-asm-stream]'); const dropsBox = $('[data-asm-drops]'); const drops = $$('i', dropsBox);
+  const liq = segs.map((s) => $('.asm-liquid', s)); const nums = labs.map((l) => $('[data-asm-n]', l));
+  const COLORS = ['#9A2C49', '#6C2456', '#55307A']; const FILL = [1.3, 0.7, 0.5];
+  let tl = null; let dropTl = null; let follow = null;
+  const stopFollow = () => { if (follow) { gsap.ticker.remove(follow); follow = null; } };
+  const reset = () => {
+    if (tl) tl.kill(); if (dropTl) dropTl.kill(); stopFollow();
+    gsap.set(liq, { height: '0%' }); segs.forEach((s) => s.classList.remove('is-full', 'is-filling'));
+    gsap.set([...labs, note], { autoAlpha: 0 }); gsap.set(leads, { scaleY: 0 });
+    nums.forEach((n) => { n.textContent = '0'; });
+    gsap.set(pour, { autoAlpha: 0 }); gsap.set(bottle, { rotation: 0, rotationY: 0, scale: 1 }); gsap.set(stream, { scaleY: 0 }); gsap.set(dropsBox, { autoAlpha: 0 });
+  };
+  const build = () => {
+    reset();
+    const cr = chart.getBoundingClientRect(); const br = $('.asm-bar', chart).getBoundingClientRect();
+    const barTop = br.top - cr.top; const barH = br.height; const bh = bottle.offsetHeight || 110;
+    const tipY = barTop - Math.round(bh * 0.34);
+    const xs = segs.map((s) => { const r = s.getBoundingClientRect(); return [r.left - cr.left, r.width]; });
+    gsap.set(stream, { height: barTop - tipY + barH - 4 });
+    // les gouttes suivent la bouteille et la surface du vin
+    let level = 0;
+    follow = () => { gsap.set(dropsBox, { x: gsap.getProperty(pour, 'x'), y: barTop + barH * (1 - level) - 2 }); };
+    gsap.ticker.add(follow);
+    dropTl = gsap.timeline({ repeat: -1, paused: true });
+    drops.forEach((d, k) => dropTl.fromTo(d, { x: 0, y: 0, scale: 1, autoAlpha: 1 }, { x: (k % 2 ? 1 : -1) * (6 + k * 3), y: -10 - k * 4, scale: 0.4, autoAlpha: 0, duration: 0.42, ease: 'power2.out' }, k * 0.11));
+    const t = gsap.timeline({ onComplete: stopFollow });
+    const x1 = xs[0][0] + Math.max(xs[0][1] * 0.16, bh * 0.92);
+    // entrée en profondeur : la bouteille pivote sur elle-même avant de s'incliner
+    t.fromTo(pour, { autoAlpha: 0, x: x1 - 70, y: tipY - 30 }, { autoAlpha: 1, x: x1, y: tipY, duration: 0.8, ease: 'power3.out' }, 0)
+      .fromTo(bottle, { rotation: 8, rotationY: -70, scale: 0.72, transformPerspective: 520 }, { rotation: 118, rotationY: 0, scale: 1, duration: 0.85, ease: 'power2.inOut' }, 0);
+    let at = 0.75;
+    segs.forEach((s, i) => {
+      const [x0, w] = xs[i];
+      if (i > 0) {
+        t.to(stream, { scaleY: 0, transformOrigin: '50% 100%', duration: 0.14, ease: 'power1.in' }, at)
+          .to(bottle, { rotation: 96, duration: 0.22, ease: 'power2.out' }, at)
+          .add(() => { dropTl.pause(); gsap.to(dropsBox, { autoAlpha: 0, duration: 0.15 }); }, at)
+          .to(pour, { x: x0 + w * 0.5, duration: 0.5, ease: 'power2.inOut' }, at + 0.06)
+          .to(bottle, { rotation: 118, duration: 0.26, ease: 'power2.in' }, at + 0.34);
+        at += 0.6;
+      }
+      t.set(stream, { backgroundColor: COLORS[i], transformOrigin: '50% 0%' }, at)
+        .to(stream, { scaleY: 1, duration: 0.2, ease: 'power1.in' }, at)
+        .add(() => { s.classList.add('is-filling'); gsap.set(drops, { backgroundColor: COLORS[i] }); gsap.to(dropsBox, { autoAlpha: 1, duration: 0.15 }); dropTl.restart(); }, at + 0.16)
+        .to(bottle, { rotation: 112, duration: Math.min(0.25, (FILL[i] - 0.1) / (2 * Math.max(1, Math.floor(FILL[i] / 0.5)))), ease: 'sine.inOut', yoyo: true, repeat: 2 * Math.max(1, Math.floor(FILL[i] / 0.5)) - 1 }, at + 0.2)
+        .to(liq[i], { height: '100%', duration: FILL[i], ease: 'power1.inOut', onUpdate() { level = this.progress(); } }, at + 0.16)
+        .fromTo(nums[i], { textContent: 0 }, { textContent: +nums[i].dataset.asmN, duration: FILL[i], ease: 'power1.inOut', snap: { textContent: 1 } }, at + 0.16)
+        .add(() => { s.classList.remove('is-filling'); s.classList.add('is-full'); level = 0; }, at + 0.16 + FILL[i]);
+      if (i === 0) t.to(pour, { x: x0 + w * 0.66, duration: FILL[0] + 0.1, ease: 'sine.inOut' }, at + 0.1);
+      if (i < 2) t.fromTo(labs[i], { y: 14, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.6, ease: 'power3.out' }, at + FILL[i] * 0.5);
+      if (i === 1) t.fromTo(leads[0], { scaleY: 0 }, { scaleY: 1, duration: 0.3, ease: 'power2.out' }, at + FILL[i] * 0.4);
+      at += 0.16 + FILL[i];
+    });
+    t.to(stream, { scaleY: 0, transformOrigin: '50% 100%', duration: 0.16, ease: 'power1.in' }, at)
+      .add(() => { dropTl.pause(); gsap.to(dropsBox, { autoAlpha: 0, duration: 0.2 }); }, at)
+      .to(bottle, { rotation: 0, rotationY: 50, scale: 0.8, duration: 0.7, ease: 'power2.inOut' }, at)
+      .to(pour, { y: tipY - 90, x: '+=40', autoAlpha: 0, duration: 0.5, ease: 'power2.in' }, at + 0.2)
+      .fromTo(leads[1], { scaleY: 0 }, { scaleY: 1, duration: 0.3, ease: 'power2.out' }, at + 0.6)
+      .fromTo(labs[2], { y: -12, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.55, ease: 'power3.out' }, at + 0.72)
+      .fromTo(note, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.6 }, at + 0.85);
+    tl = t;
+  };
+  reset();
+  return {
+    restart: () => build(),
+    pause: () => reset(),
+    hurry: () => { if (tl && tl.progress() < 1) tl.timeScale(2.2); },
+    progress: () => { reset(); gsap.set(liq, { height: '100%' }); segs.forEach((s) => s.classList.add('is-full')); gsap.set([...labs, note], { autoAlpha: 1 }); gsap.set(leads, { scaleY: 1 }); nums.forEach((n) => { n.textContent = n.dataset.asmN; }); },
+  };
 }
 
 /* ---------- Trois vins ---------- */
