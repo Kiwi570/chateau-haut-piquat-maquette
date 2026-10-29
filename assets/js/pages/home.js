@@ -1,7 +1,7 @@
 // Accueil : ouverture, coupe géologique, vins, millésimes, puis deux bandeaux vers Le domaine et Visites & événements.
-import { $, $$, L, eur, CALM, TOUCH, DESKTOP, hdrH, splitTitle, padMasks, pourSound } from '../core.js?v=12';
-import { heroLight, fossils } from '../gl.js?v=12';
-import { WINES, CHATEAUX, FORMATS } from '../data.js?v=12';
+import { $, $$, L, eur, CALM, TOUCH, DESKTOP, hdrH, splitTitle, padMasks, pourSound } from '../core.js?v=13';
+import { heroLight, fossils } from '../gl.js?v=13';
+import { WINES, CHATEAUX, FORMATS } from '../data.js?v=13';
 
 const gsap = window.gsap; const ST = window.ScrollTrigger;
 let hero = null;
@@ -81,7 +81,7 @@ async function startHeroGL() {
 function coupe() {
   const frame = $('[data-coupe-frame]'); const stack = $('[data-coupe-stack]');
   const panels = $$('[data-panel]'); const ticks = $$('[data-tick]');
-  const T = 1.16; const blend = blendTimeline(); let played = false;
+  const T = 1.3; const blend = blendTimeline(); let played = false;
   // le titre de l'assemblage entre d'un seul geste (et non au rythme du défilement) : il n'est jamais figé à moitié
   const head = $$('[data-asm-head]'); let headIn = false;
   gsap.set(head, { y: 16, autoAlpha: 0 });
@@ -93,7 +93,7 @@ function coupe() {
     trigger: frame, start: () => `top top+=${hdrH()}`, end: () => `+=${frame.offsetHeight * (DESKTOP() ? 4.2 : 3.6) * T}`,
     pin: true, scrub: 0.8, anticipatePin: 1, invalidateOnRefresh: true,
     onToggle: (s) => { if (fos) s.isActive ? fos.start() : fos.stop(); },
-    onLeave: () => { if (!headIn) { headIn = true; gsap.set(head, { y: 0, autoAlpha: 1 }); } if (!blend) return; if (!played) { played = true; blend.progress(1); } else blend.scroll(1); },
+    onLeave: () => { if (!headIn) { headIn = true; gsap.set(head, { y: 0, autoAlpha: 1 }); } if (!blend) return; if (!played) { played = true; blend.progress(1); } else { blend.scroll(1); blend.hurry(); } },
     onUpdate: (s) => {
       const t = s.progress * T; const p = t / 0.82;
       ticks.forEach((k, i) => k.classList.toggle('is-on', p >= [0, 0.24, 0.51, 0.77][i]));
@@ -136,14 +136,16 @@ function blendTimeline() {
   const segs = $$('[data-asm-seg]'); const labs = $$('[data-asm-lab]'); const leads = $$('[data-asm-lead]'); const note = $('[data-asm-note]');
   const pour = $('[data-asm-pour]'); const bottle = $('[data-asm-bottle]'); const stream = $('[data-asm-stream]'); const dropsBox = $('[data-asm-drops]'); const drops = $$('i', dropsBox);
   const liq = segs.map((s) => $('.asm-liquid', s)); const nums = labs.map((l) => $('[data-asm-n]', l));
-  const COLORS = ['#9A2C49', '#6C2456', '#55307A']; const FILL = [1.0, 0.55, 0.42];
+  const COLORS = ['#9A2C49', '#6C2456', '#55307A']; const FILL = [1.15, 0.6, 0.48];
   let tl = null; let dropTl = null; let ticker = null; let snd = null;
   let shown = 0; let push = 0; let pushS = 0; let level = 0; let geo = null; let full = false;
+  // vitesse maximale du versement : le défilement peut l'accélérer jusqu'à 1,6 fois sa vitesse naturelle, pas plus
+  const CAP = 1.6; let cap = CAP;
   const stopTicker = () => { if (ticker) { gsap.ticker.remove(ticker); ticker = null; } };
   const stopSnd = () => { if (snd) { snd.stop(); snd = null; } };
   const reset = () => {
     stopTicker(); stopSnd(); if (tl) tl.kill(); tl = null; if (dropTl) dropTl.kill(); dropTl = null;
-    gsap.killTweensOf(liq); full = false; push = pushS = shown = level = 0;
+    gsap.killTweensOf(liq); full = false; push = pushS = shown = level = 0; cap = CAP;
     gsap.set(liq, { yPercent: 100 }); segs.forEach((s) => s.classList.remove('is-full', 'is-filling'));
     gsap.set([...labs, note], { autoAlpha: 0 }); gsap.set(leads, { scaleY: 0 });
     nums.forEach((n) => { n.textContent = '0'; });
@@ -206,8 +208,10 @@ function blendTimeline() {
     ticker = () => {
       gsap.set(dropsBox, { x: gsap.getProperty(pour, 'x'), y: barTop + barH * (1 - level) - 2 });
       const r = gsap.ticker.deltaRatio(60);
+      const dt = r / 60;
       pushS += (push - pushS) * (1 - Math.pow(0.75, r));
-      shown = Math.min(1, Math.max(shown + r / 60 / D, pushS > 0.985 ? 1 : pushS));
+      const want = Math.max(shown + dt / D, pushS > 0.985 ? 1 : pushS);
+      shown = Math.min(1, shown + Math.min(want - shown, dt * cap / D));
       t.progress(shown);
       if (shown >= 1) { stopTicker(); stopSnd(); full = true; }
     };
@@ -225,7 +229,7 @@ function blendTimeline() {
   addEventListener('resize', () => { if (ticker && geo !== innerWidth) finish(); });
   bottle.addEventListener('error', () => { bottle.style.display = 'none'; }, { once: true });
   reset();
-  return { restart: build, pause: reset, progress: finish, scroll: (v) => { push = v; }, playing: () => !!ticker };
+  return { restart: build, pause: reset, progress: finish, scroll: (v) => { push = v; }, hurry: () => { cap = 4; }, playing: () => !!ticker };
 }
 
 /* ---------- Trois vins ---------- */

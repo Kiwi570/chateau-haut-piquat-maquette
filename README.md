@@ -1,4 +1,4 @@
-# Château Haut-Piquat · maquette v12
+# Château Haut-Piquat · maquette v13
 
 Maquette de démonstration du futur site du Château Haut-Piquat (Lussac Saint-Émilion), direction artistique « Calcaire à astéries ». Site statique en HTML, CSS et JavaScript, sans étape de construction, prêt pour Vercel.
 
@@ -32,7 +32,14 @@ Maquette de démonstration du futur site du Château Haut-Piquat (Lussac Saint-�
 1. Remplacer une image : déposer le nouveau fichier sous le même nom ; aucune règle de cache n'est à modifier.
 2. Changer un prix : modifier `assets/js/data.js`.
 3. À chaque version livrée, changer le numéro `?v=N` partout et à l'identique, dans les pages et dans les `import` JavaScript :
-   `grep -rl "?v=12" --include=*.html --include=*.js . | xargs sed -i "" "s/?v=12/?v=13/g"`
+   `grep -rl "?v=13" --include=*.html --include=*.js . | xargs sed -i "" "s/?v=13/?v=14/g"`
+
+## Version 13 : versement moins rapide au défilement
+
+- Le défilement peut accélérer le versement jusqu'à 1,6 fois sa vitesse naturelle, pas plus : la jauge se remplit en 2 à 2,5 secondes quand on défile normalement (contre moins d'une seconde en v12).
+- La section reste épinglée plus longtemps (environ 1 480 px de défilement sur ordinateur, 1 150 px sur mobile) pour laisser le temps au vin de couler.
+- Sans défiler, le versement complet dure environ 4 secondes.
+- Si l'on quitte la section avant la fin, le versement se termine rapidement pendant qu'elle s'éloigne.
 
 ## Version 12 : réglages de la bouteille qui verse
 
