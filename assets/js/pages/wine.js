@@ -1,7 +1,7 @@
 // Fiche vin : rendu depuis les données du site, bouteille qui pivote sur son socle.
-import { $, $$, L, eur, CALM, TOUCH, toast, fmtShort } from '../core.js?v=18';
-import { WINES, CHATEAUX, FORMATS, BOTTLES, TEXTURES } from '../data.js?v=18';
-import { addToCart } from '../cart.js?v=18';
+import { $, $$, L, eur, CALM, TOUCH, toast, fmtShort } from '../core.js?v=19';
+import { WINES, CHATEAUX, FORMATS, BOTTLES, TEXTURES } from '../data.js?v=19';
+import { addToCart } from '../cart.js?v=19';
 
 const gsap = window.gsap;
 let wine = null;
@@ -61,7 +61,17 @@ function render() {
   // les bouteilles détourées portent l'étiquette 2018 : on le dit quand la fiche est celle d'un autre millésime
   $('[data-wcuvee-note]').innerHTML = L(ch.note.fr, ch.note.en) + (String(w.vintage) !== '2018' ? `<br>${L('Bouteille présentée : étiquette du millésime 2018.', 'Bottle shown: 2018 vintage label.')}` : '');
   // vous aimerez aussi
-  const rel = WINES.filter((x) => x.id !== w.id && x.ch === w.ch).slice(0, 3).concat(WINES.filter((x) => x.ch !== w.ch && x.badge === 'coeur').slice(0, 1));
+  // un millésime voisin du même château, un autre format, puis un vin de chacun des autres châteaux (coup de cœur, sinon prix proche)
+  const others = WINES.filter((x) => x.id !== w.id); const rel = []; const add = (x) => { if (x && !rel.includes(x) && rel.length < 4) rel.push(x); };
+  add(others.filter((x) => x.ch === w.ch && x.fmt === w.fmt).sort((a, b) => Math.abs(+a.vintage - +w.vintage) - Math.abs(+b.vintage - +w.vintage))[0]);
+  add(others.find((x) => x.ch === w.ch && x.fmt !== w.fmt));
+  [...new Set(others.filter((x) => x.ch !== w.ch).map((x) => x.ch))].forEach((c) => add(others.filter((x) => x.ch === c).sort((a, b) => (b.badge === 'coeur') - (a.badge === 'coeur') || Math.abs(a.price - w.price) - Math.abs(b.price - w.price))[0]));
+  others.forEach(add);
+  // photos de service : jamais la bouteille d'un autre château que celui de la fiche
+  const shots = $$('.service .frame img');
+  const photo = (im, name, ws, wd, ht, fr, en, pos) => { if (!im) return; const u = (x) => `assets/img/photos/${name}-${x}.webp`; im.srcset = ws.map((x) => `${u(x)} ${x}w`).join(', '); im.src = u(ws[1] || ws[0]); im.width = wd; im.height = ht; im.dataset.altFr = fr; im.dataset.altEn = en; im.alt = document.documentElement.lang === 'en' ? en : fr; if (pos) im.style.objectPosition = pos; };
+  if (w.ch === 'hp') photo(shots[1], 'service-haut-piquat-2010', [640, 1024, 1440, 1772], 1772, 2484, 'Château Haut-Piquat 2010 servi dans un verre', 'Château Haut-Piquat 2010 poured into a glass', '50% 42%');
+  else photo(shots[2], 'salle-degustation-table', [640, 1024, 1440, 1920, 2560], 2560, 3413, 'Verres et bouteilles prêts pour une dégustation au domaine', 'Glasses and bottles set for a tasting at the estate', '50% 40%');
   $('[data-related]').innerHTML = rel.map((x) => `<a class="pcard" href="vin.html?id=${x.id}" style="text-decoration:none"><span class="pcard__img"><img src="${x.img.small}" alt="" loading="lazy" width="${x.img.w}" height="${x.img.h}"></span><span class="pcard__body"><span style="font-weight:600">${CHATEAUX[x.ch].name.replace('Haut-Piquat', '<span class="nw">Haut-Piquat</span>')} ${x.vintage}</span><span class="pcard__fmt">${L(FORMATS[x.fmt].label.fr, FORMATS[x.fmt].label.en)}</span><span class="pcard__price"><b>${eur(x.price)}</b></span></span></a>`).join('');
 }
 
@@ -85,8 +95,10 @@ function buyBar() {
   // position du bouton mesurée hors défilement (chargement, redimensionnement, changement de hauteur)
   const measure = () => { edge = btn.getBoundingClientRect().bottom + scrollY - 60; check(); };
   if (window.ResizeObserver) new ResizeObserver(measure).observe(document.body); addEventListener('resize', measure);
+  // la barre s'efface quand le pied de page arrive : elle ne recouvre jamais ses liens
+  const ftr = $('.ftr');
   const check = () => {
-    raf = 0; const on = scrollY > edge; if (on === was) return; was = on;
+    raf = 0; const on = scrollY > edge && (!ftr || ftr.getBoundingClientRect().top > innerHeight - 40); if (on === was) return; was = on;
     bar.classList.toggle('is-on', on); bar.inert = !on; document.body.classList.toggle('has-buybar', on);
   };
   addEventListener('scroll', () => { if (!raf) raf = requestAnimationFrame(check); }, { passive: true }); measure();

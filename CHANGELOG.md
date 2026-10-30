@@ -1,5 +1,38 @@
 # Journal des modifications
 
+## v19 (par rapport à l'archive v18)
+
+Mise à jour sans suppression : `unzip -o` suffit, aucun fichier à retirer du dépôt.
+
+Audit complet : transitions et chargement sans éclair, menu, en-tête, panier, coupe du sol sur petits écrans, filtrage de la boutique, fiche vin, textes et contrastes.
+
+### Fichiers modifiés (24)
+
+- `404.html`
+- `CHANGELOG.md`
+- `README.md`
+- `_audit/rapport.md`
+- `assets/css/style.css`
+- `assets/js/cart.js`
+- `assets/js/core.js`
+- `assets/js/data.js`
+- `assets/js/main.js`
+- `assets/js/pages/cellar.js`
+- `assets/js/pages/domain.js`
+- `assets/js/pages/formats.js`
+- `assets/js/pages/home.js`
+- `assets/js/pages/places.js`
+- `assets/js/pages/shop.js`
+- `assets/js/pages/tourism.js`
+- `assets/js/pages/wine.js`
+- `boutique.html`
+- `domaine.html`
+- `index.html`
+- `informations.html`
+- `oenotourisme.html`
+- `vin.html`
+- `vins.html`
+
 ## v18 (par rapport à l'archive v17)
 
 Mise à jour sans suppression : `unzip -o` suffit, aucun fichier à retirer du dépôt.

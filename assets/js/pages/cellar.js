@@ -1,7 +1,7 @@
 // Les vins : ouverture, tour de la cave, l'accord parfait, servir votre vin.
-import { $, $$, L, eur, CALM, TOUCH, hdrH, padMasks, splitHold, sparkAt, smooth, thudSound, anticipate, pinType } from '../core.js?v=18';
-import { WINES, CHATEAUX, FORMATS } from '../data.js?v=18';
-import { formatsMeter } from './formats.js?v=18';
+import { $, $$, L, eur, CALM, TOUCH, hdrH, padMasks, splitHold, sparkAt, smooth, thudSound, anticipate, pinType } from '../core.js?v=19';
+import { WINES, CHATEAUX, FORMATS } from '../data.js?v=19';
+import { formatsMeter } from './formats.js?v=19';
 
 const gsap = window.gsap; const ST = window.ScrollTrigger;
 const ORDER = ['hp', 'lf', 'bl'];
@@ -49,7 +49,7 @@ function heroIn() {
   gsap.from('.vhero__text .kicker, .vhero__text .lead, .vhero__text .hero__ctas > *', { y: 24, autoAlpha: 0, duration: 0.9, ease: 'power3.out', stagger: 0.08, delay: 0.35 });
   const plinths = $$('.vhero__plinth');
   gsap.from(plinths, { y: 80, autoAlpha: 0, duration: 1.2, ease: 'expo.out', stagger: 0.12, delay: 0.25 });
-  gsap.from('[data-vh-bottle]', { yPercent: 40, autoAlpha: 0, duration: 1.3, ease: 'expo.out', stagger: 0.12, delay: 0.55 });
+  gsap.from('[data-vh-bottle]', { yPercent: 40, duration: 1.3, ease: 'expo.out', stagger: 0.12, delay: 0.55 }); gsap.from('[data-vh-bottle]', { autoAlpha: 0, duration: 0.3, stagger: 0.12, delay: 0.55 });
   if (!TOUCH) {
     const trio = $('.vhero__trio'); const rx = gsap.quickTo(trio, 'rotationY', { duration: 1, ease: 'power3' });
     gsap.set(trio, { transformPerspective: 1400 });
@@ -61,7 +61,11 @@ function heroIn() {
 /* ---------- Le tour de la cave ---------- */
 function intro(ch) {
   const tl = gsap.timeline({ paused: true });
-  tl.fromTo($$('[data-cv-seg]', ch), { clipPath: 'inset(0% 100% 0% 0%)' }, { clipPath: 'inset(0% 0% 0% 0%)', duration: 0.6, ease: 'power2.inOut', stagger: 0.18 }, 0.1)
+  // la jauge d'assemblage se remplit d'un seul trait, cépage après cépage, sans trou entre deux segments
+  const segs = $$('[data-cv-seg]', ch); const w = (s) => parseFloat(s.style.flexGrow) || 1; const tot = segs.reduce((a, s) => a + w(s), 0) || 1;
+  const fill = gsap.timeline({ paused: true });
+  segs.forEach((s) => fill.fromTo(s, { clipPath: 'inset(0% 100% 0% 0%)' }, { clipPath: 'inset(0% 0% 0% 0%)', duration: w(s) / tot, ease: 'none' }));
+  tl.fromTo(fill, { progress: 0 }, { progress: 1, duration: 1.1, ease: 'power2.inOut' }, 0.1)
     .fromTo($$('.medal', ch), { y: 10, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.5, ease: 'power3.out', stagger: 0.08 }, 0.3)
     .fromTo($$('.medal circle', ch), { drawSVG: '0%' }, { drawSVG: '100%', duration: 0.9, ease: 'power2.out', stagger: 0.06 }, 0.35)
     .fromTo($('.cave__note', ch), { y: 14, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.7, ease: 'power3.out' }, 0.5);
@@ -259,7 +263,7 @@ function renderAccords(animate) {
 
 /* ---------- Servir votre vin : conseils du domaine ---------- */
 const SERVE = {
-  jeune: { hi: 18, temp: '16–18&nbsp;°C', ttext: L('Grands vins rouges&nbsp;: 16 à 18&nbsp;°C. Mieux vaut un vin un peu frais, que l\'on «&nbsp;chambre&nbsp;» dans le verre, qu\'un vin trop chaud.', 'Fine red wines: 16 to 18 °C. A slightly cool wine that warms in the glass is better than one served too warm.'), carafe: L('Carafer 1&nbsp;h avant', 'Decant 1 hr ahead'), ctext: L('Vins jeunes&nbsp;: carafer une heure avant pour aérer et arrondir les tannins.', 'Young wines: decant an hour ahead to aerate and soften the tannins.') },
+  jeune: { hi: 18, temp: '16–18&nbsp;°C', ttext: L('Grands vins rouges&nbsp;: 16 à 18&nbsp;°C. Mieux vaut un vin un peu frais, que l\'on «&nbsp;chambre&nbsp;» dans le verre, qu\'un vin trop chaud.', 'Fine red wines: 16 to 18 °C. A slightly cool wine that warms in the glass is better than one served too warm.'), carafe: L('Carafer 1&nbsp;h avant', 'Decant 1 hr ahead'), ctext: L('Vins jeunes&nbsp;: carafer une heure avant pour aérer et arrondir les tanins.', 'Young wines: decant an hour ahead to aerate and soften the tannins.') },
   vieux: { hi: 20, temp: '18–20&nbsp;°C', ttext: L('Vins rouges vieux&nbsp;: 18 à 20&nbsp;°C. Mieux vaut un vin un peu frais, que l\'on «&nbsp;chambre&nbsp;» dans le verre, qu\'un vin trop chaud.', 'Older reds: 18 to 20 °C. A slightly cool wine that warms in the glass is better than one served too warm.'), carafe: L('Décanter au service', 'Decant when serving'), ctext: L('Vins vieux&nbsp;: décanter juste avant de servir, très délicatement, pour séparer le dépôt.', 'Older wines: decant very gently just before serving to leave the sediment behind.') },
 };
 let currentAge = 'jeune'; let bubbles = null;

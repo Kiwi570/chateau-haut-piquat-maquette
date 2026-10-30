@@ -1,7 +1,7 @@
 // Château Haut-Piquat — grands formats : la bouteille choisie s'éclaire sur la photo de la gamme,
 // un trait de niveau monte jusqu'à son épaule et l'équivalence en bouteilles de 75 cl se remplit.
 // Utilisé sur Les vins (liens vers la boutique) et dans la Boutique (réglette qui filtre le catalogue).
-import { $, $$, L, CALM } from '../core.js?v=18';
+import { $, $$, L, CALM } from '../core.js?v=19';
 
 // repères mesurés sur la photo gamme-formats (720 × 687, affichée recadrée à 720 × 646 depuis le haut) :
 // centre horizontal, haut et bas de chaque bouteille, demi-largeur, en % du cadre
@@ -67,7 +67,7 @@ export function formatsMeter(root, { items, keyOf, rest = 'i600', onShow = () =>
     // le voile se déplace, puis le trait de niveau remonte depuis le pied de la bouteille
     gsap.to(S, { x: to.x, y: to.y, rx: to.rx, ry: to.ry, a: to.a, lx: to.lx, lw: to.lw, duration: 0.55, ease: 'power3.out', onUpdate: paint });
     gsap.fromTo(S, { top: b.bot }, { top: to.top, duration: 0.9, ease: 'power2.out', delay: 0.12, onUpdate: paint, immediateRender: false });
-    gsap.fromTo(chip, { autoAlpha: 0, y: 6 }, { autoAlpha: 1, y: 0, duration: 0.4, delay: 0.55, ease: 'power2.out' });
+    gsap.fromTo(chip, { autoAlpha: 0.35 }, { autoAlpha: 1, duration: 0.3, ease: 'power2.out' });
     fills.forEach((r, i) => {
       const h = 71 * lv(i); const o = { h: +r.getAttribute('height') || 0 };
       gsap.killTweensOf(o);
@@ -76,16 +76,16 @@ export function formatsMeter(root, { items, keyOf, rest = 'i600', onShow = () =>
   };
   const restKey = () => (typeof rest === 'function' ? rest() : rest);
   items.forEach((el) => {
-    el.addEventListener('pointerenter', (e) => { if (e.pointerType !== 'touch') show(keyOf(el)); });
+    el.addEventListener('pointermove', (e) => { if (e.pointerType === 'mouse' && (e.movementX || e.movementY)) show(keyOf(el)); });
     el.addEventListener('focus', () => show(keyOf(el)));
   });
-  if (ruler) ruler.addEventListener('pointerleave', (e) => { if (e.pointerType !== 'touch') show(restKey()); });
+  if (ruler) ruler.addEventListener('pointerleave', (e) => { if (e.pointerType === 'mouse' && (e.movementX || e.movementY)) show(restKey()); });
   // état de départ lisible sans interaction ; à l'arrivée à l'écran, la gamme est parcourue une fois
   show(restKey(), true);
   if (!CALM && window.ScrollTrigger) {
-    ScrollTrigger.create({ trigger: root, start: 'top 70%', once: true, onEnter: () => {
+    ScrollTrigger.create({ trigger: root, start: 'top 55%', once: true, onEnter: () => {
       cur = null; const seq = ORDER.concat(restKey() === 'i600' ? [] : [restKey()]);
-      seq.forEach((k, i) => gsap.delayedCall(i * 0.75, () => show(k)));
+      seq.forEach((k, i) => gsap.delayedCall(i * 0.6, () => show(k)));
     } });
   }
   return { show };

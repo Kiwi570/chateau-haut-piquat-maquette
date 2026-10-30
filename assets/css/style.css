@@ -309,12 +309,12 @@ figcaption { font-size: 12.5px; color: var(--encre-3); margin-top: 10px; letter-
 .assemblage__legend { display: flex; gap: 6px; margin-top: 12px; }
 .assemblage__legend span { flex: 0 0 auto; font-size: 13px; color: rgba(238, 231, 217, .8); white-space: nowrap; overflow: visible; }
 .assemblage__note { text-align: center; margin-top: 18px; font-size: 13px; color: rgba(238, 231, 217, .6); }
-:is(html.calm, html.no-js) .coupe .pin-frame { height: auto; overflow: visible; }
-:is(html.calm, html.no-js) .coupe__stack { position: relative; }
-:is(html.calm, html.no-js) .coupe__panels { position: relative; inset: auto; transform: none; width: auto; padding: 24px var(--gutter); display: grid; gap: 16px; }
-:is(html.calm, html.no-js) .coupe__panel { position: relative; inset: auto; transform: none; opacity: 1; visibility: visible; }
-:is(html.calm, html.no-js) .coupe__assemblage { position: relative; opacity: 1; visibility: visible; padding-block: 60px; background: var(--encre); }
-:is(html.calm, html.no-js) .coupe__gauge, :is(html.calm, html.no-js) .coupe__core { display: none; }
+:is(html.calm, html.no-js, html.coupe-static) .coupe .pin-frame { height: auto; overflow: visible; }
+:is(html.calm, html.no-js, html.coupe-static) .coupe__stack { position: relative; }
+:is(html.calm, html.no-js, html.coupe-static) .coupe__panels { position: relative; inset: auto; transform: none; width: auto; padding: 24px var(--gutter); display: grid; gap: 16px; }
+:is(html.calm, html.no-js, html.coupe-static) .coupe__panel { position: relative; inset: auto; transform: none; opacity: 1; visibility: visible; }
+:is(html.calm, html.no-js, html.coupe-static) .coupe__assemblage { position: relative; opacity: 1; visibility: visible; padding-block: 60px; background: var(--encre); }
+:is(html.calm, html.no-js, html.coupe-static) .coupe__gauge, :is(html.calm, html.no-js, html.coupe-static) .coupe__core { display: none; }
 
 /* ---------- Trois vins ---------- */
 .cuvees__head { display: grid; gap: 24px; margin-bottom: clamp(40px, 6vw, 90px); }
@@ -870,8 +870,8 @@ p { text-wrap: pretty; }
 @media (min-width: 900px) and (max-height: 640px) { .coupe__box { padding: 18px 22px 20px; } .coupe__box .coupe__panel { padding: 0; } }
 .coupe__gauge .tick { font-size: 12.5px; }
 .coupe__gauge .tick.is-on::after { content: ""; width: 6px; height: 6px; margin-left: 2px; border-radius: 50%; background: var(--ocre); box-shadow: 0 0 10px var(--ocre); }
-:is(html.calm, html.no-js) .coupe__box { position: relative; display: grid; gap: 22px; }
-:is(html.calm, html.no-js) .coupe__box .coupe__panel { grid-area: auto; }
+:is(html.calm, html.no-js, html.coupe-static) .coupe__box { position: relative; display: grid; gap: 22px; }
+:is(html.calm, html.no-js, html.coupe-static) .coupe__box .coupe__panel { grid-area: auto; }
 
 /* Assemblage : barres sans débordement, légende sous chaque segment */
 .assemblage__bars { width: 100%; }
@@ -1064,7 +1064,7 @@ html[lang="en"] .tool[data-tip-en]::after { content: attr(data-tip-en); }
   .asm-lab b, .asm-lab.is-mb b { grid-row: span 2; font-size: 2rem; margin: 0; }
   .asm-lab .desc { grid-column: 2; }
 }
-:is(html.calm, html.no-js) .coupe__assemblage .assemblage { margin-inline: auto; }
+:is(html.calm, html.no-js, html.coupe-static) .coupe__assemblage .assemblage { margin-inline: auto; }
 
 /* ============ v4 · corrections et finitions ============ */
 .nw { white-space: nowrap; }
@@ -1344,7 +1344,7 @@ body.menu-open .totop, body.cart-open .totop { opacity: 0; visibility: hidden; }
 .asm-drops { position: absolute; left: 0; top: 0; z-index: 2; width: 0; height: 0; pointer-events: none; opacity: 0; will-change: transform; }
 .asm-drops i { position: absolute; left: -3px; top: -3px; width: 6px; height: 6px; border-radius: 50%; background: #9A2C49; }
 :is(html.calm, html.no-js) .asm-pour, :is(html.calm, html.no-js) .asm-drops, :is(html.calm, html.no-js) .asm-wave { display: none; }
-:is(html.calm, html.no-js) .asm-chart { margin-top: clamp(48px, 7vh, 72px); }
+:is(html.calm, html.no-js, html.coupe-static) .asm-chart { margin-top: clamp(48px, 7vh, 72px); }
 @media (max-height: 640px) and (min-width: 761px) { .asm-chart { margin-top: 96px; } .asm-pour { --bw: 22px; } }
 @media (max-width: 760px) { .asm-chart { margin-top: 110px; } .asm-pour { --bw: 26px; } .asm-bar { height: 60px; } }
 @media (prefers-reduced-motion: reduce) { .asm-wave { animation: none; } }
@@ -1701,3 +1701,66 @@ body.cart-open .legal { z-index: 96; }
 /* moyens de paiement : un seul cadre par moyen (les textes bilingues n'ont plus leur propre bordure) */
 .paychips span { padding: 0; border: 0; border-radius: 0; background: none; font-size: inherit; font-weight: inherit; }
 .paychips { grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); }
+
+/* ============ v19 · audit complet ============ */
+/* Filtre d'âge : voile sombre sans flou (la vidéo d'ouverture tourne dessous) */
+.agegate { backdrop-filter: none; -webkit-backdrop-filter: none; background: rgba(24, 20, 15, .72); }
+/* Boutique sur téléphone : le bouton « Voir les vins » ne cache plus le bas du tiroir des filtres ; bandeau sanitaire visible */
+@media (max-width: 1099px) { .filters__panel.is-open { padding-bottom: calc(var(--legal-h) + 100px); } }
+body:has(.filters__panel.is-open) .legal { z-index: 96; }
+/* En-tête : fond plein (le texte qui défile ne transparaît plus), passage clair/sombre très court et simultané */
+.hdr { transition: background-color .15s ease, color .15s ease, box-shadow .15s ease; }
+.hdr.is-solid { background: #EEE7D9; }
+.hdr__brand img { transition: filter .15s ease; }
+.hdr__cta { transition: background-color .15s, color .15s, border-color .15s; }
+.hdr.is-over-dark:not(.is-solid) .tool--lang :is(.l-fr, .l-en) { opacity: .8; text-shadow: 0 1px 8px rgba(0, 0, 0, .55); }
+html:not([lang="en"]) .hdr .tool--lang .l-fr, html[lang="en"] .hdr .tool--lang .l-en { opacity: 1; }
+/* Au doigt, plus de pastille de survol qui reste accrochée aux boutons de l'en-tête */
+@media (hover: none) { .tool:hover, .hdr.is-over-dark:not(.is-solid) .tool:hover { background: none; } }
+html { scrollbar-gutter: stable; }
+/* Coupe du sol sur téléphone : titres des cartes dans leur cadre */
+@media (max-width: 480px) { .coupe__box { padding: 20px 20px 22px; } .coupe__panel .h3 { font-size: 1.32rem; line-height: 1.15; overflow-wrap: anywhere; } .coupe__panel .h3 em { display: inline-block; } }
+/* Mention « Illustration générée » toujours au-dessus des cartes, et au-dessus du bandeau sanitaire sur la 404 */
+.pin-frame > .gen-tag { z-index: 30; }
+@media (max-width: 899px) { .pin-frame > .gen-tag { top: 10px; bottom: auto; left: auto; right: var(--gutter); } }
+.nf > .gen-tag { bottom: calc(var(--legal-h) + 12px); }
+/* Trois vins sur téléphone : la carte s'aligne sur la marge, pas sur le bord de l'écran */
+.cuvees__grid { scroll-padding-inline: var(--gutter); }
+@media (min-width: 900px) { .cuvee__body .h3 { min-height: 2.3em; } }
+/* Coupe du sol : plus de bande d'herbe en dents de scie, un simple fondu entre la vigne et la terre */
+.coupe__grass { display: none; }
+.coupe__sky::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 70px; background: linear-gradient(180deg, rgba(42, 30, 20, 0), #2A1E14); pointer-events: none; z-index: 2; }
+/* Boutique sur téléphone : voile plus dense derrière le titre */
+@media (max-width: 899px) { body[data-page="boutique"] .phero__shade { background: linear-gradient(0deg, rgba(20, 15, 10, .95) 0%, rgba(20, 15, 10, .82) 45%, rgba(20, 15, 10, .35) 80%), linear-gradient(180deg, rgba(20, 15, 10, .5), transparent 30%); } }
+/* Contrastes : vins non concernés par l'accord, surtitre de la 404, logo Famille Rivière, compteurs des filtres */
+.accords__trio span { opacity: .5; }
+.nf .kicker { color: #5E4417; }
+.nf .kicker::before { background: #5E4417; }
+.ftr__labels img.riviere { filter: invert(1) brightness(2) grayscale(1); opacity: 1; }
+.chip .muted { color: var(--encre-2); }
+.chip[aria-pressed="true"] .muted { color: rgba(238, 231, 217, .8); }
+/* Pied de page : nom gravé net (arête fine), liens moins espacés sur téléphone */
+.ftr__big { text-shadow: -1px -1px 0 rgba(0, 0, 0, .6), 1px 1px 0 rgba(238, 231, 217, .14); }
+@media (max-width: 899px) { .ftr ul a { min-height: 44px; } .ftr ul { gap: 0; } }
+/* Respiration : sections un peu moins hautes */
+:root { --space-section: clamp(80px, 9vw, 140px); }
+/* Titres équilibrés, interlignes serrés, liens soulignés proprement */
+.h2, .h3, h2, h3 { text-wrap: balance; }
+.legal-page h2, main h2 { line-height: 1.12; }
+.vtip a { display: inline; text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
+.nocaps { text-transform: none; letter-spacing: .02em; }
+.loader svg, .loader__count { opacity: 0; }
+/* Cave sans épinglage (téléphone, écran bas) : la bouteille qui attend au-dessus de son socle ne dépasse plus sur la section précédente */
+.cave__frame:not(.is-pinned) .cave__chapter { overflow: hidden; overflow: clip; }
+/* Accueil, carte « Venir » : une photo du chemin vers les vignes, le repère posé dessus */
+.tmore__map { position: relative; display: block; flex: none; line-height: 0; }
+.tmore__map svg { position: absolute; left: 8px; bottom: 8px; width: 28px; height: 28px; padding: 5px; border-radius: 50%; background: rgba(246, 241, 231, .94); fill: none; stroke: var(--argile); stroke-width: 1.7; box-shadow: 0 4px 12px -6px rgba(31, 27, 22, .5); }
+/* Frise des millésimes au doigt : chaque vin garde une zone de 44 px, le lien reste souligné dans la ligne */
+@media (pointer: coarse), (max-width: 899px) { .vtip li { min-height: 44px; display: flex; align-items: center; flex-wrap: wrap; column-gap: .35em; } .vtip li a.link { display: inline-flex; align-items: center; min-height: 44px; } }
+/* En-tête sur photo : la langue active reste pleine, l'autre un peu effacée */
+html:not([lang="en"]) .hdr.is-over-dark .tool--lang .l-fr, html[lang="en"] .hdr.is-over-dark .tool--lang .l-en { opacity: 1; }
+/* Assemblage : la colonne ne dépasse jamais l'écran (320 px compris), le contenu se plie à la largeur */
+.coupe__assemblage { grid-template-columns: minmax(0, 1fr); }
+.coupe__assemblage .assemblage { min-width: 0; justify-self: center; }
+/* Mentions « à confirmer » : sur petit écran, elles passent à la ligne au lieu de déborder */
+@media (max-width: 480px) { .todo { white-space: normal; display: inline-block; max-width: 100%; border-radius: 8px; } }

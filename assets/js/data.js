@@ -472,8 +472,8 @@ export const WINES = [
    }
   ],
   "flag": {
-   "fr": "Médaille obtenue en 2022 selon la boutique, en 2020 selon la fiche technique.",
-   "en": "Medal won in 2022 according to the shop, 2020 according to the tech sheet."
+   "fr": "Année de la médaille à confirmer (2020 ou 2022).",
+   "en": "Year of the medal to confirm (2020 or 2022)."
   },
   "blend": "100% Merlot",
   "blendSrc": "site",
@@ -567,8 +567,8 @@ export const WINES = [
    }
   ],
   "flag": {
-   "fr": "La fiche technique cite aussi Argent Bruxelles 2025 et Andreas Larsson 91/100, absents de la boutique.",
-   "en": "The tech sheet also cites Silver Brussels 2025 and Andreas Larsson 91/100, missing from the shop."
+   "fr": "Distinctions à confirmer&nbsp;: Argent Bruxelles 2025 et Andreas Larsson 91/100.",
+   "en": "Awards to confirm: Silver Brussels 2025 and Andreas Larsson 91/100."
   },
   "blend": "100% Merlot",
   "blendSrc": "site",
@@ -798,8 +798,8 @@ export const WINES = [
    }
   ],
   "flag": {
-   "fr": "Médaille d'argent selon la boutique, d'or selon la fiche technique.",
-   "en": "Silver medal according to the shop, gold according to the tech sheet."
+   "fr": "Couleur de la médaille à confirmer (argent ou or).",
+   "en": "Medal colour to confirm (silver or gold)."
   },
   "blend": "50 % cabernet franc, 35 % merlot, 15 % cabernet sauvignon",
   "blendSrc": "fiche",
@@ -1085,8 +1085,8 @@ export const CHATEAUX = {
   },
   "bottle": "bouteille-haut-piquat",
   "note": {
-   "fr": "Vin du château, au cœur de l'appellation. Fiche technique : surface de 20 ha <span class=\"todo\">surface à confirmer, 20 ou 30 ha</span>",
-   "en": "The château wine, in the heart of the appellation. Tech sheet: 20 ha <span class=\"todo\">area to confirm, 20 or 30 ha</span>"
+   "fr": "Vin du château, au cœur de l'appellation. <span class=\"todo\">Surface à confirmer (20 ou 30 ha)</span>",
+   "en": "The château wine, in the heart of the appellation. <span class=\"todo\">Area to confirm (20 or 30 ha)</span>"
   }
  },
  "lf": {
@@ -1121,8 +1121,8 @@ export const CHATEAUX = {
   },
   "bottle": "bouteille-beaulieu",
   "note": {
-   "fr": "Sur la commune de Montagne, en bordure de Saint-Émilion. Assemblage tiré de la fiche technique, absent des fiches boutique.",
-   "en": "In the commune of Montagne, on the edge of Saint-Émilion. Blend taken from the tech sheet; missing from the shop pages."
+   "fr": "Sur la commune de Montagne, en bordure de Saint-Émilion. <span class=\"todo\">Assemblage à confirmer</span>",
+   "en": "In the commune of Montagne, on the edge of Saint-Émilion. <span class=\"todo\">Blend to confirm</span>"
   }
  }
 };

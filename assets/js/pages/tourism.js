@@ -1,9 +1,9 @@
 // Visites & événements : passage de l'arche, atelier écriVins, journée dans le Libournais, réservation simulée, accès et parc.
-import { $, $$, L, eur, CALM, TOUCH, DESKTOP, hdrH, scrollToEl, toast, lang, padMasks, splitHold, sparkAt, anticipate, pinType } from '../core.js?v=18';
-import { ACTIVITIES } from '../data.js?v=18';
+import { $, $$, L, eur, CALM, TOUCH, DESKTOP, hdrH, scrollToEl, toast, lang, padMasks, splitHold, sparkAt, anticipate, pinType } from '../core.js?v=19';
+import { ACTIVITIES } from '../data.js?v=19';
 // taille de groupe : « à compléter » quand le domaine ne l'a pas donnée (formule avec repas vigneron)
 const grp = (a) => (a.sizeTodo ? `<span class="todo">${L('groupe à compléter', 'group size to complete')}</span>` : L(`${a.min} à ${a.max} pers.`, `${a.min} to ${a.max} people`));
-import { parc, buildMap, mapAnim } from './places.js?v=18';
+import { parc, buildMap, mapAnim } from './places.js?v=19';
 
 const gsap = window.gsap; const ST = window.ScrollTrigger;
 
@@ -26,7 +26,7 @@ function initBooking() {
   const list = $('[data-formule-list]'); const date = $('[data-bdate]'); const n = $('[data-bn]');
   const alert = $('[data-balert]'); const sum = $('[data-bsum]'); const sumL = $('[data-bsum-label]'); const submit = $('[data-bsubmit]');
   const pre = new URLSearchParams(location.search).get('formule');
-  list.innerHTML = ACTIVITIES.map((a, i) => `<label><input type="radio" name="formule" value="${a.id}" ${(pre ? pre === a.id : i === 0) ? 'checked' : ''}><span><b>${L(a.name.fr, a.name.en)}</b><small>${L(a.dur.fr, a.dur.en)} · ${grp(a)}</small></span><span class="p">${eur(a.price)}</span></label>`).join('');
+  list.innerHTML = ACTIVITIES.map((a, i) => `<label><input type="radio" name="formule" value="${a.id}" ${(pre ? pre === a.id : i === 0) ? 'checked' : ''}><span><b>${L(a.name.fr, a.name.en).replace('Haut-Piquat', '<span class="nw">Haut-Piquat</span>')}</b><small>${L(a.dur.fr, a.dur.en)} · ${grp(a)}</small></span><span class="p">${eur(a.price)}</span></label>`).join('');
   const t = new Date(); t.setDate(t.getDate() + 1); date.min = iso(new Date(Date.UTC(t.getFullYear(), t.getMonth(), t.getDate())));
   const cur = () => ACTIVITIES.find((a) => a.id === (form.formule.value || 'visite'));
   function update() {
@@ -46,13 +46,14 @@ function initBooking() {
     }
     alert.innerHTML = msg; alert.classList.toggle('is-on', !!msg); submit.disabled = block;
   }
-  const IMG = { visite: 'chateau-facade', ecrivins: 'table-ecrivins', journee: 'cour-tables-barriques', repas: 'parc-pelouse-cedre' };
+  // le récapitulatif montre une autre facette de la formule que sa carte (jamais la même photo deux fois sur la page)
+  const IMG = { visite: 'chai-barriques', ecrivins: 'salle-degustation-table', journee: 'vigne-chateau-matin', repas: 'chateau-panorama-midi' };
   const recap = $('[data-brecap]'); const done = $('[data-bdone]');
   function renderRecap() {
     if (!recap) return;
     const a = cur(); const card = $(`[data-pick="${a.id}"]`)?.closest('.tcard'); const ul = card ? $('ul', card) : null;
     recap.innerHTML = `<span class="frame"><img src="assets/img/photos/${IMG[a.id]}-640.webp" alt="" width="640" height="360" loading="lazy" decoding="async" style="width:100%;height:100%;object-fit:cover"></span>
-      <b>${L(a.name.fr, a.name.en)}</b>
+      <b>${L(a.name.fr, a.name.en).replace('Haut-Piquat', '<span class="nw">Haut-Piquat</span>')}</b>
       <p class="small muted" style="margin:0">${L(a.dur.fr, a.dur.en)} · ${grp(a)} · ${L(`${a.price}&nbsp;€ par personne`, `€${a.price} per person`)}</p>
       ${ul ? `<ul>${ul.innerHTML}</ul>` : ''}
       <p class="form-note" style="margin:0">${a.online ? L('Réservable en ligne du lundi au vendredi.', 'Bookable online Monday to Friday.') : L('Sur demande auprès du domaine.', 'On request from the estate.')}</p>`;
@@ -84,7 +85,7 @@ function initBooking() {
     done.innerHTML = `<svg class="ast" aria-hidden="true"><use href="#ast"/></svg>
       <h3 class="h3" style="margin:0">${L('Demande prête', 'Request ready')}</h3>
       <p class="muted" style="margin:0">${L('Simulation&nbsp;: rien n\'a été envoyé. Sur le site réel, le domaine confirmerait l\'horaire par e-mail.', 'Simulation: nothing was sent. On the live site, the estate would confirm the time by email.')}</p>
-      <dl><dt>${L('Formule', 'Experience')}</dt><dd>${L(a.name.fr, a.name.en)}</dd><dt>Date</dt><dd>${dl}</dd><dt>${L('Personnes', 'People')}</dt><dd>${people}</dd><dt>Total</dt><dd>${eur(a.price * people)}</dd></dl>
+      <dl><dt>${L('Formule', 'Experience')}</dt><dd>${L(a.name.fr, a.name.en).replace('Haut-Piquat', '<span class="nw">Haut-Piquat</span>')}</dd><dt>Date</dt><dd>${dl}</dd><dt>${L('Personnes', 'People')}</dt><dd>${people}</dd><dt>Total</dt><dd>${eur(a.price * people)}</dd></dl>
       <div style="display:flex;flex-wrap:wrap;gap:10px"><a class="btn btn--sm" href="${ics(a, date.value, people)}" download="visite-chateau-haut-piquat.ics">${L('Ajouter au calendrier', 'Add to calendar')}</a><a class="btn btn--ghost btn--sm" href="#acces">${L('Comment venir', 'Getting here')}</a><button class="link small" type="button" style="border:0;background:none;padding:0;min-height:44px" data-bagain>${L('Nouvelle réservation', 'New booking')}</button></div>`;
     form.hidden = true; done.classList.add('is-on'); scrollToEl(done); setTimeout(() => { done.focus({ preventScroll: true }); sparkAt($('.ast', done)); }, 700);
     if (window.gsap && !CALM) gsap.from(done.children, { y: 18, autoAlpha: 0, duration: 0.7, ease: 'power3.out', stagger: 0.06 });
@@ -103,7 +104,7 @@ function initBooking() {
 const GRAPES = {
   m: { name: 'Merlot', col: [110, 28, 48], fr: 'élégance raffinée, gras en bouche, un côté accessible et flatteur', en: 'refined elegance, roundness and an approachable, generous side' },
   cf: { name: 'Cabernet franc', col: [128, 34, 62], fr: 'des vins plus tanniques et très aromatiques', en: 'more tannic, highly aromatic wines' },
-  cs: { name: 'Cabernet sauvignon', col: [62, 20, 46], fr: 'des notes épicées, des tannins renforcés et l\'aptitude au vieillissement', en: 'spicy notes, firmer tannins and ageing potential' },
+  cs: { name: 'Cabernet sauvignon', col: [62, 20, 46], fr: 'des notes épicées, des tanins renforcés et l\'aptitude au vieillissement', en: 'spicy notes, firmer tannins and ageing potential' },
 };
 function initEcri() {
   const box = $('[data-ecri]'); if (!box) return;

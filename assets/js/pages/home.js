@@ -1,7 +1,7 @@
 // Accueil : ouverture, coupe géologique, vins, millésimes, puis deux bandeaux vers Le domaine et Visites & événements.
-import { $, $$, L, eur, CALM, TOUCH, DESKTOP, hdrH, splitTitle, splitHold, padMasks, pourSound, anticipate, pinType } from '../core.js?v=18';
-import { heroLight, fossils } from '../gl.js?v=18';
-import { WINES, CHATEAUX, FORMATS } from '../data.js?v=18';
+import { $, $$, L, eur, CALM, TOUCH, DESKTOP, hdrH, splitTitle, splitHold, padMasks, pourSound, anticipate, pinType } from '../core.js?v=19';
+import { heroLight, fossils } from '../gl.js?v=19';
+import { WINES, CHATEAUX, FORMATS } from '../data.js?v=19';
 
 const gsap = window.gsap; const ST = window.ScrollTrigger;
 let hero = null;
@@ -26,7 +26,7 @@ export function enter() {
 function teasers() {
   const dates = $$('[data-tdates] [data-engrave]');
   gsap.set(dates, { clipPath: 'inset(0 100% 0 0)' });
-  ST.create({ trigger: '[data-tdates]', start: 'top 85%', once: true, onEnter: () => gsap.to(dates, { clipPath: 'inset(0 0% 0 0)', duration: 1.1, ease: 'steps(14)', stagger: 0.25 }) });
+  ST.create({ trigger: '[data-tdates]', start: 'top 95%', once: true, onEnter: () => gsap.to(dates, { clipPath: 'inset(0 0% 0 0)', duration: 0.8, ease: 'steps(12)', stagger: 0.15 }) });
   gsap.fromTo('.tdom__media img', { scale: 1.14 }, { scale: 1, ease: 'none', scrollTrigger: { trigger: '.tdom', start: 'top bottom', end: 'bottom top', scrub: true } });
 }
 
@@ -38,7 +38,7 @@ function heroIn() {
   tl.to('[data-hero-strata] span', { scaleY: 0, duration: 0.85, ease: 'expo.inOut', stagger: 0.09 }, 0)
     .to(['[data-hero-img]', '[data-hero-video]'], { scale: 1.03, duration: 2.0, ease: 'expo.out' }, 0);
   if (split) tl.from(split.chars, { yPercent: 115, rotate: 4, duration: 0.75, ease: 'expo.out', stagger: 0.02, onComplete: split.done }, 0.1);
-  tl.to('[data-hdr]', { autoAlpha: 1, y: 0, duration: 0.6, ease: 'power3.out' }, 0.35)
+  tl.to('[data-hdr]', { autoAlpha: 1, y: 0, duration: 0.6, ease: 'power3.out' }, 0.8)
     .to(['[data-hero-kicker]', '[data-hero-sub]', '[data-hero-ctas] > *', '[data-hero-meta]', '[data-hero-scroll]'], { autoAlpha: 1, y: 0, duration: 0.65, ease: 'power3.out', stagger: 0.04 }, 0.45)
     .add(() => startHeroVideo(), 0.2);
   // la photo descend doucement au défilement
@@ -78,6 +78,15 @@ async function startHeroGL() {
 
 /* ---------- La coupe géologique ---------- */
 function coupe() {
+  // écrans très bas (téléphone à l'horizontale, 320 × 568) : la coupe et l'assemblage ne tiennent pas dans un écran épinglé ;
+  // ils se lisent donc à la suite, et la bouteille verse quand la jauge arrive à l'écran
+  if (matchMedia('(max-height: 620px)').matches) {
+    document.documentElement.classList.add('coupe-static');
+    gsap.set($$('[data-asm-head]'), { autoAlpha: 1, y: 0 });
+    const b = blendTimeline();
+    if (b) ScrollTrigger.create({ trigger: '[data-asm]', start: 'top 72%', once: true, onEnter: () => b.restart() });
+    return;
+  }
   const frame = $('[data-coupe-frame]'); const stack = $('[data-coupe-stack]');
   const panels = $$('[data-panel]'); const ticks = $$('[data-tick]');
   const T = 1.3; const blend = blendTimeline(); let played = false;
@@ -85,8 +94,9 @@ function coupe() {
   const head = $$('[data-asm-head]'); let headIn = false;
   gsap.set(head, { y: 16, autoAlpha: 0 });
   const fos = fossils($('[data-fossils]'));
-  gsap.set(panels, { autoAlpha: 0, y: 24 });
-  gsap.set('[data-panel-box]', { autoAlpha: 0 });
+  // le premier panneau est déjà affiché quand la section arrive (avant, la boîte apparaissait d'un coup au début de l'épinglage)
+  gsap.set(panels.slice(1), { autoAlpha: 0, y: 24 }); gsap.set(panels[0], { autoAlpha: 1, y: 0 });
+  gsap.set('[data-panel-box]', { autoAlpha: 1 });
   const travel = () => stack.offsetHeight - frame.offsetHeight;
   const tl = gsap.timeline({ defaults: { ease: 'none' }, scrollTrigger: {
     trigger: frame, start: () => `top top+=${hdrH()}`, end: () => `+=${frame.offsetHeight * (DESKTOP() ? 4.2 : 3.6) * T}`,
@@ -107,8 +117,7 @@ function coupe() {
       }
     },
   } });
-  tl.to('[data-panel-box]', { autoAlpha: 1, duration: 0.03 }, 0)
-    .to('[data-panel-box]', { autoAlpha: 0, duration: 0.03 }, 0.82)
+  tl.to('[data-panel-box]', { autoAlpha: 0, duration: 0.03 }, 0.82)
     .to('[data-gauge]', { autoAlpha: 0, duration: 0.03 }, 0.82)
     .to(stack, { y: () => -travel(), duration: 0.82 }, 0)
     .to('[data-gauge-fill]', { scaleY: 1, duration: 0.82 }, 0)
@@ -117,7 +126,7 @@ function coupe() {
   const seg = [[0, 0.2], [0.2, 0.42], [0.42, 0.63], [0.63, 0.82]];
   panels.forEach((p, i) => {
     const [a, b] = seg[i];
-    tl.to(p, { autoAlpha: 1, y: 0, duration: 0.03, ease: 'power2.out' }, a === 0 ? 0.001 : a - 0.005);
+    if (i > 0) tl.to(p, { autoAlpha: 1, y: 0, duration: 0.03, ease: 'power2.out' }, a + 0.008);
     if (i < 3) tl.to(p, { autoAlpha: 0, y: -20, duration: 0.025, ease: 'power2.in' }, b - 0.02);
   });
   gsap.set('[data-core]', { xPercent: -50, yPercent: -30, autoAlpha: 0 });

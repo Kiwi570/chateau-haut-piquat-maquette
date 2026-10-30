@@ -1,5 +1,5 @@
 // Parc et accès : mosaïque en parallaxe, plan schématique et boussole.
-import { $, $$, L, TOUCH } from '../core.js?v=18';
+import { $, $$, L, TOUCH } from '../core.js?v=19';
 
 const gsap = window.gsap; const ST = window.ScrollTrigger;
 
@@ -55,7 +55,7 @@ export function mapAnim() {
   ST.create({ trigger: '[data-map]', start: 'top 75%', once: true, onEnter: () => gsap.fromTo(needle, { rotation: -540, svgOrigin: '50 50' }, { rotation: b, svgOrigin: '50 50', duration: 2.6, ease: 'elastic.out(1, 0.35)' }) });
   if (!TOUCH) {
     const map = $('[data-map]'); const rTo = gsap.quickTo(needle, 'rotation', { duration: 1.2, ease: 'power3' });
-    map.addEventListener('pointermove', (e) => { const r = map.getBoundingClientRect(); const x = (e.clientX - r.left) / r.width - 0.5; rTo(b + x * 24); });
+    map.addEventListener('pointermove', (e) => { if (e.pointerType !== 'mouse' || (!e.movementX && !e.movementY)) return; const r = map.getBoundingClientRect(); const x = (e.clientX - r.left) / r.width - 0.5; rTo(b + x * 24); });
     map.addEventListener('pointerleave', () => rTo(b));
   }
 }

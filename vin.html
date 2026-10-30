@@ -22,13 +22,14 @@
 <meta name="twitter:description" content="Fiche détaillée d&#x27;un vin du domaine : assemblage, distinctions, notes de dégustation, accords et conseils de service.">
 <meta name="twitter:image" content="https://chateau-haut-piquat-maquette.vercel.app/assets/img/og/og-vin.jpg">
 <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<style>html{background:#EEE7D9}</style>
 <link rel="preload" href="assets/fonts/fraunces-latin-full-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="assets/fonts/fraunces-latin-full-italic.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="assets/fonts/manrope-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
 
-<link rel="stylesheet" href="assets/css/style.css?v=18">
-<link rel="modulepreload" href="assets/js/main.js?v=18">
-<script>(function(d){var h=d.documentElement;h.className=h.className.replace('no-js','js');try{var s=localStorage;var l=s.getItem('ahp-lang');if(l==='en'){h.lang='en';}if(matchMedia('(prefers-reduced-motion: reduce)').matches||s.getItem('ahp-calm')==='1'){h.classList.add('calm');}if(s.getItem('ahp-age')==='ok'){h.classList.add('age-ok');}if(sessionStorage.getItem('ahp-trans')==='1'){h.classList.add('trans-in');}}catch(e){}setTimeout(function(){if(!window.__ahpReady){h.classList.add('calm');h.classList.remove('trans-in');}},4500);})(document);</script>
+<link rel="stylesheet" href="assets/css/style.css?v=19">
+<link rel="modulepreload" href="assets/js/main.js?v=19">
+<script>(function(d){var h=d.documentElement;h.className=h.className.replace('no-js','js');try{var s=localStorage;var l=s.getItem('ahp-lang');if(l==='en'){h.lang='en';}if(matchMedia('(prefers-reduced-motion: reduce)').matches||s.getItem('ahp-calm')==='1'){h.classList.add('calm');}if(s.getItem('ahp-age')==='ok'){h.classList.add('age-ok');}if(sessionStorage.getItem('ahp-trans')==='1'||sessionStorage.getItem('ahp-seen')==='1'){h.classList.add('trans-in');}}catch(e){}setTimeout(function(){if(!window.__ahpReady){h.classList.add('calm');h.classList.remove('trans-in');}},4500);})(document);</script>
 </head>
 <body data-page="vin">
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
@@ -67,7 +68,7 @@
   <div>
     <div class="mmenu__ctas"><a class="btn btn--light" href="oenotourisme.html#reserver"><span lang="fr">Réserver une visite</span><span lang="en">Book a visit</span></a><a class="btn btn--ghost" href="boutique.html"><span lang="fr">Boutique en ligne</span><span lang="en">Online shop</span></a></div>
     <div class="mmenu__tools">
-      <button class="tool" type="button" data-sound aria-pressed="false"><span lang="fr">Son d'ambiance</span><span lang="en">Ambient sound</span></button>
+      <button class="tool" type="button" data-sound aria-pressed="false"><span lang="fr">Son d’ambiance</span><span lang="en">Ambient sound</span></button>
       <button class="tool" type="button" data-calm-toggle><span lang="fr">Réduire les animations</span><span lang="en">Reduce motion</span></button>
     </div>
     <p class="mmenu__foot">Château Haut-Piquat · 33570 Lussac · <a href="tel:+33685304242">+33 6 85 30 42 42</a></p>
@@ -80,7 +81,7 @@
     <div class="whero__visual"><div class="whero__pack" data-wine-pack></div></div>
     <div data-wine-info>
       <p class="crumbs"><a href="boutique.html"><span lang="fr">Boutique</span><span lang="en">Shop</span></a> / <span data-wine-crumb></span></p>
-      <noscript><h1 class="h1"><span lang="fr">Fiche du vin</span><span lang="en">Wine sheet</span></h1><p class="lead"><span lang="fr">Cette fiche s'affiche avec JavaScript.</span><span lang="en">This sheet needs JavaScript.</span> <a class="link" href="vins.html"><span lang="fr">Découvrir les vins du domaine</span><span lang="en">Discover the estate's wines</span></a> <span lang="fr">ou commander au</span><span lang="en">or order on</span> <a class="link" href="tel:+33685304242">+33 6 85 30 42 42</a>.</p></noscript>
+      <noscript><h1 class="h1"><span lang="fr">Fiche du vin</span><span lang="en">Wine sheet</span></h1><p class="lead"><span lang="fr">Cette fiche s’affiche avec JavaScript.</span><span lang="en">This sheet needs JavaScript.</span> <a class="link" href="vins.html"><span lang="fr">Découvrir les vins du domaine</span><span lang="en">Discover the estate’s wines</span></a> <span lang="fr">ou commander au</span><span lang="en">or order on</span> <a class="link" href="tel:+33685304242">+33 6 85 30 42 42</a>.</p></noscript>
     </div>
   </div>
 </section>
@@ -98,8 +99,8 @@
   <p class="kicker"><span lang="fr">Conseils du domaine</span><span lang="en">Advice from the estate</span></p>
   <h2 class="h2" id="serv-title" data-split style="margin-bottom:clamp(30px,5vw,60px)"><span lang="fr">Servir <em>et garder</em></span><span lang="en">Serving <em>and cellaring</em></span></h2>
   <div class="service">
-    <div data-reveal><div class="frame"><img src="assets/img/photos/service-temperature-1024.webp" srcset="assets/img/photos/service-temperature-640.webp 640w, assets/img/photos/service-temperature-1024.webp 1024w, assets/img/photos/service-temperature-1440.webp 1440w, assets/img/photos/service-temperature-1920.webp 1920w" sizes="(min-width:1000px) 30vw, 100vw" width="1920" height="1080" alt="Thermomètre plongé dans une carafe de vin rouge" data-alt-en="Thermometer in a carafe of red wine" loading="lazy" decoding="async"></div><h3 class="h3" style="font-size:1.5rem;margin-bottom:10px"><span lang="fr">Température</span><span lang="en">Temperature</span></h3><p class="muted"><span lang="fr">Grands vins rouges&nbsp;: 16 à 18&nbsp;°C. Vins rouges vieux&nbsp;: 18 à 20&nbsp;°C. Mieux vaut un vin un peu frais, que l'on «&nbsp;chambre&nbsp;» dans le verre, qu'un vin trop chaud.</span><span lang="en">Fine red wines: 16 to 18 °C. Older reds: 18 to 20 °C. A slightly cool wine that warms in the glass is better than one served too warm.</span></p></div>
-    <div data-reveal><div class="frame"><img src="assets/img/photos/carafe-la-fleur-1024.webp" srcset="assets/img/photos/carafe-la-fleur-640.webp 640w, assets/img/photos/carafe-la-fleur-1024.webp 1024w, assets/img/photos/carafe-la-fleur-1440.webp 1440w, assets/img/photos/carafe-la-fleur-1920.webp 1920w, assets/img/photos/carafe-la-fleur-2362.webp 2362w" sizes="(min-width:1000px) 30vw, 100vw" width="2362" height="1575" alt="Carafe et bouteille de La Fleur de Château Haut-Piquat sur une table" data-alt-en="Carafe and bottle of La Fleur de Château Haut-Piquat on a table" loading="lazy" decoding="async"></div><h3 class="h3" style="font-size:1.5rem;margin-bottom:10px"><span lang="fr">Carafe ou décantation</span><span lang="en">Decanting</span></h3><p class="muted"><span lang="fr">Vins jeunes&nbsp;: carafer une heure avant pour aérer et arrondir les tannins. Vins vieux&nbsp;: décanter juste avant de servir, très délicatement, pour séparer le dépôt.</span><span lang="en">Young wines: decant an hour ahead to aerate and soften the tannins. Older wines: decant very gently just before serving to leave the sediment behind.</span></p></div>
+    <div data-reveal><div class="frame"><img src="assets/img/photos/service-temperature-1024.webp" srcset="assets/img/photos/service-temperature-640.webp 640w, assets/img/photos/service-temperature-1024.webp 1024w, assets/img/photos/service-temperature-1440.webp 1440w, assets/img/photos/service-temperature-1920.webp 1920w" sizes="(min-width:1000px) 30vw, 100vw" width="1920" height="1080" alt="Thermomètre plongé dans une carafe de vin rouge" data-alt-en="Thermometer in a carafe of red wine" loading="lazy" decoding="async"></div><h3 class="h3" style="font-size:1.5rem;margin-bottom:10px"><span lang="fr">Température</span><span lang="en">Temperature</span></h3><p class="muted"><span lang="fr">Grands vins rouges&nbsp;: 16 à 18&nbsp;°C. Vins rouges vieux&nbsp;: 18 à 20&nbsp;°C. Mieux vaut un vin un peu frais, que l’on «&nbsp;chambre&nbsp;» dans le verre, qu’un vin trop chaud.</span><span lang="en">Fine red wines: 16 to 18 °C. Older reds: 18 to 20 °C. A slightly cool wine that warms in the glass is better than one served too warm.</span></p></div>
+    <div data-reveal><div class="frame"><img src="assets/img/photos/carafe-la-fleur-1024.webp" srcset="assets/img/photos/carafe-la-fleur-640.webp 640w, assets/img/photos/carafe-la-fleur-1024.webp 1024w, assets/img/photos/carafe-la-fleur-1440.webp 1440w, assets/img/photos/carafe-la-fleur-1920.webp 1920w, assets/img/photos/carafe-la-fleur-2362.webp 2362w" sizes="(min-width:1000px) 30vw, 100vw" width="2362" height="1575" alt="Carafe et bouteille de La Fleur de Château Haut-Piquat sur une table" data-alt-en="Carafe and bottle of La Fleur de Château Haut-Piquat on a table" loading="lazy" decoding="async"></div><h3 class="h3" style="font-size:1.5rem;margin-bottom:10px"><span lang="fr">Carafe ou décantation</span><span lang="en">Decanting</span></h3><p class="muted"><span lang="fr">Vins jeunes&nbsp;: carafer une heure avant pour aérer et arrondir les tanins. Vins vieux&nbsp;: décanter juste avant de servir, très délicatement, pour séparer le dépôt.</span><span lang="en">Young wines: decant an hour ahead to aerate and soften the tannins. Older wines: decant very gently just before serving to leave the sediment behind.</span></p></div>
     <div data-reveal><div class="frame"><img src="assets/img/photos/accords-fromages-haut-piquat-1024.webp" srcset="assets/img/photos/accords-fromages-haut-piquat-640.webp 640w, assets/img/photos/accords-fromages-haut-piquat-1024.webp 1024w, assets/img/photos/accords-fromages-haut-piquat-1440.webp 1440w, assets/img/photos/accords-fromages-haut-piquat-1920.webp 1920w, assets/img/photos/accords-fromages-haut-piquat-2362.webp 2362w" sizes="(min-width:1000px) 30vw, 100vw" width="2362" height="1575" alt="Plateau de fromages et bouteille de Château Haut-Piquat" data-alt-en="Cheese board and a bottle of Château Haut-Piquat" loading="lazy" decoding="async"></div><h3 class="h3" style="font-size:1.5rem;margin-bottom:10px"><span lang="fr">Verre et accords</span><span lang="en">Glass and pairings</span></h3><p class="muted"><span lang="fr">Un verre transparent en tulipe, au pied assez long. Charcuteries, viandes rouges et blanches, fromages à pâte dure ou molle&nbsp;; prudence avec les fromages forts.</span><span lang="en">A clear tulip glass with a long stem. Charcuterie, red and white meats, hard or soft cheeses; be careful with strong cheeses.</span></p></div>
   </div>
 </section>
@@ -117,7 +118,7 @@
         <address>Château Haut-Piquat<br>33570 Lussac, Gironde<br><a href="tel:+33685304242">+33 6 85 30 42 42</a><br><a href="mailto:jpriviere@chateau-haut-piquat.com">jpriviere@chateau-haut-piquat.com</a></address>
         <div class="ftr__labels">
           <img class="riviere" src="assets/img/logos/logo-famille-riviere-480.webp" width="480" height="303" alt="Famille Rivière, depuis 1875" loading="lazy">
-          <img src="assets/img/logos/label-hve-240.webp" width="240" height="240" alt="Issu d'une exploitation Haute Valeur Environnementale" data-alt-en="From a High Environmental Value certified farm" loading="lazy">
+          <img src="assets/img/logos/label-hve-240.webp" width="240" height="240" alt="Issu d’une exploitation Haute Valeur Environnementale" data-alt-en="From a High Environmental Value certified farm" loading="lazy">
           <img src="assets/img/logos/label-vignobles-decouvertes-240.webp" width="240" height="307" alt="Label Vignobles &amp; Découvertes" data-alt-en="Vignobles &amp; Découvertes label" loading="lazy">
         </div>
       </div>
@@ -159,15 +160,15 @@
       </div>
     </div>
     <div class="ftr__bottom">
-      <span>© 2026 Château Haut-Piquat · SARL Vignoble Rivière Jean Pierre</span>
-      <span><span lang="fr">Maquette de démonstration&nbsp;: paiement, réservation et formulaires simulés, rien n'est envoyé.</span><span lang="en">Demonstration mock-up: payment, booking and forms are simulated, nothing is sent.</span></span>
-      <span><span lang="fr">La vente d'alcool est interdite aux mineurs.</span><span lang="en">The sale of alcohol to minors is prohibited.</span></span>
-      <span class="ftr__tools"><button class="ftr__tool" type="button" data-sound aria-pressed="false"><span lang="fr">Son d'ambiance</span><span lang="en">Ambient sound</span></button><button class="ftr__tool" type="button" data-calm-toggle><span lang="fr">Réduire les animations</span><span lang="en">Reduce motion</span></button></span>
+      <span>© 2026 Château Haut-Piquat · SARL Vignoble Rivière Jean&nbsp;Pierre</span>
+      <span><span lang="fr">Maquette de démonstration&nbsp;: paiement, réservation et formulaires simulés, rien n’est envoyé.</span><span lang="en">Demonstration mock-up: payment, booking and forms are simulated, nothing is sent.</span></span>
+      <span><span lang="fr">La vente d’alcool est interdite aux mineurs.</span><span lang="en">The sale of alcohol to minors is prohibited.</span></span>
+      <span class="ftr__tools"><button class="ftr__tool" type="button" data-sound aria-pressed="false"><span lang="fr">Son d’ambiance</span><span lang="en">Ambient sound</span></button><button class="ftr__tool" type="button" data-calm-toggle><span lang="fr">Réduire les animations</span><span lang="en">Reduce motion</span></button></span>
     </div>
     <div class="ftr__big" aria-hidden="true" data-carve><span class="ch">H</span><span class="ch">a</span><span class="ch">u</span><span class="ch">t</span><span class="ch">-</span><span class="ch">P</span><span class="ch">i</span><span class="ch">q</span><span class="ch">u</span><span class="ch">a</span><span class="ch">t</span></div>
   </div>
 </footer>
-<div class="legal" data-legal role="note"><b><span lang="fr">L'abus d'alcool est dangereux pour la santé, à consommer avec modération.</span><span lang="en">Alcohol abuse is dangerous for your health; drink in moderation.</span></b><span class="sep" aria-hidden="true">·</span><span><span lang="fr">Vente interdite aux mineurs</span><span lang="en">No sale to minors</span></span></div>
+<div class="legal" data-legal role="note"><b><span lang="fr">L’abus d’alcool est dangereux pour la santé, à consommer avec modération.</span><span lang="en">Alcohol abuse is dangerous for your health; drink in moderation.</span></b><span class="sep" aria-hidden="true">·</span><span><span lang="fr">Vente interdite aux mineurs</span><span lang="en">No sale to minors</span></span></div>
 <div class="cart-ov" data-cart-ov></div>
 <aside class="cart" data-cart aria-label="Panier" data-aria-en="Cart" aria-hidden="true" inert>
   <div class="cart__head"><div><h2><span lang="fr">Votre panier</span><span lang="en">Your cart</span></h2><p class="cart__sum" data-cart-sum></p></div><button class="tool" type="button" data-cart-close aria-label="Fermer le panier" data-aria-en="Close cart"><svg><use href="#i-close"/></svg></button></div>
@@ -185,13 +186,13 @@
   <div class="agegate__card">
     <svg class="ast" aria-hidden="true"><use href="#ast"/></svg>
     <h2 id="age-title"><span lang="fr">Avez-vous 18 ans ou plus&nbsp;?</span><span lang="en">Are you 18 or older?</span></h2>
-    <p id="age-desc" class="muted"><span lang="fr">La vente d'alcool est interdite aux mineurs. Ce site présente des vins&nbsp;: merci de confirmer votre âge.</span><span lang="en">The sale of alcohol to minors is prohibited. This site presents wines: please confirm your age.</span></p>
+    <p id="age-desc" class="muted"><span lang="fr">La vente d’alcool est interdite aux mineurs. Ce site présente des vins&nbsp;: merci de confirmer votre âge.</span><span lang="en">The sale of alcohol to minors is prohibited. This site presents wines: please confirm your age.</span></p>
     <div class="agegate__actions">
-      <button class="btn magnetic" type="button" data-age-yes><span lang="fr">J'ai 18 ans ou plus</span><span lang="en">I am 18 or older</span></button>
-      <button class="btn btn--ghost" type="button" data-age-no><span lang="fr">J'ai moins de 18 ans</span><span lang="en">I am under 18</span></button>
+      <button class="btn magnetic" type="button" data-age-yes><span lang="fr">J’ai 18 ans ou plus</span><span lang="en">I am 18 or older</span></button>
+      <button class="btn btn--ghost" type="button" data-age-no><span lang="fr">J’ai moins de 18 ans</span><span lang="en">I am under 18</span></button>
     </div>
-    <p class="agegate__no" role="alert"><span lang="fr">Revenez nous voir à votre majorité. L'accès au site n'est pas possible.</span><span lang="en">Please come back when you are of age. Access to this site is not possible.</span></p>
-    <p class="tiny muted"><span lang="fr">L'abus d'alcool est dangereux pour la santé, à consommer avec modération.</span><span lang="en">Alcohol abuse is dangerous for your health; drink in moderation.</span></p>
+    <p class="agegate__no" role="alert"><span lang="fr">Revenez nous voir à votre majorité. L’accès au site n’est pas possible.</span><span lang="en">Please come back when you are of age. Access to this site is not possible.</span></p>
+    <p class="tiny muted"><span lang="fr">L’abus d’alcool est dangereux pour la santé, à consommer avec modération.</span><span lang="en">Alcohol abuse is dangerous for your health; drink in moderation.</span></p>
   </div>
 </div>
 <div class="cursor" data-cursor aria-hidden="true"><svg class="ast"><use href="#ast"/></svg></div>
@@ -203,6 +204,6 @@
 <script src="assets/vendor/gsap/DrawSVGPlugin.min.js" defer></script>
 <script src="assets/vendor/gsap/CustomEase.min.js" defer></script>
 <script src="assets/vendor/gsap/Flip.min.js" defer></script>
-<script type="module" src="assets/js/main.js?v=18"></script>
+<script type="module" src="assets/js/main.js?v=19"></script>
 </body>
 </html>

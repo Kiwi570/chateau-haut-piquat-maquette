@@ -1,5 +1,5 @@
 // Le domaine : frise gravée, savoir-faire ouvert par une fissure, chai de 480 barriques.
-import { $, $$, L, CALM, hdrH, padMasks, splitHold, anticipate, pinType } from '../core.js?v=18';
+import { $, $$, L, CALM, hdrH, padMasks, splitHold, anticipate, pinType } from '../core.js?v=19';
 
 const gsap = window.gsap; const ST = window.ScrollTrigger;
 
@@ -87,7 +87,7 @@ function craft() {
       frames.forEach((f) => gsap.fromTo($('img', f), { scale: 1.12 }, { scale: 1, ease: 'none', scrollTrigger: { trigger: '[data-craft-media]', start: 'top bottom', end: 'bottom top', scrub: true } }));
     },
     '(max-width: 999px)': () => {
-      steps.forEach((s, i) => { const f = $('.frame', s); const tw = crack(f, i + 1, false); ST.create({ trigger: f, start: 'top 85%', once: true, onEnter: () => tw.play() }); });
+      steps.forEach((s, i) => { const f = $('.frame', s); const tw = crack(f, i + 1, false); tw.duration(0.9); ST.create({ trigger: f, start: 'top 98%', once: true, onEnter: () => tw.play() }); });
     },
   });
 }
@@ -122,7 +122,7 @@ function drawBarrels(cv, n) {
 }
 function chai() {
   const cv = $('[data-barrels]'); const count = $('[data-chai-count]'); const o = { n: 0 };
-  ST.create({ trigger: '[data-chai]', start: 'top 85%', once: true, onEnter: () => gsap.to(o, { n: 480, duration: 1.8, ease: 'power2.inOut', onUpdate: () => { const v = Math.round(o.n); count.textContent = v; drawBarrels(cv, v); } }) });
+  ST.create({ trigger: cv || '[data-chai]', start: 'top 80%', once: true, onEnter: () => gsap.to(o, { n: 480, duration: 1.5, ease: 'power2.inOut', onUpdate: () => { const v = Math.round(o.n); count.textContent = v; drawBarrels(cv, v); } }) });
   addEventListener('resize', () => drawBarrels(cv, Math.round(o.n)));
   gsap.to('[data-chai-bg]', { yPercent: 10, ease: 'none', scrollTrigger: { trigger: '[data-chai]', start: 'top bottom', end: 'bottom top', scrub: true } });
   gsap.to('[data-beam]', { xPercent: 6, yPercent: -4, opacity: 0.55, duration: 7, ease: 'sine.inOut', yoyo: true, repeat: -1 });

@@ -1,6 +1,6 @@
 // Panier simulé : tiroir toujours accessible, frais de port et minimum de commande du domaine.
-import { $, $$, L, eur, store, toast, smooth, CALM, TOUCH, hideToast, sparkAt, lang } from './core.js?v=18';
-import { WINES, CHATEAUX, FORMATS } from './data.js?v=18';
+import { $, $$, L, eur, store, toast, smooth, CALM, TOUCH, hideToast, sparkAt, lang } from './core.js?v=19';
+import { WINES, CHATEAUX, FORMATS, BOTTLES } from './data.js?v=19';
 
 const KEY = 'ahp-cart';
 const FREE = 350, SHIP = 35, MIN = 105;
@@ -188,6 +188,7 @@ function flyout() {
     f.addEventListener('pointerenter', () => clearTimeout(flyTimer));
     f.addEventListener('pointerleave', () => hideFlyout(1600));
     f.addEventListener('focusin', () => clearTimeout(flyTimer));
+    let y0 = 0; addEventListener('scroll', () => { if (!f.classList.contains('is-on')) { y0 = scrollY; return; } if (Math.abs(scrollY - y0) > 160) hideFlyout(150); }, { passive: true });
   }
   return f;
 }
@@ -205,8 +206,9 @@ function showFlyout(w, fromImg) {
   $('[data-crate-msg]', box).innerHTML = crateMsg(crateState());
   f.classList.add('is-on'); hideToast();
   const st = crateState();
-  const go = () => { paintCrates(true); renderCount(); bump(); hideFlyout(TOUCH ? 3400 : 3800); };
+  const go = () => { paintCrates(true); renderCount(); bump(); hideFlyout(3000); };
   if (CALM || !fromImg || !window.gsap) { go(); return; }
+  flyWine = w;
   requestAnimationFrame(() => fly(fromImg, nextSlotRect(box, st), go));
 }
 
@@ -228,11 +230,18 @@ export function closeCart() {
   if (lastFocus && lastFocus.focus) lastFocus.focus({ preventScroll: true });
 }
 
+let flyWine = null;
 function fly(fromImg, rect, done) {
   const target = $('.hdr [data-cart-open]');
   if (CALM || !fromImg || (!rect && !target) || !window.gsap) return done();
-  const r = fromImg.getBoundingClientRect(); const t = rect || target.getBoundingClientRect();
-  const clone = fromImg.cloneNode(); clone.removeAttribute('srcset'); clone.className = 'fly';
+  const r0 = fromImg.getBoundingClientRect(); const t = rect || target.getBoundingClientRect();
+  let clone; let r = r0;
+  const cut = flyWine && BOTTLES[CHATEAUX[flyWine.ch]?.bottle];
+  if (cut) {
+    // bouteille détourée, posée à la place de celle de la photo
+    clone = document.createElement('img'); clone.src = cut.replace(/-\d+\.webp$/, '-360.webp'); clone.alt = ''; clone.className = 'fly fly--bottle';
+    const h = r0.height * 0.82; const w = h * 0.26; r = { left: r0.left + r0.width / 2 - w / 2, top: r0.top + r0.height * 0.08, width: w, height: h };
+  } else { clone = fromImg.cloneNode(); clone.removeAttribute('srcset'); clone.className = 'fly'; }
   Object.assign(clone.style, { left: r.left + 'px', top: r.top + 'px', width: r.width + 'px', height: r.height + 'px' });
   document.body.appendChild(clone);
   const dx = t.left + t.width / 2 - (r.left + r.width / 2); const dy = t.top + t.height / 2 - (r.top + r.height / 2);
@@ -256,6 +265,8 @@ export function addToCart(id, qty = 1, fromImg = null) {
 
 export function initCart() {
   renderCount();
+  // retour arrière depuis une fiche ouverte dans le panier : tiroir et fenêtre refermés, compteur à jour
+  addEventListener('pageshow', (e) => { if (!e.persisted) return; if ($('[data-cart]')?.classList.contains('is-open')) closeCart(); hideFlyout(0); try { lines = JSON.parse(store.get(KEY) || '[]').filter((l) => WINES.some((w) => w.id === l.id)); } catch (err) { /* panier illisible : on garde l'état en mémoire */ } renderCount(); { const st = crateState(); shown = { full: st.full, part: st.part, sub: st.sub }; } });
   { const st = crateState(); shown = { full: st.full, part: st.part, sub: st.sub }; }
   document.addEventListener('click', (e) => {
     if (e.target.closest('[data-cfly-close]')) { hideFlyout(0); return; }

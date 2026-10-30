@@ -38,6 +38,24 @@ Le dossier `_audit/` contient le script d'audit (Playwright) relancé à chaque 
 3. À chaque version livrée, changer le numéro `?v=N` partout et à l'identique, dans les pages et dans les `import` JavaScript :
    `grep -rl "?v=18" --include=*.html --include=*.js . | xargs sed -i "" "s/?v=18/?v=19/g"`
 
+## Version 19 : audit complet, transitions et finitions
+
+- Transitions entre pages : plus d'éclair de la page d'arrivée ni de l'astérie de chargement, le fond crème est posé avant tout le reste ; l'ouverture complète ne se joue qu'à la première page de la visite. Retour arrière : plus de bandeaux figés ni de menu resté ouvert ; un double clic ne lance plus deux transitions.
+- Chargement : l'astérie se dessine sans apparaître d'abord pleine, puis s'efface avec son libellé.
+- Menu : icône menu et croix toujours justes, liens qui entrent à chaque ouverture, page bloquée derrière le menu ouvert.
+- En-tête : fond plein (le texte ne transparaît plus), passage clair et sombre presque instantané, plus de pastille de survol qui reste accrochée au doigt sur téléphone, EN et FR lisibles sur les photos. La barre de défilement ne fait plus bouger la mise en page.
+- Panier : c'est la vraie bouteille détourée qui vole jusqu'à la caisse ; la fenêtre de la caisse se ferme seule après 3 secondes ou dès qu'on défile ; panier et fenêtre se referment au retour arrière.
+- Accueil : coupe du sol lisible sur petits écrans et téléphone tenu à l'horizontale (version fixe, sans épinglage) ; titres des cartes tenus dans leur cadre sur téléphone ; un fondu entre la vigne et la terre remplace la bande d'herbe ; compteurs et dates de la frise qui partent plus tôt ; mention « Illustration générée » toujours au-dessus des cartes ; carte « Venir » illustrée par une photo ; trois vins alignés sur la marge sur téléphone.
+- Le domaine : « Goûter le domaine » sans photo déjà vue plus haut ; fûts et fissure animés plus tôt sur téléphone.
+- Les vins : la jauge d'assemblage se remplit d'un seul trait ; sans épinglage, les bouteilles ne dépassent plus sur la section du dessus ; grands formats : la gamme ne saute plus quand la page défile sous une souris immobile.
+- Boutique : filtrage animé sans saut de page (les vins qui partent s'effacent vite, les autres glissent, les nouveaux arrivent ensuite) ; voile plus dense derrière le titre sur téléphone ; le bandeau sanitaire reste visible au-dessus du tiroir des filtres.
+- Fiche vin : la barre d'achat s'efface à l'arrivée du pied de page ; « Vous aimerez aussi » propose un millésime voisin, un autre format et un vin de chaque autre château ; les photos de service ne montrent plus la bouteille d'un autre château.
+- Œnotourisme : la photo du récapitulatif de réservation n'est plus celle de la carte choisie ; vignette « Le domaine » sans doublon ; « Haut-Piquat » jamais coupé dans la liste des formules.
+- Retour en haut : sur téléphone, le bouton s'efface quand on descend et revient dès qu'on remonte.
+- Textes : apostrophes typographiques, « œnotourisme », « écriVins© » jamais en capitales, adresses e-mail et lien de réservation coupés proprement ; les notes « à confirmer » ne renvoient plus aux sources (le détail est dans « Incohérences relevées » ci-dessous).
+- Lisibilité et rythme : contrastes renforcés (vins non concernés par l'accord, surtitre de la 404, logo Famille Rivière, compteurs des filtres, nom gravé du pied de page), sections un peu moins hautes, titres équilibrés sur deux lignes.
+- Filtre d'âge : fond sans flou, plus fluide.
+
 ## Version 18 : panier plus large et caisse redessinée
 
 - Tiroir du panier plus large (600 px sur ordinateur) et réorganisé : la caisse et ce qui manque pour le port offert en bandeau sous le titre, le nombre de caisses et de bouteilles sous « Votre panier », une ligne compacte par vin (vignette, nom, format, prix ; puis quantité, caisse bois et « Retirer »). Sur ordinateur, quatre vins sont visibles sans défiler, trois et demi sur téléphone.
@@ -229,7 +247,7 @@ Le dossier `_audit/` contient le script d'audit (Playwright) relancé à chaque 
 - Surface : 20 ha selon la fiche technique, 30 ha selon l'infographie.
 - Assemblage de Haut-Piquat : 80/14/6 depuis 2018 selon la fiche technique, 80/15/5 selon le site.
 - Certification HVE obtenue en 2018 ou en 2019 selon la page ; la mention « HVE4 en 2025 » est à vérifier.
-- Médailles : Beaulieu 2020 en argent (boutique) ou en or (fiche technique) ; La Fleur 2019 primée en 2022 ou en 2020 selon la page.
+- Médailles : Beaulieu 2020 en argent (boutique) ou en or (fiche technique) ; La Fleur 2019 primée en 2022 ou en 2020 selon la page ; La Fleur 2022 : Argent Bruxelles 2025 et Andreas Larsson 91/100 sur la fiche technique, absents de la boutique.
 - Prix à la bouteille erronés sur 6 fiches. La maquette les recalcule à partir du prix de la caisse.
 - Demi-bouteilles : millésime 2019 dans le titre, 2018 dans la description.
 - Mentions légales copiées d'un autre site : « La petite boutique des couleurs », contact « Clémentine Decoursier ».

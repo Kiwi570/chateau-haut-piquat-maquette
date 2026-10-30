@@ -77,7 +77,7 @@ export const smooth = {
     if (!this.enabled || immediate) { scrollTo({ top: y, behavior: immediate || CALM ? 'auto' : 'smooth' }); this.target = this.current = y; return; }
     this.target = y; this.start();
   },
-  lock(on) { this.locked = on; document.body.style.overflow = on ? 'hidden' : ''; },
+  lock(on) { this.locked = on; document.documentElement.style.overflow = on ? 'hidden' : ''; },
 };
 export function scrollToEl(el, immediate) {
   if (!el) return;
@@ -129,14 +129,19 @@ function initHeader() {
   const upd = () => h.classList.toggle('is-solid', scrollY > 40 || document.body.dataset.page === 'vin' || document.body.dataset.page === 'informations');
   upd(); addEventListener('scroll', upd, { passive: true });
   const btn = $('[data-menu]'); const m = $('[data-mmenu]');
-  const close = () => { if (!m.classList.contains('is-open')) return; m.classList.remove('is-open'); m.setAttribute('aria-hidden', 'true'); btn.setAttribute('aria-expanded', 'false'); document.body.classList.remove('menu-open'); smooth.lock(false); $$('main, footer').forEach((el) => { el.inert = false; }); btn.focus({ preventScroll: true }); };
+  const setIcon = (open) => { const u = btn && $('use', btn); if (u) u.setAttribute('href', open ? '#i-close' : '#i-menu'); };
+  const close = () => { if (!m.classList.contains('is-open')) return; m.classList.remove('is-open'); m.setAttribute('aria-hidden', 'true'); btn.setAttribute('aria-expanded', 'false'); document.body.classList.remove('menu-open'); setIcon(false); smooth.lock(false); $$('main, footer').forEach((el) => { el.inert = false; }); btn.focus({ preventScroll: true }); };
   btn?.addEventListener('click', () => {
     const open = !m.classList.contains('is-open');
     if (!open) return close();
-    hideToast(); m.classList.add('is-open'); m.setAttribute('aria-hidden', 'false'); btn.setAttribute('aria-expanded', 'true'); document.body.classList.add('menu-open'); smooth.lock(true); $$('main, footer').forEach((el) => { el.inert = true; }); setTimeout(() => $('nav a', m).focus({ preventScroll: true }), 120);
-    if (!CALM && gsap) gsap.from($$('nav a', m), { y: 40, autoAlpha: 0, stagger: 0.05, duration: 0.7, ease: 'power3.out', delay: 0.15 });
+    hideToast(); m.classList.add('is-open'); m.setAttribute('aria-hidden', 'false'); btn.setAttribute('aria-expanded', 'true'); document.body.classList.add('menu-open'); setIcon(true); smooth.lock(true); $$('main, footer').forEach((el) => { el.inert = true; }); setTimeout(() => $('nav a', m).focus({ preventScroll: true }), 120);
+    if (!CALM && gsap) gsap.fromTo($$('nav a', m), { y: 40, autoAlpha: 0 }, { y: 0, autoAlpha: 1, stagger: 0.05, duration: 0.7, ease: 'power3.out', delay: 0.15, overwrite: true });
   });
-  $$('a', m).forEach((a) => a.addEventListener('click', close));
+  $$('a', m).forEach((a) => a.addEventListener('click', () => {
+    const u = new URL(a.href, location.href); const here = u.pathname.replace(/\.html$/, '').replace(/\/index$/, '/') === location.pathname.replace(/\.html$/, '').replace(/\/index$/, '/');
+    if (here || CALM) close();
+  }));
+  addEventListener('pageshow', (e) => { if (e.persisted && m.classList.contains('is-open')) { setIcon(false); m.classList.remove('is-open'); m.setAttribute('aria-hidden', 'true'); btn.setAttribute('aria-expanded', 'false'); document.body.classList.remove('menu-open'); smooth.lock(false); $$('main, footer').forEach((el) => { el.inert = false; }); } });
   addEventListener('keydown', (e) => { if (e.key === 'Escape' && m.classList.contains('is-open')) close(); });
 }
 
@@ -252,8 +257,10 @@ function initVeil() {
 /* ---------- Transitions de page ---------- */
 function initTransitions() {
   const bands = $$('.ptrans span');
+  let leaving = false;
   const leave = (href) => {
-    store.ses('ahp-trans', '1');
+    if (leaving) return; leaving = true;
+    store.ses('ahp-trans', '1'); gsap.set(bands, { visibility: 'visible' });
     if (CALM) { location.href = href; return; }
     gsap.set(bands, { transformOrigin: 'bottom' });
     gsap.to(bands, { scaleY: 1, duration: 0.5, ease: 'power3.inOut', stagger: 0.07, onComplete: () => { location.href = href; } });
@@ -268,7 +275,7 @@ function initTransitions() {
     if (samePage && url.search === location.search) return;
     e.preventDefault(); leave(url.href);
   });
-  addEventListener('pageshow', (e) => { if (e.persisted) { gsap.set(bands, { scaleY: 0 }); html.classList.remove('trans-in'); } });
+  addEventListener('pageshow', (e) => { if (e.persisted) { leaving = false; gsap.killTweensOf(bands); gsap.set(bands, { scaleY: 0, visibility: 'hidden' }); html.classList.remove('trans-in'); } });
 }
 function transIn() {
   const bands = $$('.ptrans span');
@@ -276,7 +283,7 @@ function transIn() {
   store.ses('ahp-trans', null);
   gsap.set(bands, { scaleY: 1, transformOrigin: 'top' });
   html.classList.remove('trans-in');
-  gsap.to(bands, { scaleY: 0, duration: 0.65, ease: 'power3.inOut', stagger: 0.07, delay: 0.05 });
+  gsap.to(bands, { scaleY: 0, duration: 0.65, ease: 'power3.inOut', stagger: 0.07, delay: 0.05, onComplete: () => gsap.set(bands, { visibility: 'hidden' }) });
   return 1;
 }
 
@@ -312,12 +319,16 @@ export function opening() {
   return new Promise((resolve) => {
     const path = $('[data-ast-path]', loader); const hole = $('[data-ast-hole]', loader);
     const home = document.body.dataset.page === 'index';
+    store.ses('ahp-seen', '1');
+    const svg = loader.querySelector('svg'); const lab = $('.loader__count', loader);
     const tl = gsap.timeline({ onComplete: () => { loader.remove(); } });
     tl.fromTo(path, { drawSVG: '0%' }, { drawSVG: '100%', duration: home ? 0.7 : 0.45, ease: 'power2.inOut' })
       .fromTo(hole, { drawSVG: '0%' }, { drawSVG: '100%', duration: 0.25, ease: 'power2.out' }, '-=0.2')
-      .to(loader.querySelector('svg'), { rotate: 36, scale: 0.6, duration: 0.4, ease: 'power3.in' }, '+=0.02')
-      .add(() => resolve({ fromTrans: false }), '-=0.32')
-      .to(loader, { autoAlpha: 0, duration: 0.4, ease: 'power2.out' }, '-=0.25');
+      .to(svg, { rotate: 36, scale: 0.6, autoAlpha: 0, duration: 0.4, ease: 'power3.in' }, '+=0.02')
+      .to(lab, { autoAlpha: 0, duration: 0.25 }, '<')
+      .add(() => resolve({ fromTrans: false }), '-=0.2')
+      .to(loader, { autoAlpha: 0, duration: 0.3, ease: 'power2.out' }, '-=0.15');
+    gsap.set([svg, lab], { opacity: 1 });
   });
 }
 
@@ -375,7 +386,7 @@ function initCarve() {
       .fromTo(c, { y: 1.5 }, { y: 0, duration: 0.18, ease: 'power2.out' }, i * 0.11 + 0.2);
   });
   tl.call(() => gsap.set(chars, { clearProps: 'clipPath' }));
-  ScrollTrigger.create({ trigger: box, start: 'top 94%', once: true, onEnter: () => tl.play() });
+  ScrollTrigger.create({ trigger: box, start: 'top 82%', once: true, onEnter: () => tl.play() });
 }
 // Petite astérie qui s'allume à chaque validation (ajout au panier, réservation…)
 export function spark(x, y) {
@@ -401,7 +412,7 @@ export function initReveals(root = document) {
     const end = parseFloat(ref.replace(/\s/g, '')); if (isNaN(end) || (end >= 1800 && end <= 2100)) return;
     const o = { v: 0 };
     el.textContent = fmtCount(o.v, ref);
-    ScrollTrigger.create({ trigger: el, start: 'top 92%', once: true, onEnter: () => gsap.to(o, { v: end, duration: 1.6, ease: 'power3.out', onUpdate: () => { el.textContent = fmtCount(o.v, ref); } }) });
+    ScrollTrigger.create({ trigger: el, start: 'top 98%', once: true, onEnter: () => gsap.to(o, { v: end, duration: 0.85, ease: 'power2.out', onUpdate: () => { el.textContent = fmtCount(o.v, ref); } }) });
   });
 }
 
@@ -457,12 +468,15 @@ function initProgress() {
   top.addEventListener('click', () => { window.scrollTo({ top: 0, behavior: CALM ? 'auto' : 'smooth' }); if (!CALM) gsap.fromTo($('.totop__ast', top), { rotation: 0 }, { rotation: -360, duration: 1, ease: 'power3.out' }); });
   const ring = $('.p', top); const ast = $('.totop__ast', top); const C = 2 * Math.PI * 21;
   ring.style.strokeDasharray = C.toFixed(1);
-  let raf = 0;
+  let raf = 0; let lastY = scrollY; let dir = 0;
+  // sur téléphone, le bouton s'efface quand on descend et revient dès qu'on remonte (ou en bas de page)
+  const narrow = matchMedia('(max-width: 899px)');
   const upd = () => {
-    raf = 0; const pr = Math.min(1, scrollY / doc.max);
+    raf = 0; const y = scrollY; const pr = Math.min(1, y / doc.max);
+    if (Math.abs(y - lastY) > 8) { dir = y > lastY ? 1 : -1; lastY = y; }
     bar.style.transform = `scaleX(${pr.toFixed(4)})`;
     ring.style.strokeDashoffset = (C * (1 - pr)).toFixed(1); ast.style.transform = `rotate(${(pr * 360).toFixed(1)}deg)`;
-    top.classList.toggle('is-on', scrollY > innerHeight * 1.2);
+    top.classList.toggle('is-on', y > innerHeight * 1.2 && (!narrow.matches || dir < 0 || y > doc.max - innerHeight * 0.6));
   };
   addEventListener('scroll', () => { if (!raf) raf = requestAnimationFrame(upd); }, { passive: true });
   addEventListener('resize', upd); upd();

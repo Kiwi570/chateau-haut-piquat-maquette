@@ -1,8 +1,8 @@
 // Boutique : filtres, cartes inclinables, ajout au panier, règle des formats.
-import { $, $$, L, eur, CALM, TOUCH, scrollToEl, sparkAt, splitHold, fmtShort } from '../core.js?v=18';
-import { WINES, CHATEAUX, FORMATS } from '../data.js?v=18';
-import { addToCart } from '../cart.js?v=18';
-import { formatsMeter } from './formats.js?v=18';
+import { $, $$, L, eur, CALM, TOUCH, scrollToEl, sparkAt, splitHold, fmtShort } from '../core.js?v=19';
+import { WINES, CHATEAUX, FORMATS } from '../data.js?v=19';
+import { addToCart } from '../cart.js?v=19';
+import { formatsMeter } from './formats.js?v=19';
 
 const gsap = window.gsap; const Flip = window.Flip;
 const pw = (u) => +((u.match(/-(\d+)\.webp$/) || [0, 840])[1]); // largeur du fichier, lue dans son nom
@@ -91,6 +91,7 @@ function renderGrid(animate) {
   const limited = noFilter && !expanded && all.length > LIMIT;
   const list = limited ? all.slice(0, LIMIT) : all;
   const stateF = animate && !CALM && Flip ? Flip.getState($$('.pcard', grid)) : null;
+  const gh0 = stateF ? grid.offsetHeight : 0;
   const existing = new Map($$('.pcard', grid).map((c) => [c.dataset.id, c]));
   const frag = document.createDocumentFragment();
   list.forEach((w) => {
@@ -112,7 +113,15 @@ function renderGrid(animate) {
   if (!more) { more = document.createElement('div'); more.className = 'pgrid__more'; more.setAttribute('data-pmore', ''); grid.after(more); }
   const rest = all.length - list.length;
   more.innerHTML = limited ? `<span class="pgrid__more-line" aria-hidden="true"></span><button class="btn btn--ghost magnetic" type="button" data-more>${L(`Voir les ${rest} autres vins`, `See the other ${rest} wines`)}</button><span class="pgrid__more-line" aria-hidden="true"></span>` : '';
-  if (stateF) Flip.from(stateF, { duration: 0.7, ease: 'power3.inOut', absolute: true, stagger: 0.02, onEnter: (els) => gsap.fromTo(els, { autoAlpha: 0, scale: 0.9 }, { autoAlpha: 1, scale: 1, duration: 0.6 }), onLeave: (els) => gsap.to(els, { autoAlpha: 0, scale: 0.9, duration: 0.4 }) });
+  if (stateF) {
+    // la grille garde sa hauteur pendant le mouvement : la page ne saute pas quand le nombre de vins baisse
+    const gh1 = grid.offsetHeight;
+    if (gh1 < gh0) gsap.fromTo(grid, { minHeight: gh0 }, { minHeight: gh1, duration: 0.65, ease: 'power3.inOut', clearProps: 'minHeight' });
+    // les vins qui partent s'effacent vite, ceux qui restent glissent, les nouveaux arrivent une fois la place libérée
+    Flip.from(stateF, { duration: 0.6, ease: 'power3.inOut', absoluteOnLeave: true, stagger: 0.012,
+      onEnter: (els) => gsap.fromTo(els, { autoAlpha: 0, scale: 0.94 }, { autoAlpha: 1, scale: 1, duration: 0.45, delay: 0.18, ease: 'power2.out' }),
+      onLeave: (els) => gsap.to(els, { autoAlpha: 0, scale: 0.94, duration: 0.2, ease: 'power1.in' }) });
+  }
 }
 
 function bindTilt(c) {
